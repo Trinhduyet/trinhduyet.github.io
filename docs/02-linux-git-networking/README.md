@@ -106,3 +106,23 @@ Nguồn module được quản lý tại [references.md](references.md). Technol
 - Official sources: [references.md](references.md)
 - Context7 queries used: /dotnet/docs cho HttpClient pooling/DNS refresh và .NET diagnostics; .NET baseline dùng /dotnet/core ở roadmap baseline
 - Notes: content v1 hoàn thành 7/7 slices. Command output có thể khác theo distro, init system, cgroup version, network namespace và privilege; Linux signal/namespace lab evidence vẫn cần người học thực hiện trên môi trường phù hợp.
+
+<!-- Mermaid.js Script CDN hỗ trợ tự động render sơ đồ Mermaid trên GitHub Pages (Jekyll) -->
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'default' });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const elements = document.querySelectorAll("pre.language-mermaid, code.language-mermaid, .language-mermaid pre, pre code.language-mermaid");
+    elements.forEach((el) => {
+      const container = el.tagName.toLowerCase() === "code" ? el.parentElement : el;
+      const div = document.createElement("div");
+      div.className = "mermaid";
+      div.textContent = el.textContent;
+      if (container && container.parentNode) {
+        container.parentNode.replaceChild(div, container);
+      }
+    });
+    mermaid.run({ querySelector: '.mermaid' });
+  });
+</script>

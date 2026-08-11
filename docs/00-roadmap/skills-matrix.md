@@ -26,49 +26,49 @@ Ký hiệu “current → target”. Level current bằng 0 cho đến khi có a
 | Git | History, diff, branch, merge, revert/recovery | P0 | 0 → 4 | In progress | [Git recovery chapter](../02-linux-git-networking/git-mental-model-and-safe-recovery.md) + learner recovery exercise pending |
 | Networking | DNS/TCP/UDP/TLS/HTTP | P0 | 0 → 5 | In progress | [Protocol deep dive](../02-linux-git-networking/dns-tcp-tls-http-deep-dive.md) + layer-by-layer lab output pending |
 | Networking | NAT, proxy, load balancer | P0/P1 | 0 → 4 | In progress | [Network boundaries chapter](../02-linux-git-networking/proxy-nat-load-balancer-and-network-boundaries.md) + [incident lab](../02-linux-git-networking/incident-lab-dotnet-service.md) output pending |
-| C# | Type system, generics, collections, LINQ | P0 | 0 → 4 | Planned | Project 01 code/review |
-| .NET | Exceptions, IDisposable, resource ownership | P0 | 0 → 5 | Planned | Failure/cleanup tests |
-| .NET | Task, async/await, CancellationToken | P0 | 0 → 5 | Planned | Project 01 load/cancel evidence |
-| .NET | ThreadPool và concurrency | P0 | 0 → 5 | Planned | Saturation/race lab |
-| .NET | GC, allocations, memory | P0 | 0 → 4 | Planned | Trace/profile report |
-| .NET | Generic Host, DI, config, logging | P0 | 0 → 5 | Planned | Hosted app + lifecycle tests |
-| Backend | HTTP request lifecycle | P0 | 0 → 5 | Planned | Trace từ socket đến handler |
-| Backend | Authn/authz/validation | P0 | 0 → 5 | Planned | Threat tests + policy matrix |
-| Backend | Pagination/filtering/sorting | P0 | 0 → 4 | Planned | Contract + SQL/load evidence |
-| Backend | Idempotency/rate limiting/caching | P0 | 0 → 5 | Planned | Duplicate/overload experiments |
-| Backend | Background jobs/files/webhooks | P0 | 0 → 4 | Planned | Recovery/replay tests |
-| SQL | Relational model/schema/constraints | P0 | 0 → 5 | Planned | Data model review |
-| SQL | Querying, joins, windows, CTEs | P0 | 0 → 4 | Planned | Query portfolio |
-| SQL | Transactions/isolation/locking/deadlocks | P0 | 0 → 5 | Planned | Blocking/deadlock lab |
-| SQL | Indexes/statistics/execution plans | P0 | 0 → 5 | Planned | Actual plan analysis |
-| SQL Server | Query Store/plan cache/parameterization | P0/P1 | 0 → 4 | Planned | Incident-style diagnosis |
-| SQL Server | tempdb/log/storage/backup overview | P1/P2 | 0 → 4 | Planned | Recovery/operations review |
+| C# | Type system, generics, collections, LINQ | P0 | 0 → 4 | In progress | [Types chapter](../03-dotnet/csharp-types-generics-and-collections.md) + Project 01 code/review |
+| .NET | Exceptions, IDisposable, resource ownership | P0 | 0 → 5 | In progress | [Ownership chapter](../03-dotnet/exceptions-disposable-and-resource-ownership.md) + failure/cleanup tests |
+| .NET | Task, async/await, CancellationToken | P0 | 0 → 5 | In progress | [Async chapter](../03-dotnet/async-await-cancellation-and-task-lifecycle.md) + RuntimeLab cancel evidence |
+| .NET | ThreadPool và concurrency | P0 | 0 → 5 | In progress | [ThreadPool chapter](../03-dotnet/threadpool-concurrency-and-diagnostics.md) + saturation/race lab |
+| .NET | GC, allocations, memory | P0 | 0 → 4 | In progress | [GC chapter](../03-dotnet/gc-allocations-and-runtime-memory.md) + RuntimeLab allocation/diagnostics |
+| .NET | Generic Host, DI, config, logging | P0 | 0 → 5 | In progress | [ThreadPool/Host chapter](../03-dotnet/threadpool-concurrency-and-diagnostics.md) + hosted app/lifecycle tests |
+| Backend | HTTP request lifecycle | P0 | 0 → 5 | In progress | [Request lifecycle](../04-backend/request-lifecycle-and-endpoint-contract.md) + trace từ socket đến handler |
+| Backend | Authn/authz/validation | P0 | 0 → 5 | In progress | [Auth chapter](../04-backend/authentication-authorization-and-validation.md) + threat tests/policy matrix |
+| Backend | Pagination/filtering/sorting | P0 | 0 → 4 | In progress | [Capacity chapter](../04-backend/pagination-idempotency-rate-limiting-and-caching.md) + BackendLab contract evidence |
+| Backend | Idempotency/rate limiting/caching | P0 | 0 → 5 | In progress | [Capacity chapter](../04-backend/pagination-idempotency-rate-limiting-and-caching.md) + duplicate/overload experiments |
+| Backend | Background jobs/files/webhooks | P0 | 0 → 4 | In progress | [Integration chapter](../04-backend/background-jobs-files-and-webhooks.md) + recovery/replay tests |
+| SQL | Relational model/schema/constraints | P0 | 0 → 5 | In progress | [Relational chapter](../05-sql/relational-model-schema-and-sql.md) + data model review |
+| SQL | Querying, joins, windows, CTEs | P0 | 0 → 4 | In progress | [Relational chapter](../05-sql/relational-model-schema-and-sql.md) + query portfolio |
+| SQL | Transactions/isolation/locking/deadlocks | P0 | 0 → 5 | In progress | [Transactions chapter](../05-sql/transactions-isolation-and-concurrency.md) + blocking/deadlock lab |
+| SQL | Indexes/statistics/execution plans | P0 | 0 → 5 | In progress | [Plans chapter](../05-sql/indexes-execution-plans-and-operations.md) + actual plan analysis |
+| SQL Server | Query Store/plan cache/parameterization | P0/P1 | 0 → 4 | In progress | [Plans chapter](../05-sql/indexes-execution-plans-and-operations.md) + incident diagnosis |
+| SQL Server | tempdb/log/storage/backup overview | P1/P2 | 0 → 4 | In progress | [Plans chapter](../05-sql/indexes-execution-plans-and-operations.md) + recovery review |
 | EF Core | Query translation/tracking/loading | P0 | 0 → 5 | Planned | LINQ → SQL → plan → index evidence |
 | EF Core | Transactions/concurrency/migrations | P0 | 0 → 4 | Planned | Migration/rollback exercise |
-| API Design | Resources, methods, status/error model | P0 | 0 → 5 | Planned | API contract review |
-| API Design | Evolution/versioning/compatibility | P0 | 0 → 5 | Planned | Breaking-change exercise |
-| API Design | REST/RPC/gRPC/GraphQL/events | P1 | 0 → 5 | Planned | Requirement-based decision record |
-| ASP.NET Core | Hosting/pipeline/routing/binding | P0 | 0 → 5 | Planned | Request pipeline trace |
-| ASP.NET Core | Security/rate limit/health checks | P0 | 0 → 5 | Planned | Security + probe failure tests |
-| ASP.NET Core | HttpClientFactory/workers/caching | P0 | 0 → 4 | Planned | Dependency failure lab |
-| Testing | Unit/integration/API/database/contract | P0 | 0 → 5 | Planned | Test strategy by boundary |
-| Testing | Load/resilience/security/AI eval | P0 | 0 → 4 | Planned | Automated gates |
-| Code Review | Correctness/design/security/perf/ops | P0 | 0 → 5 | Planned | Multi-role review report |
-| Security | OAuth/OIDC/JWT/cookies/CSRF/CORS | P0 | 0 → 5 | Planned | Threat model + tests |
-| Security | Injection/SSRF/secrets/TLS/least privilege | P0 | 0 → 5 | Planned | Attack/mitigation lab |
-| DevSecOps | SAST/dependencies/secrets/SBOM/supply chain | P1 | 0 → 4 | Planned | CI security gates |
-| Performance | Latency/throughput/tails/resources | P0 | 0 → 5 | Planned | Reproducible performance report |
-| Performance | Profiling/load/capacity | P0 | 0 → 5 | Planned | Bottleneck hypothesis cycle |
-| Redis | Data structures/TTL/cache patterns | P1 | 0 → 4 | Planned | Cache decision + lab |
-| Redis | Persistence/replication/eviction/failure | P1 | 0 → 5 | Planned | Redis outage/stampede lab |
-| Docker | Image/layers/build/cache/registry | P0 | 0 → 4 | Planned | Reproducible image |
-| Docker | Runtime/network/volume/signals/resources | P0 | 0 → 5 | Planned | Failure/security lab |
-| DevOps | Git strategy/CI/CD/artifact promotion | P1 | 0 → 5 | Planned | Delivery pipeline + rollback |
-| Terraform | State/plan/apply/drift/modules | P1 | 0 → 4 | Planned | Reviewed plan + drift exercise |
-| Cloud | Compute/network/data/identity/regions/DR | P1 | 0 → 5 | Planned | Cloud-neutral architecture |
-| Kubernetes | Reconciliation/control plane/workloads | P1 | 0 → 5 | Planned | Diagnose rollout/readiness |
-| Kubernetes | Networking/storage/resources/autoscaling | P1 | 0 → 5 | Planned | Capacity/failure lab |
-| Kubernetes | RBAC/policy/upgrades/troubleshooting | P1 | 0 → 5 | Planned | Security/upgrade runbook |
+| API Design | Resources, methods, status/error model | P0 | 0 → 5 | In progress | [HTTP contract](../06-api-design/http-resource-contracts-and-semantics.md) + API review |
+| API Design | Evolution/versioning/compatibility | P0 | 0 → 5 | In progress | [Evolution chapter](../06-api-design/api-evolution-errors-and-pagination.md) + breaking-change exercise |
+| API Design | REST/RPC/gRPC/GraphQL/events | P1 | 0 → 5 | In progress | [Events chapter](../06-api-design/events-grpc-webhooks-and-contracts.md) + decision record |
+| ASP.NET Core | Hosting/pipeline/routing/binding | P0 | 0 → 5 | In progress | [Pipeline chapter](../07-aspnet-core/pipeline-hosting-and-configuration.md) + request trace |
+| ASP.NET Core | Security/rate limit/health checks | P0 | 0 → 5 | In progress | [Resilience chapter](../07-aspnet-core/resilience-security-and-middleware.md) + probe tests |
+| ASP.NET Core | HttpClientFactory/workers/caching | P0 | 0 → 4 | In progress | [Operations chapter](../07-aspnet-core/deployment-observability-and-operations.md) + dependency lab |
+| Testing | Unit/integration/API/database/contract | P0 | 0 → 5 | In progress | [Test strategy](../08-testing-code-review/test-strategy-and-boundaries.md) + boundary evidence |
+| Testing | Load/resilience/security/AI eval | P0 | 0 → 4 | In progress | [Load testing](../08-testing-code-review/integration-contract-and-load-testing.md) + automated gates |
+| Code Review | Correctness/design/security/perf/ops | P0 | 0 → 5 | In progress | [Review chapter](../08-testing-code-review/code-review-quality-and-failure-analysis.md) + multi-role report |
+| Security | OAuth/OIDC/JWT/cookies/CSRF/CORS | P0 | 0 → 5 | In progress | [Identity chapter](../09-security-devsecops/identity-secrets-and-data-protection.md) + threat tests |
+| Security | Injection/SSRF/secrets/TLS/least privilege | P0 | 0 → 5 | In progress | [Threat modeling](../09-security-devsecops/threat-modeling-and-application-security.md) + mitigation lab |
+| DevSecOps | SAST/dependencies/secrets/SBOM/supply chain | P1 | 0 → 4 | In progress | [Supply-chain chapter](../09-security-devsecops/secure-supply-chain-and-devsecops.md) + CI gates |
+| Performance | Latency/throughput/tails/resources | P0 | 0 → 5 | In progress | [Measurement](../10-performance/measurement-profiling-and-bottlenecks.md) + performance report |
+| Performance | Profiling/load/capacity | P0 | 0 → 5 | In progress | [Capacity chapter](../10-performance/load-capacity-and-scalability.md) + bottleneck cycle |
+| Redis | Data structures/TTL/cache patterns | P1 | 0 → 4 | In progress | [Redis data types](../11-redis-caching/redis-data-structures-and-command-shape.md) + cache lab |
+| Redis | Persistence/replication/eviction/failure | P1 | 0 → 5 | In progress | [Redis operations](../11-redis-caching/redis-operations-ha-and-coordination.md) + outage/stampede lab |
+| Docker | Image/layers/build/cache/registry | P0 | 0 → 4 | In progress | [Docker images](../12-docker/images-builds-and-reproducibility.md) + reproducible image |
+| Docker | Runtime/network/volume/signals/resources | P0 | 0 → 5 | In progress | [Docker runtime](../12-docker/runtime-networking-storage-and-resources.md) + failure lab |
+| DevOps | Git strategy/CI/CD/artifact promotion | P1 | 0 → 5 | In progress | [CI/CD chapter](../13-devops-iac/ci-cd-artifacts-and-promotion.md) + rollback |
+| Terraform | State/plan/apply/drift/modules | P1 | 0 → 4 | In progress | [Terraform chapter](../13-devops-iac/terraform-state-modules-and-drift.md) + drift exercise |
+| Cloud | Compute/network/data/identity/regions/DR | P1 | 0 → 5 | In progress | [Cloud primitives](../14-cloud/cloud-primitives-identity-and-networking.md) + architecture |
+| Kubernetes | Reconciliation/control plane/workloads | P1 | 0 → 5 | In progress | [Reconciliation](../15-kubernetes/cluster-architecture-and-reconciliation.md) + rollout diagnosis |
+| Kubernetes | Networking/storage/resources/autoscaling | P1 | 0 → 5 | In progress | [Workloads](../15-kubernetes/workloads-networking-and-storage.md) + capacity lab |
+| Kubernetes | RBAC/policy/upgrades/troubleshooting | P1 | 0 → 5 | In progress | [Kubernetes operations](../15-kubernetes/kubernetes-security-observability-and-operations.md) + security runbook |
 | Observability | Structured logs/metrics/traces/correlation | P0 | 0 → 5 | Planned | End-to-end telemetry |
 | Observability | OpenTelemetry/SLI/SLO/alerts/incidents | P0/P1 | 0 → 5 | Planned | SLO + incident investigation |
 | Distributed | Timeout/retry/backoff/jitter/resilience | P0 | 0 → 5 | Planned | Dependency failure matrix |

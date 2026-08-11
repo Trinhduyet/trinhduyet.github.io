@@ -72,7 +72,20 @@ Trạng thái dưới đây là tiến độ tài liệu, không phải level n�
 | Baseline và source policy | Đã xác minh 2026-08-11 | [Technology baseline](docs/00-roadmap/technology-baseline.md) · [Source policy](docs/00-roadmap/source-policy.md) |
 | Module 01 — Computer Science Essentials | Content v1 hoàn thành 4/4; learner evidence pending | [Module overview](docs/01-computer-science/README.md) |
 | Module 02 — Linux, Git, Networking | Content v1 hoàn thành 7/7; learner evidence pending | [Module overview](docs/02-linux-git-networking/README.md) |
-| Module 03–26 | Planned theo dependency | [Module map](docs/00-roadmap/master-roadmap.md#bản-đồ-module) |
+| Module 03 — C#/.NET Runtime | Content v1 hoàn thành 5/5; RuntimeLab buildable; learner evidence pending | [Module overview](docs/03-dotnet/README.md) |
+| Module 04 — Backend | Content v1 hoàn thành 4/4; BackendLab buildable; learner evidence pending | [Module overview](docs/04-backend/README.md) |
+| Module 05 — SQL | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](docs/05-sql/README.md) |
+| Module 06 — API Design | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](docs/06-api-design/README.md) |
+| Module 07 — ASP.NET Core | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](docs/07-aspnet-core/README.md) |
+| Module 08 — Testing và Code Review | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](docs/08-testing-code-review/README.md) |
+| Module 09 — Security và DevSecOps | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](docs/09-security-devsecops/README.md) |
+| Module 10 — Performance | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](docs/10-performance/README.md) |
+| Module 11 — Redis và Caching | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](docs/11-redis-caching/README.md) |
+| Module 12 — Docker | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](docs/12-docker/README.md) |
+| Module 13 — DevOps và IaC | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](docs/13-devops-iac/README.md) |
+| Module 14 — Cloud | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](docs/14-cloud/README.md) |
+| Module 15 — Kubernetes | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](docs/15-kubernetes/README.md) |
+| Module 16–26 | Planned theo dependency | [Module map](docs/00-roadmap/master-roadmap.md#bản-đồ-module) |
 | Project spine | Planned; phát triển dần từ Project 01 đến 07 | [Project spine](docs/00-roadmap/master-roadmap.md#project-spine) |
 
 ### Nội dung có thể học ngay
@@ -88,8 +101,50 @@ Trạng thái dưới đây là tiến độ tài liệu, không phải level n�
 9. [Git mental model và safe recovery](docs/02-linux-git-networking/git-mental-model-and-safe-recovery.md)
 10. [Proxy, NAT, load balancer và network boundaries](docs/02-linux-git-networking/proxy-nat-load-balancer-and-network-boundaries.md)
 11. [.NET incident lab end to end](docs/02-linux-git-networking/incident-lab-dotnet-service.md)
+12. [C# types, generics và collections](docs/03-dotnet/csharp-types-generics-and-collections.md)
+13. [Exceptions, IDisposable và ownership](docs/03-dotnet/exceptions-disposable-and-resource-ownership.md)
+14. [Async/await, cancellation và Task lifecycle](docs/03-dotnet/async-await-cancellation-and-task-lifecycle.md)
+15. [ThreadPool, Generic Host và diagnostics](docs/03-dotnet/threadpool-concurrency-and-diagnostics.md)
+16. [GC, allocations và runtime memory](docs/03-dotnet/gc-allocations-and-runtime-memory.md)
+17. [Request lifecycle và endpoint contract](docs/04-backend/request-lifecycle-and-endpoint-contract.md)
+18. [Authentication, authorization và validation](docs/04-backend/authentication-authorization-and-validation.md)
+19. [Pagination, idempotency, rate limiting và caching](docs/04-backend/pagination-idempotency-rate-limiting-and-caching.md)
+20. [Background jobs, files và webhooks](docs/04-backend/background-jobs-files-and-webhooks.md)
+21. [Relational model, schema và SQL](docs/05-sql/relational-model-schema-and-sql.md)
+22. [Transactions, isolation và concurrency](docs/05-sql/transactions-isolation-and-concurrency.md)
+23. [Indexes, execution plans và operations](docs/05-sql/indexes-execution-plans-and-operations.md)
+24. [HTTP resource contracts và semantics](docs/06-api-design/http-resource-contracts-and-semantics.md)
+25. [API evolution, errors và pagination](docs/06-api-design/api-evolution-errors-and-pagination.md)
+26. [Events, gRPC và webhooks](docs/06-api-design/events-grpc-webhooks-and-contracts.md)
+27. [ASP.NET Core pipeline và hosting](docs/07-aspnet-core/pipeline-hosting-and-configuration.md)
+28. [ASP.NET resilience và middleware](docs/07-aspnet-core/resilience-security-and-middleware.md)
+29. [ASP.NET deployment và operations](docs/07-aspnet-core/deployment-observability-and-operations.md)
+30. [Testing strategy và boundaries](docs/08-testing-code-review/test-strategy-and-boundaries.md)
+31. [Integration, contract và load testing](docs/08-testing-code-review/integration-contract-and-load-testing.md)
+32. [Code review và failure analysis](docs/08-testing-code-review/code-review-quality-and-failure-analysis.md)
+33. [Threat modeling và application security](docs/09-security-devsecops/threat-modeling-and-application-security.md)
+34. [Identity, secrets và data protection](docs/09-security-devsecops/identity-secrets-and-data-protection.md)
+35. [Secure supply chain và DevSecOps](docs/09-security-devsecops/secure-supply-chain-and-devsecops.md)
+36. [Measurement, profiling và bottlenecks](docs/10-performance/measurement-profiling-and-bottlenecks.md)
+37. [Load, capacity và scalability](docs/10-performance/load-capacity-and-scalability.md)
+38. [Optimization budgets và regression control](docs/10-performance/optimization-budgets-and-regression-control.md)
+39. [Redis data structures và command shape](docs/11-redis-caching/redis-data-structures-and-command-shape.md)
+40. [Cache consistency và stampede](docs/11-redis-caching/cache-consistency-invalidation-and-stampede.md)
+41. [Redis operations và HA](docs/11-redis-caching/redis-operations-ha-and-coordination.md)
+42. [Docker images và reproducibility](docs/12-docker/images-builds-and-reproducibility.md)
+43. [Container runtime, network và storage](docs/12-docker/runtime-networking-storage-and-resources.md)
+44. [Docker security và Compose](docs/12-docker/docker-security-compose-and-operations.md)
+45. [CI/CD artifacts và promotion](docs/13-devops-iac/ci-cd-artifacts-and-promotion.md)
+46. [Terraform state, modules và drift](docs/13-devops-iac/terraform-state-modules-and-drift.md)
+47. [Safe delivery và recovery](docs/13-devops-iac/safe-delivery-drift-and-recovery.md)
+48. [Cloud primitives và identity](docs/14-cloud/cloud-primitives-identity-and-networking.md)
+49. [Regions, availability và DR](docs/14-cloud/regions-availability-and-disaster-recovery.md)
+50. [Cloud cost governance](docs/14-cloud/cloud-cost-governance-and-operations.md)
+51. [Kubernetes architecture và reconciliation](docs/15-kubernetes/cluster-architecture-and-reconciliation.md)
+52. [Kubernetes workloads, network và storage](docs/15-kubernetes/workloads-networking-and-storage.md)
+53. [Kubernetes security và observability](docs/15-kubernetes/kubernetes-security-observability-and-operations.md)
 
-Module 01 và 02 đã đủ content v1; bước hoàn thành năng lực tiếp theo là chạy WorkloadLab, incident/Git labs và lưu evidence bằng progress template.
+Module 01–15 đã đủ content v1; bước hoàn thành năng lực tiếp theo là chạy labs, review artifacts và lưu evidence bằng progress template.
 
 ## Cách bắt đầu
 
@@ -100,7 +155,9 @@ Module 01 và 02 đã đủ content v1; bước hoàn thành năng lực tiếp 
 3. Kiểm tra prerequisite tại [Knowledge Dependency Graph](docs/00-roadmap/prerequisites.md).
 4. Bắt đầu [Module 01 — Computer Science Essentials](docs/01-computer-science/README.md).
 5. Nối mental model sang [Module 02 — Linux, Git và Networking](docs/02-linux-git-networking/README.md).
-6. Lưu kết quả bằng [Progress Template](docs/00-roadmap/progress-template.md).
+6. Học [Module 03 — C#/.NET Runtime](docs/03-dotnet/README.md) và chạy RuntimeLab.
+7. Học [Module 04 — Backend](docs/04-backend/README.md) và chạy BackendLab.
+8. Lưu kết quả bằng [Progress Template](docs/00-roadmap/progress-template.md).
 
 ### Nếu đã có kinh nghiệm backend/.NET
 
@@ -230,22 +287,54 @@ docs/
 │   ├── process-thread-scheduling-and-concurrency.md
 │   ├── memory-stack-heap-virtual-memory-and-cache.md
 │   └── references.md
-└── 02-linux-git-networking/
+├── 02-linux-git-networking/
+│   ├── README.md
+│   ├── production-troubleshooting-foundations.md
+│   ├── filesystem-permissions-and-identities.md
+│   ├── process-signals-and-resource-pressure.md
+│   ├── dns-tcp-tls-http-deep-dive.md
+│   ├── git-mental-model-and-safe-recovery.md
+│   ├── proxy-nat-load-balancer-and-network-boundaries.md
+│   ├── incident-lab-dotnet-service.md
+│   └── references.md
+├── 03-dotnet/
+│   ├── README.md
+│   ├── csharp-types-generics-and-collections.md
+│   ├── exceptions-disposable-and-resource-ownership.md
+│   ├── async-await-cancellation-and-task-lifecycle.md
+│   ├── threadpool-concurrency-and-diagnostics.md
+│   ├── gc-allocations-and-runtime-memory.md
+│   └── references.md
+└── 04-backend/
     ├── README.md
-    ├── production-troubleshooting-foundations.md
-    ├── filesystem-permissions-and-identities.md
-    ├── process-signals-and-resource-pressure.md
-    ├── dns-tcp-tls-http-deep-dive.md
-    ├── git-mental-model-and-safe-recovery.md
-    ├── proxy-nat-load-balancer-and-network-boundaries.md
-    ├── incident-lab-dotnet-service.md
+    ├── request-lifecycle-and-endpoint-contract.md
+    ├── authentication-authorization-and-validation.md
+    ├── pagination-idempotency-rate-limiting-and-caching.md
+    ├── background-jobs-files-and-webhooks.md
     └── references.md
+├── 05-sql/
+├── 06-api-design/
+├── 07-aspnet-core/
+├── 08-testing-code-review/
+├── 09-security-devsecops/
+├── 10-performance/
+├── 11-redis-caching/
+├── 12-docker/
+├── 13-devops-iac/
+├── 14-cloud/
+└── 15-kubernetes/
+    ├── README.md + references.md
+    └── 3 production reasoning chapters mỗi module
 
 labs/
 ├── 01-computer-science/
 │   └── workload-lab/           .NET 10 experiments: lookup, race, locality
-└── 02-linux-git-networking/
-    └── incident-service/       ứng dụng .NET 10 cho failure lab
+├── 02-linux-git-networking/
+│   └── incident-service/       ứng dụng .NET 10 cho failure lab
+├── 03-dotnet/
+│   └── runtime-lab/             .NET 10 cancellation/allocation/diagnostics
+└── 04-backend/
+    └── backend-lab/             .NET 10 pagination/idempotency/backpressure
 ~~~
 
 Module Planned chỉ có link khi nội dung đã đủ hữu ích. [Technology Baseline](docs/00-roadmap/technology-baseline.md) phải được kiểm tra lại trước lab phụ thuộc phiên bản.
@@ -262,12 +351,16 @@ Module Planned chỉ có link khi nội dung đã đủ hữu ích. [Technology 
 
 ## Tiếp tục từ đây
 
-Điểm vào thực hành hiện tại là [WorkloadLab](labs/01-computer-science/workload-lab/Program.cs), sau đó [.NET incident lab](docs/02-linux-git-networking/incident-lab-dotnet-service.md). Thứ tự tiếp theo:
+Điểm vào thực hành hiện tại là [WorkloadLab](labs/01-computer-science/workload-lab/Program.cs), sau đó [.NET incident lab](docs/02-linux-git-networking/incident-lab-dotnet-service.md) và [RuntimeLab](labs/03-dotnet/runtime-lab/Program.cs). Thứ tự tiếp theo:
 
 1. Chạy lookup, race và locality experiments; lưu prediction, output và interpretation.
 2. Chạy Git recovery và incident scenarios; nối resource evidence với mental model Module 01.
 3. Đối chiếu Phase 01 gate trong Learning Path.
-4. Mở Module 03 — C#/.NET runtime khi prerequisite evidence đạt.
+4. Chạy RuntimeLab cancellation/allocation/diagnostics; lưu output và decision note.
+5. Chạy BackendLab pagination/idempotency/backpressure; lưu output và contract decision note.
+6. Đi Module 05 → 06 → 07 theo dependency và lưu evidence mỗi gate.
+7. Tiếp tục Module 08 → 10 để đóng testing/security/performance boundary.
+8. Hoàn thành Module 11 → 15 để nối cache, container, delivery, cloud và orchestration.
 
 ## Verification metadata
 

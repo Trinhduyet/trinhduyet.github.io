@@ -53,19 +53,19 @@ Những phần repository cố ý nhấn mạnh hơn catalog:
 | 00-roadmap | Dependency, baseline, source policy, progress | P0 | L5 | Completed v1 |
 | 01-computer-science | Complexity, data structures, OS/memory/concurrency | P0 core + P2 selective | L3–L4 | Content v1 complete; learner evidence pending |
 | 02-linux-git-networking | Production troubleshooting, Git, DNS/TCP/TLS/HTTP | P0 | L4 | Content v1 complete; learner evidence pending |
-| 03-dotnet | C#, runtime, async/concurrency, GC, hosting, diagnostics | P0 | L5 | Planned |
-| 04-backend | Request lifecycle, auth, validation, background/integration | P0 | L5 | Planned |
-| 05-sql | Relational model, SQL Server, transactions, plans, operations | P0 | L5 | Planned |
-| 06-api-design | Resource/contract design, evolution, REST/RPC/events | P0 | L5 | Planned |
-| 07-aspnet-core | Pipeline, hosting, security, resilience, deployment | P0 | L5 | Planned |
-| 08-testing-code-review | Test boundaries và multi-angle review | P0 | L4 | Planned |
-| 09-security-devsecops | Identity, app/API security, supply chain, gates | P0/P1 | L5 | Planned |
-| 10-performance | Measurement, profiling, load/capacity, bottlenecks | P0 | L5 | Planned |
-| 11-redis-caching | Cache/data structures, failure modes, coordination | P1 | L5 | Planned |
-| 12-docker | Images, runtime, networking, security, operations | P0 | L5 | Planned |
-| 13-devops-iac | CI/CD, artifacts, Terraform, drift, deployment strategy | P1 | L5 | Planned |
-| 14-cloud | Cloud-neutral primitives, regions/AZ, identity, DR | P1 | L4 | Planned |
-| 15-kubernetes | Reconciliation, workloads, networking, security, upgrades | P1 | L5 | Planned |
+| 03-dotnet | C#, runtime, async/concurrency, GC, hosting, diagnostics | P0 | L5 | Content v1 complete; learner evidence pending |
+| 04-backend | Request lifecycle, auth, validation, background/integration | P0 | L5 | Content v1 complete; learner evidence pending |
+| 05-sql | Relational model, SQL Server, transactions, plans, operations | P0 | L5 | Content v1 complete; learner evidence pending |
+| 06-api-design | Resource/contract design, evolution, REST/RPC/events | P0 | L5 | Content v1 complete; learner evidence pending |
+| 07-aspnet-core | Pipeline, hosting, security, resilience, deployment | P0 | L5 | Content v1 complete; learner evidence pending |
+| 08-testing-code-review | Test boundaries và multi-angle review | P0 | L4 | Content v1 complete; learner evidence pending |
+| 09-security-devsecops | Identity, app/API security, supply chain, gates | P0/P1 | L5 | Content v1 complete; learner evidence pending |
+| 10-performance | Measurement, profiling, load/capacity, bottlenecks | P0 | L5 | Content v1 complete; learner evidence pending |
+| 11-redis-caching | Cache/data structures, failure modes, coordination | P1 | L5 | Content v1 complete; learner evidence pending |
+| 12-docker | Images, runtime, networking, security, operations | P0 | L5 | Content v1 complete; learner evidence pending |
+| 13-devops-iac | CI/CD, artifacts, Terraform, drift, deployment strategy | P1 | L5 | Content v1 complete; learner evidence pending |
+| 14-cloud | Cloud-neutral primitives, regions/AZ, identity, DR | P1 | L4 | Content v1 complete; learner evidence pending |
+| 15-kubernetes | Reconciliation, workloads, networking, security, upgrades | P1 | L5 | Content v1 complete; learner evidence pending |
 | 16-observability | Logs, metrics, traces, OTel, SLI/SLO, incidents | P0/P1 | L5 | Planned |
 | 17-distributed-systems | Partial failure, messaging, consistency, recovery | P0 | L5 | Planned |
 | 18-data-engineering | Ingestion, CDC, batch/stream, lineage, retention | P2 | L3 | Planned |

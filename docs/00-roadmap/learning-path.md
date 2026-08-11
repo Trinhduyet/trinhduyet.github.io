@@ -9,13 +9,13 @@
 | Phase | Phạm vi | Priority | Exit outcome | Project/evidence |
 | --- | --- | --- | --- | --- |
 | 01 | CS essentials; Linux, Git, Networking | P0 core/P2 selective | Reason được workload/memory/concurrency và chẩn đoán process → socket → DNS/TCP/TLS → HTTP | WorkloadLab, Linux failure lab, Git recovery exercise |
-| 02 | C# và .NET runtime | P0 | Viết async/concurrent code có cancellation; đo allocation/GC/ThreadPool | Project 01 |
-| 03 | Backend, SQL, API Design | P0 | Thiết kế contract và schema; đọc query/plan/index; reasoning idempotency | API/data design dossier |
-| 04 | ASP.NET Core và EF Core | P0 | Theo dõi request qua pipeline đến SQL; xử lý lifecycle/security/failure | Project 02 |
-| 05 | Testing, Security, Code Review, Performance | P0 | Chứng minh correctness, threat controls và bottleneck bằng test/measurement | Review packet + load profile |
-| 06 | Redis và Docker | P0/P1 | Chọn cache đúng lý do; containerize và xử lý lifecycle/network/resource failure | Project 03 increment |
-| 07 | DevOps, Terraform, Cloud | P1 | Xây artifact/promotion flow và IaC có state/plan/drift/rollback | CI/CD + IaC plan review |
-| 08 | Kubernetes, Observability, DevSecOps | P1/P0 | Vận hành workload bằng probes/resources/RBAC/telemetry/SLO | Project 03 production platform |
+| 02 | C# và .NET runtime | P0 | Viết async/concurrent code có cancellation; đo allocation/GC/ThreadPool; compose host lifecycle | [Module 03 RuntimeLab](../03-dotnet/README.md) + Project 01 |
+| 03 | Backend, SQL, API Design | P0 | Trace request lifecycle; thiết kế contract/auth/capacity; đọc schema/query/plan/index và reasoning idempotency | Module 04–06 + BackendLab + API/data dossier |
+| 04 | ASP.NET Core và EF Core | P0 | Theo dõi request qua pipeline đến SQL; xử lý lifecycle/security/failure | Module 07 + Project 02 |
+| 05 | Testing, Security, Code Review, Performance | P0 | Chứng minh correctness, threat controls và bottleneck bằng test/measurement | Module 08–10 + review packet/load profile |
+| 06 | Redis và Docker | P0/P1 | Chọn cache đúng lý do; containerize và xử lý lifecycle/network/resource failure | Module 11–12 + Project 03 increment |
+| 07 | DevOps, Terraform, Cloud | P1 | Xây artifact/promotion flow và IaC có state/plan/drift/rollback | Module 13–14 + CI/CD/IaC plan review |
+| 08 | Kubernetes, Observability, DevSecOps | P1/P0 | Vận hành workload bằng probes/resources/RBAC/telemetry/SLO | Module 15 + Project 03 production platform |
 | 09 | Distributed Systems | P0 | Thiết kế recovery cho partial failure, duplicate, backlog, ordering | Project 04 |
 | 10 | AI Engineering và RAG | P0 | Thiết kế provider/retrieval lifecycle có eval, ACL, cost, observability | Project 05 |
 | 11 | Agents, MCP, AI Security | P0 | Chọn workflow/agent đúng mức; bảo vệ tools/data/identity và approval | Project 06 |
@@ -36,6 +36,26 @@ Thứ tự khuyến nghị:
 
 [Computer Science Essentials](../01-computer-science/README.md) cung cấp deep dive có chọn lọc về workload, data structures, scheduling/concurrency và memory/cache. [Linux, Git và Networking](../02-linux-git-networking/README.md) nối các mental model đó với production diagnostics. Hai module đều có content v1; learner có thể chạy WorkloadLab và incident/Git labs như một evidence chain thay vì học hai silo độc lập.
 
+## Phase 02 chi tiết
+
+1. Type/generic/collection contract và equality/boxing boundary.
+2. Exception, `IDisposable`, `IAsyncDisposable` và ownership khi failure.
+3. `Task`, `await`, cancellation/deadline, bounded concurrency và async streams.
+4. ThreadPool/Generic Host/DI/config/logging, shutdown và diagnostics ladder.
+5. GC generations, allocation/retention, pooling và managed/native memory.
+
+Chạy [RuntimeLab](../../labs/03-dotnet/runtime-lab/Program.cs) để tạo evidence cancellation, allocation và diagnostics; sau đó lặp lại các boundary này trong Project 01.
+
+### Phase 03 chi tiết
+
+1. Request lifecycle: middleware, routing, binding, validation và response contract.
+2. Authentication/authorization: scheme, policy, resource/tenant check và audit.
+3. Pagination, idempotency, rate limiting và cache freshness/invalidation.
+4. Background queue, file lifecycle, HTTP integration và webhook replay.
+5. Nối endpoint contract với SQL/schema/query ở module tiếp theo.
+
+Chạy [BackendLab](../../labs/04-backend/backend-lab/Program.cs) để lưu stable-page, replay và bounded-backpressure evidence trước khi đi vào persistence.
+
 ## Phase gates
 
 ### Gate A — Backend-ready
@@ -43,7 +63,8 @@ Thứ tự khuyến nghị:
 - Giải thích được HTTP request/response, DNS/TCP/TLS path.
 - Phân biệt process/thread/Task và blocking/async I/O.
 - Dùng Git inspection/recovery mà không phá history.
-- Viết C# có cancellation, deterministic cleanup và test.
+- Viết C# có cancellation, deterministic cleanup và test; đọc allocation/ThreadPool evidence từ RuntimeLab.
+- Trace được request qua middleware/binding/authz và có contract/error/capacity decision.
 
 ### Gate B — Production-backend-ready
 

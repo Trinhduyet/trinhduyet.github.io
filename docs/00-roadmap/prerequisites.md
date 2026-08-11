@@ -78,6 +78,29 @@ flowchart TD
 - Biết syntax C# cơ bản.
 - Hiểu process/thread/memory ở mức L1.
 - Có thể dùng Git để lưu và review thay đổi.
+- Chạy được [RuntimeLab](../../labs/03-dotnet/runtime-lab/Program.cs) và đọc output cancellation/allocation/diagnostics.
+
+### 04 Backend
+
+- Đạt entry criteria Module 03: hiểu async/cancellation, ownership, host lifetime và diagnostics.
+- Đọc được HTTP method/status/header, route và request body ở mức L1.
+- Có thể chạy [BackendLab](../../labs/04-backend/backend-lab/Program.cs) và giải thích pagination, idempotency, rate/backpressure output.
+
+### 05–15 Production Backend Track
+
+| Module | Entry evidence tối thiểu |
+| --- | --- |
+| 05 SQL | Đọc schema/constraint, transaction/isolation và actual plan ở workload bounded |
+| 06 API Design | Viết resource/status/error/version contract và compatibility matrix |
+| 07 ASP.NET Core | Trace pipeline, config/health/readiness, resilience và rollback |
+| 08 Testing/Review | Có test boundary, integration/contract evidence và review packet |
+| 09 Security/DevSecOps | Có threat model, identity/secret matrix và supply-chain gate |
+| 10 Performance | Có baseline, load/capacity model, p95/p99 và regression gate |
+| 11 Redis | Có key/type/TTL policy, consistency/stampede và restore/failover note |
+| 12 Docker | Build image reproducibly, inspect runtime/resource/signal/security boundary |
+| 13 DevOps/IaC | Có artifact promotion, Terraform plan/state/lock và rollback path |
+| 14 Cloud | Có identity/network map, RTO/RPO, cost/unit economics và DR rehearsal |
+| 15 Kubernetes | Có reconciliation/readiness, workload/network/storage và RBAC/observability review |
 
 ### 05 SQL
 
@@ -126,7 +149,7 @@ flowchart TD
 
 ## Next path
 
-Bắt đầu: [Computer Science Essentials](../01-computer-science/README.md) → [Linux, Git và Networking](../02-linux-git-networking/README.md) → .NET (Planned) → Backend/SQL/API → ASP.NET Core.
+Bắt đầu: [Computer Science Essentials](../01-computer-science/README.md) → [Linux, Git và Networking](../02-linux-git-networking/README.md) → [C#/.NET Runtime](../03-dotnet/README.md) → [Backend](../04-backend/README.md) → SQL/API → ASP.NET Core.
 
 Các link tới module Planned chỉ được thêm khi file có nội dung hữu ích; roadmap status nằm trong [master-roadmap.md](master-roadmap.md).
 

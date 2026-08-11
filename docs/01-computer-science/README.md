@@ -173,3 +173,23 @@ Sau khi có evidence, học tiếp [Module 02 — Linux, Git và Networking](../
 - Official sources: Microsoft Learn, Linux Kernel documentation, Linux man-pages, MIT OpenCourseWare; xem [references.md](references.md).
 - Context7 queries used: không có Context7 tool khả dụng trong run này; API .NET được đối chiếu trực tiếp với Microsoft Learn `net-10.0`.
 - Notes: scope selective theo backend/system design; learner level chưa tăng cho đến khi có evidence.
+
+<!-- Mermaid.js Script CDN hỗ trợ tự động render sơ đồ Mermaid trên GitHub Pages (Jekyll) -->
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'default' });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const elements = document.querySelectorAll("pre.language-mermaid, code.language-mermaid, .language-mermaid pre, pre code.language-mermaid");
+    elements.forEach((el) => {
+      const container = el.tagName.toLowerCase() === "code" ? el.parentElement : el;
+      const div = document.createElement("div");
+      div.className = "mermaid";
+      div.textContent = el.textContent;
+      if (container && container.parentNode) {
+        container.parentNode.replaceChild(div, container);
+      }
+    });
+    mermaid.run({ querySelector: '.mermaid' });
+  });
+</script>
