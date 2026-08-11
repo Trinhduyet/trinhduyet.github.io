@@ -22,7 +22,7 @@ flowchart LR
     M --> E
     S --> E
     E --> A
-    A -.->|"workload đổi"| W
+    A -.->|workload đổi| W
 
     classDef input fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e;
     classDef model fill:#ecfccb,stroke:#65a30d,color:#365314;

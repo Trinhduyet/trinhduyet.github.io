@@ -276,3 +276,23 @@ Module Planned chỉ có link khi nội dung đã đủ hữu ích. [Technology 
 - Technology details: [Technology Baseline](docs/00-roadmap/technology-baseline.md).
 - Source rules: [Source Policy](docs/00-roadmap/source-policy.md).
 - Mermaid target: GitHub/CommonMark-compatible flowchart syntax; diagrams vẫn có phần chữ/bảng tương đương để tài liệu đọc được khi renderer không hỗ trợ Mermaid.
+
+<!-- Mermaid.js Script CDN hỗ trợ tự động render sơ đồ Mermaid trên GitHub Pages (Jekyll) -->
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'default' });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const elements = document.querySelectorAll("pre.language-mermaid, code.language-mermaid, .language-mermaid pre, pre code.language-mermaid");
+    elements.forEach((el) => {
+      const container = el.tagName.toLowerCase() === "code" ? el.parentElement : el;
+      const div = document.createElement("div");
+      div.className = "mermaid";
+      div.textContent = el.textContent;
+      if (container && container.parentNode) {
+        container.parentNode.replaceChild(div, container);
+      }
+    });
+    mermaid.run({ querySelector: '.mermaid' });
+  });
+</script>

@@ -55,6 +55,18 @@ Context7 không có callable tool trong run này. Các claim/API .NET phụ thu�
 
 Các timings chỉ là smoke evidence của implementation trên máy hiện tại, không phải benchmark dùng để so hardware hay hứa production performance.
 
+## Review mode
+
+| Reviewer | Kết quả |
+| --- | --- |
+| Senior Engineer | Bốn chương đủ standard template, prerequisites và cross-links; sửa lại cây thư mục trong root README sau khi phát hiện nesting sai. |
+| Security Reviewer | Bổ sung hard input budgets, algorithmic-complexity/resource-exhaustion controls, tenant boundaries và bảo vệ dump/pooled sensitive data. |
+| Performance Reviewer | Tách analytical model khỏi wall-clock evidence, construction khỏi lookup, allocation khỏi retention; mọi lab timing đều có caveat và correctness check. |
+| Operations Engineer | Có queue/backpressure, shutdown, cgroup/OOM, telemetry và diagnostic artifact ownership; lab từ chối workload vượt budget. |
+| Software Architect | Mỗi chương có simpler option, trade-off, when-not-to-use, 10x/100x trigger và operational complexity; không externalize state hoặc parallelize mặc định. |
+
+Không phát hiện blocker còn lại sau correction. Learner evidence vẫn pending nên Skills Matrix giữ current level 0.
+
 ## Files updated
 
 - `docs/01-computer-science/README.md`
