@@ -1,0 +1,11 @@
+# .NET build outputs
+**/bin/
+**/obj/
+
+# IDE and local user state
+.vs/
+*.user
+*.suo
+
+# Local verification artifacts
+.verification-*/
