@@ -1,199 +1,565 @@
 # Pipeline, Hosting và Configuration
 
-> [← Module 07 overview](README.md) · [ASP.NET Core references](references.md)
+> [← ASP.NET Core overview](README.md) · [References](references.md)
 
-## Mục tiêu / Learning Objectives
+## Hiểu trong 5 phút
 
-- giải thích pipeline, hosting và configuration bằng mental model và boundary;
-- implement một minimal path có bound, invariant và observable output;
-- phân tích failure, security, performance, reliability và operational ownership;
-- đối chiếu behavior với nguồn chính thức thay vì dựa vào folklore;
-- viết decision note và biết trigger để chuyển sang alternative.
+Một request không nhảy thẳng vào controller/endpoint.
 
-## Tại sao cần học? / Why It Matters
-
-Kestrel, middleware order, host lifetime, options validation và environment boundaries. Đây là boundary nơi một quyết định nhỏ có thể đổi correctness, latency, security và operational ownership.
-
-## Tổng quan / Overview
-
-~~~mermaid
+```mermaid
 flowchart LR
-    A["Input / workload"] --> B["Pipeline, Hosting và Configuration"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+    A[Socket / HTTP] --> B[Kestrel]
+    B --> C[Middleware 1]
+    C --> D[Middleware 2]
+    D --> E[Routing]
+    E --> F[Endpoint]
+    F --> G[Application]
+```
 
-## Mental Model
+Điều quan trọng:
 
-| Boundary | Câu hỏi | Evidence |
-| --- | --- | --- |
-| Input | Dữ liệu/traffic đến từ đâu và bound nào? | Contract, validation, limit |
-| Core | Invariant/state transition nào phải đúng? | Test, query/plan, policy |
-| Resource | CPU, memory, network, storage, quota nào tiêu thụ? | Metrics, profile, capacity |
-| Recovery | Khi dependency/change fail thì ai xử lý? | Retry, rollback, runbook |
+- Kestrel sở hữu HTTP connection/request processing;
+- middleware chạy theo **order**;
+- DI scope thường gắn request scope;
+- configuration được compose từ nhiều providers;
+- process có lifecycle startup → running → stopping;
+- cancellation/graceful shutdown phải đi tới công việc đang chạy.
 
-Kestrel, middleware order, host lifetime, options validation và environment boundaries. Học stable concept trước version/tool syntax; mọi claim production phải có measurement hoặc source.
+---
 
-## Thuật ngữ / Terminology
+# 1. Minimal app nhưng có production boundaries
 
-| Thuật ngữ | Ý nghĩa |
-| --- | --- |
-| Invariant | Điều kiện luôn phải đúng |
-| Boundary | Nơi ownership/semantics đổi |
-| Estimate | Dự đoán cost trước runtime |
-| Backpressure | Buộc producer theo capacity |
-| Evidence | Output dùng để quyết định |
-| Rollback | Đường quay về trạng thái an toàn |
+```csharp
+var builder = WebApplication.CreateBuilder(args);
 
-## Prerequisites
+builder.Services.AddProblemDetails();
+builder.Services.AddHealthChecks();
 
-- [Module 06 prerequisite](../06-api-design/README.md).
-- [Roadmap dependency graph](../00-roadmap/prerequisites.md).
-- Có thể ghi failure hypothesis và output reproducible.
+builder.Services
+    .AddOptions<AppOptions>()
+    .BindConfiguration("App")
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
-## How It Works
+builder.Services.AddScoped<OrderService>();
 
-Bắt đầu từ requirement, chọn primitive, đặt safety bound, quan sát behavior và xác định owner. Kestrel, middleware order, host lifetime, options validation và environment boundaries. Không coi framework/platform abstraction là proof của correctness.
+var app = builder.Build();
 
-## Minimal Example
+app.UseExceptionHandler();
 
-~~~csharp
-builder.Services.AddOptions<AppOptions>().ValidateOnStart();
-~~~
+app.MapGet("/orders/{id:long}", async (
+    long id,
+    OrderService service,
+    CancellationToken cancellationToken) =>
+{
+    var order = await service.GetAsync(id, cancellationToken);
 
-Minimal example chỉ chứng minh shape; production cần validation, cancellation/timeout, migration, security và test tùy boundary.
+    return order is null
+        ? Results.NotFound()
+        : Results.Ok(order);
+});
 
-## Production Example
+app.MapHealthChecks("/health/live");
 
-Kestrel, middleware order, host lifetime, options validation và environment boundaries. Production path bổ sung contract test, structured telemetry, failure classification, rollout/rollback và data/privacy policy.
+app.Run();
+```
 
-~~~text
-decision = requirement + workload + failure + security + cost
-evidence = implementation + test + measurement + runbook
-~~~
+Review từng dòng bằng responsibility:
 
-## .NET Integration
+```text
+AddProblemDetails    → error contract support
+ValidateOnStart      → fail-fast config
+AddScoped            → request/service ownership
+UseExceptionHandler  → global exception boundary
+CancellationToken    → request abort propagation
+Health endpoint      → operator signal
+```
 
-- DI/configuration/host composition giữ lifetime và ownership rõ.
-- Cancellation, timeout và disposal phải đi xuyên boundary; không fire-and-forget vô chủ.
-- HTTP/API layer map lỗi thành contract ổn định, không leak exception nội bộ.
-- Persistence/cache/queue adapter không che transaction, consistency hoặc retry semantics.
-- Metrics/traces/logs dùng low-cardinality labels và retention/privacy policy.
+---
 
-## Internals
+# 2. Middleware execution order
 
-Đọc access path/state machine/controller/plan theo đúng module để giải thích observed behavior. Provider, runtime, platform và version có thể thay đổi implementation detail; giữ normative claim ở official docs.
+Custom middleware:
 
-## Common Mistakes
+```csharp
+app.Use(async (context, next) =>
+{
+    Console.WriteLine("A before");
+    await next(context);
+    Console.WriteLine("A after");
+});
 
-- copy syntax trước khi xác định invariant.
-- bỏ qua input/size/concurrency bound.
-- trả success khi side effect chưa commit.
-- dùng một metric cho mọi workload.
-- để implementation detail thành public contract.
+app.Use(async (context, next) =>
+{
+    Console.WriteLine("B before");
+    await next(context);
+    Console.WriteLine("B after");
+});
 
-## Performance Considerations
+app.MapGet("/", () => "OK");
+```
 
-Đo workload representative với warm-up, concurrency, payload mix và tail latency. Bound state/queue/cache trước khi micro-optimize; so sánh before/after cùng environment và tính cả cost của measurement.
+Output:
 
-## Security Considerations
+```text
+A before
+B before
+B after
+A after
+```
 
-Threat model asset, identity, trust boundary, input abuse, secret handling và artifact access. Least privilege, data minimization, encryption, audit và expiry phải có negative test.
+Mental model:
 
-## Reliability / Failure Modes
+```text
+A ┌──────────────────────────┐
+  │ B ┌────────────────────┐ │
+  │   │ Endpoint           │ │
+  │ B └────────────────────┘ │
+A └──────────────────────────┘
+```
 
-| Failure | Signal | Response |
-| --- | --- | --- |
-| Invalid input/state | 4xx, constraint/test failure | Reject rõ, không partial side effect |
-| Dependency slow/unavailable | Timeout, queue/latency tăng | Deadline, bounded retry, fallback hoặc shed |
-| Capacity exhausted | CPU/memory/quota/429 | Backpressure, scale, degrade hoặc stop |
-| Change incompatible | Error/contract drift | Canary, migration, rollback/forward fix |
-| Operator mistake | Audit/event anomaly | Least privilege, approval, runbook |
+Do đó exception middleware thường cần ở ngoài các component mà nó muốn catch.
 
-## Observability
+---
 
-Ghi success/error rate, latency percentile, resource usage, state transitions và version/deployment. Trace nối request → core operation → dependency; log structured theo operation ID. Alert theo SLO/error budget.
+# 3. Short-circuit middleware
 
-## Operational Considerations
+Middleware có thể không gọi `next`:
 
-- Pin tool/provider/image/schema version phù hợp.
-- Readiness không báo healthy trước invariant cần thiết.
-- Runbook có preflight, read-only command, rollback và artifact retention.
-- Rehearse backup/restore, key rotation, failover, drift hoặc upgrade tùy module.
-- Manual exception có owner, expiry và post-incident review.
+```csharp
+app.Use(async (context, next) =>
+{
+    if (context.Request.Headers["X-Maintenance-Token"] == "block")
+    {
+        context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+        await context.Response.WriteAsync("Maintenance");
+        return;
+    }
 
-## Architect Perspective
+    await next(context);
+});
+```
 
-Pipeline, Hosting và Configuration trở thành architectural boundary khi ảnh hưởng ownership, consistency, deployment, capacity hoặc team topology. Chọn phương án đơn giản nhất thỏa NFR; document điều gì đổi ở 10x/100x và trigger migrate.
+Production implications:
 
-## Trade-offs
+- middleware trước endpoint có thể reject request sớm;
+- code sau `await next()` vẫn chạy khi downstream hoàn tất;
+- body/headers có thể đã bắt đầu gửi, nên late error handling có giới hạn.
 
-| Lựa chọn | Lợi ích | Chi phí/rủi ro |
-| --- | --- | --- |
-| Simple/local | Dễ hiểu, ít toil | Giới hạn scale/durability |
-| Specialized/distributed | Capacity/feature tốt | Coupling, failure và vận hành |
-| Managed/platform | Giảm control-plane toil | Quota, lock-in và cost |
+---
 
-## When NOT to Use It
+# 4. Middleware class thay vì inline delegate
 
-- Không dùng pattern này nếu requirement chưa chứng minh need hoặc không có owner vận hành.
-- Không dùng abstraction để che failure/latency/consistency semantics.
-- Không chọn managed/distributed option chỉ vì production-ready mà thiếu cost/capacity evidence.
-- Không mở rộng privilege, retention hoặc data exposure để làm lab nhanh hơn.
-- Không tối ưu một metric nếu làm hỏng SLO, security hoặc rollback.
+```csharp
+public sealed class CorrelationMiddleware(RequestDelegate next)
+{
+    public async Task InvokeAsync(HttpContext context)
+    {
+        var correlationId =
+            context.Request.Headers.TryGetValue("X-Correlation-Id", out var value)
+                ? value.ToString()
+                : Guid.NewGuid().ToString("N");
 
-## Alternatives
+        context.Response.Headers["X-Correlation-Id"] = correlationId;
 
-- Giữ local/simple implementation khi scale và durability chưa yêu cầu.
-- Dùng managed service khi team không muốn sở hữu control plane và cost hợp lý.
-- Dùng queue/batch/stream hoặc synchronous path tùy latency/durability.
-- Dùng immutable artifact/configuration và migration thay manual mutation.
-- Dùng standard protocol/contract trước custom framework.
+        using var scope = context.RequestServices
+            .GetRequiredService<ILogger<CorrelationMiddleware>>()
+            .BeginScope(new Dictionary<string, object>
+            {
+                ["CorrelationId"] = correlationId
+            });
 
-## Review Questions
+        await next(context);
+    }
+}
+```
 
-1. Invariant nào phải đúng dù request/retry/deploy lặp lại?
-2. Boundary nào sở hữu state, timeout, cleanup hoặc rollback?
-3. Evidence nào chứng minh bottleneck/security/reliability claim?
-4. Điều gì sẽ hỏng khi dependency chậm hoặc state stale?
-5. Cost và operational toil tăng theo scale nào?
-6. Khi nào phương án đơn giản hơn là lựa chọn tốt hơn?
+Register:
 
-## Hands-on Lab
+```csharp
+app.UseMiddleware<CorrelationMiddleware>();
+```
 
-Tạo một experiment bounded cho pipeline, hosting và configuration: ghi workload, expected output, failure scenario và safety bound; chạy baseline rồi so sánh; lưu decision note. Không đưa credential, production data hoặc diagnostic artifact nhạy cảm vào repository.
+Không dùng correlation ID do client gửi làm authorization identity.
 
-## Exit Criteria
+---
 
-- Giải thích được kestrel, middleware order, host lifetime, options validation và environment boundaries..
-- Implement minimal example có validation/bound phù hợp.
-- Mô tả failure, security, performance và operational response.
-- Có evidence reproducible và decision note.
-- Biết dependency tiếp theo và trigger cần nghiên cứu thêm.
+# 5. Request scoped dependency
 
-## Related Topics
+```csharp
+public sealed class OrderService(AppDbContext db)
+{
+    public async Task<OrderDto?> GetAsync(
+        long id,
+        CancellationToken cancellationToken)
+    {
+        return await db.Orders
+            .AsNoTracking()
+            .Where(x => x.Id == id)
+            .Select(x => new OrderDto(
+                x.Id,
+                x.Status,
+                x.TotalAmount))
+            .SingleOrDefaultAsync(cancellationToken);
+    }
+}
+```
 
-- [Module 06 prerequisite](../06-api-design/README.md).
-- [Pipeline, Hosting và Configuration](pipeline-hosting-and-configuration.md).
-- [Resilience, Security và Middleware Production](resilience-security-and-middleware.md).
-- [Deployment, Observability và ASP.NET Operations](deployment-observability-and-operations.md).
-- Module 08 — Testing và Code Review khi content được mở.
+Registration:
+
+```csharp
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(connectionString));
+
+builder.Services.AddScoped<OrderService>();
+```
+
+`DbContext` scoped và `OrderService` scoped cùng request là ownership dễ hiểu.
+
+---
+
+# 6. Captive dependency bug
+
+Bad:
+
+```csharp
+builder.Services.AddScoped<RequestContext>();
+builder.Services.AddSingleton<OrderCache>();
+
+public sealed class OrderCache(RequestContext requestContext)
+{
+}
+```
+
+Singleton capture scoped dependency tạo lifetime mismatch.
+
+Question khi chọn lifetime:
+
+```text
+Object này sở hữu state gì?
+State sống bao lâu?
+Có thread-safe không?
+Có giữ connection/resource không?
+Có phụ thuộc request/tenant identity không?
+```
+
+---
+
+# 7. Configuration composition
+
+Bạn có thể nhận config từ:
+
+```text
+appsettings.json
+appsettings.{Environment}.json
+environment variables
+command line
+secret provider / managed configuration
+```
+
+Không nên phụ thuộc vào source cụ thể trong business code.
+
+```csharp
+public sealed class PaymentOptions
+{
+    public const string SectionName = "Payment";
+
+    [Required]
+    public string BaseUrl { get; init; } = string.Empty;
+
+    [Range(1, 30)]
+    public int TimeoutSeconds { get; init; } = 5;
+}
+```
+
+Bind + validate:
+
+```csharp
+builder.Services
+    .AddOptions<PaymentOptions>()
+    .BindConfiguration(PaymentOptions.SectionName)
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+```
+
+Consumer:
+
+```csharp
+public sealed class PaymentClient(
+    IOptions<PaymentOptions> options,
+    HttpClient httpClient)
+{
+    private readonly PaymentOptions _options = options.Value;
+}
+```
+
+---
+
+# 8. `IOptions`, `IOptionsSnapshot`, `IOptionsMonitor`
+
+Mental model:
+
+```text
+IOptions<T>
+  simple stable value
+
+IOptionsSnapshot<T>
+  scoped snapshot
+
+IOptionsMonitor<T>
+  observe changes / current value
+```
+
+Đừng dùng dynamic config reload cho một setting nếu application invariant yêu cầu restart để thay đổi an toàn.
+
+Ví dụ connection provider, cryptographic setting hoặc schema behavior có thể cần controlled rollout hơn là hot reload.
+
+---
+
+# 9. Environment không phải security boundary
+
+```csharp
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
+```
+
+Environment giúp chọn behavior/configuration, nhưng production security không được dựa vào giả định "environment variable luôn đúng".
+
+Critical endpoints vẫn cần authorization/network policy thích hợp.
+
+---
+
+# 10. Request cancellation
+
+`HttpContext.RequestAborted` được bind thành `CancellationToken` trong Minimal API:
+
+```csharp
+app.MapGet("/report", async (
+    ReportService service,
+    CancellationToken cancellationToken) =>
+{
+    var report = await service.BuildAsync(cancellationToken);
+    return Results.Ok(report);
+});
+```
+
+Service propagate:
+
+```csharp
+public async Task<ReportDto> BuildAsync(
+    CancellationToken cancellationToken)
+{
+    var rows = await db.Orders
+        .AsNoTracking()
+        .Take(10_000)
+        .ToListAsync(cancellationToken);
+
+    return Map(rows);
+}
+```
+
+Bad:
+
+```csharp
+await db.Orders.ToListAsync(CancellationToken.None);
+```
+
+---
+
+# 11. Background task không được capture request scope vô chủ
+
+Bad:
+
+```csharp
+app.MapPost("/start", (OrderService service) =>
+{
+    _ = Task.Run(async () =>
+    {
+        await service.ProcessAsync(CancellationToken.None);
+    });
+
+    return Results.Accepted();
+});
+```
+
+Sau request, scoped service có thể bị dispose; task cũng không có owner/retry/telemetry.
+
+Tốt hơn: queue work cho `BackgroundService` hoặc external broker.
+
+```csharp
+public sealed record WorkItem(long OrderId);
+```
+
+```csharp
+app.MapPost("/orders/{id:long}/process", async (
+    long id,
+    Channel<WorkItem> channel,
+    CancellationToken cancellationToken) =>
+{
+    await channel.Writer.WriteAsync(new WorkItem(id), cancellationToken);
+    return Results.Accepted();
+});
+```
+
+Consumer có scope riêng:
+
+```csharp
+public sealed class OrderWorker(
+    Channel<WorkItem> channel,
+    IServiceScopeFactory scopeFactory,
+    ILogger<OrderWorker> logger) : BackgroundService
+{
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        await foreach (var item in channel.Reader.ReadAllAsync(stoppingToken))
+        {
+            await using var scope = scopeFactory.CreateAsyncScope();
+            var service = scope.ServiceProvider.GetRequiredService<OrderService>();
+
+            try
+            {
+                await service.ProcessAsync(item.OrderId, stoppingToken);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to process order {OrderId}", item.OrderId);
+            }
+        }
+    }
+}
+```
+
+In-memory Channel mất data khi process crash; nếu durability requirement cao hơn, dùng broker/persistent queue.
+
+---
+
+# 12. Graceful shutdown
+
+Khi process nhận stop signal:
+
+```text
+Host stopping
+    ↓
+CancellationToken của BackgroundService được cancel
+    ↓
+Server ngừng nhận/new traffic theo platform behavior
+    ↓
+Inflight work có khoảng thời gian để hoàn tất
+    ↓
+Process exits
+```
+
+Worker phải honor cancellation:
+
+```csharp
+protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+{
+    while (!stoppingToken.IsCancellationRequested)
+    {
+        await DoWorkAsync(stoppingToken);
+    }
+}
+```
+
+Đừng swallow `OperationCanceledException` rồi tiếp tục loop vô hạn khi host đang shutdown.
+
+---
+
+# 13. Kestrel limit và request bounds
+
+Application nên có bounds ở nhiều lớp:
+
+```text
+server/proxy body limits
+endpoint validation
+pagination/page size
+streaming/backpressure
+DB query bounds
+external dependency deadlines
+```
+
+Ví dụ endpoint upload không nên đọc file vô hạn vào memory:
+
+```csharp
+app.MapPost("/upload", async (
+    IFormFile file,
+    CancellationToken cancellationToken) =>
+{
+    const long maxBytes = 10 * 1024 * 1024;
+
+    if (file.Length > maxBytes)
+    {
+        return Results.BadRequest("File too large");
+    }
+
+    await using var stream = file.OpenReadStream(maxBytes);
+    await ProcessAsync(stream, cancellationToken);
+
+    return Results.NoContent();
+});
+```
+
+---
+
+# 14. Failure experiments
+
+## A — Middleware order
+
+Viết integration test kiểm tra unauthenticated request không vào protected endpoint.
+
+## B — Startup validation
+
+Set invalid config:
+
+```bash
+export Payment__TimeoutSeconds=0
+```
+
+Run app và verify startup fail.
+
+## C — Client cancellation
+
+```bash
+curl --max-time 0.5 http://localhost:5000/slow
+```
+
+Log phải cho thấy operation bị cancel thay vì tiếp tục 10 giây vô chủ.
+
+## D — Graceful shutdown
+
+1. Start long-running background operation.
+2. Send SIGTERM/container stop.
+3. Verify worker nhận stopping token.
+4. Verify state không bị half-committed.
+
+---
+
+# 15. Exit criteria
+
+Bạn hoàn thành chapter khi có thể:
+
+- giải thích middleware nesting/order;
+- viết custom middleware có scope/logging đúng;
+- chọn DI lifetime theo ownership;
+- phát hiện captive dependency;
+- bind/validate Options fail-fast;
+- propagate request cancellation;
+- không fire-and-forget scoped service;
+- giải thích graceful shutdown của API + worker;
+- đặt bounds cho request/workload.
 
 ## Official English Sources
 
-- [ASP.NET Core fundamentals](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/?view=aspnetcore-10.0).
-- [Middleware](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware?view=aspnetcore-10.0).
-- [Configuration](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-10.0).
-- [Health checks](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-10.0).
-- [Rate limiting](https://learn.microsoft.com/en-us/aspnet/core/performance/rate-limit?view=aspnetcore-10.0).
+- [ASP.NET Core fundamentals](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/?view=aspnetcore-10.0)
+- [Middleware](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware?view=aspnetcore-10.0)
+- [Configuration](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-10.0)
+- [Options pattern](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options?view=aspnetcore-10.0)
+- [.NET Generic Host](https://learn.microsoft.com/en-us/dotnet/core/extensions/generic-host)
 
-## Vietnamese Resources
+## Verification metadata
 
-- Dùng [glossary](../00-roadmap/glossary.md) để giữ canonical English term.
-- Viết reflection bằng tiếng Việt nhưng giữ tên API/protocol/metric chính xác.
-- Tuân thủ [source policy](../00-roadmap/source-policy.md) cho claim version-sensitive.
-
-## Verification Metadata
-
-- Verified: 2026-08-11.
-- Technology version: ASP.NET Core content v1; refresh version-sensitive behavior before production.
-- Context7 queries used: none; callable tool unavailable in this run.
-- Notes: content v1 không thay thế learner evidence; cần lab/review/production artifact để nâng level.
+- Verified: 2026-08-12.
+- Target: ASP.NET Core 10 / .NET 10.
+- Status: code-first deep rewrite.
