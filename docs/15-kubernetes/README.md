@@ -1,79 +1,478 @@
 # Module 15 — Kubernetes
 
-> [← Module 14](../14-cloud/README.md) · [Roadmap](../00-roadmap/README.md)
+> [← Module 14 Cloud](../14-cloud/README.md) · [Docker prerequisite](../12-docker/README.md)
 
-Module này tập trung vào Reconciliation, workloads, networking, security, storage và observability. Mental model đi trước syntax; mọi chapter nối requirement → boundary → evidence → operations.
+Kubernetes chỉ nên học sau khi bạn hiểu Docker process/network/storage/resource behavior.
 
-## Module trong một hình
+Mục tiêu module không phải nhớ YAML. Mục tiêu là hiểu **desired state + reconciliation + scheduling + service discovery + health + resource/security boundaries**.
 
-~~~mermaid
-flowchart LR
-    A["Requirement + workload"] --> B["Cluster Architecture và Reconciliation"] --> C["Workloads, Networking và Storage"] --> D["Kubernetes Security, Observability và Operations"] --> E["Production decision"]
-    E -. "evidence feedback" .-> A
-~~~
+## Hiểu trong 5 phút
 
-## Phạm vi và trạng thái
+Bạn gửi desired state vào API server:
 
-| Learning slice | Priority | Trạng thái nội dung | Evidence người học |
-| --- | --- | --- | --- |
-| [Cluster Architecture và Reconciliation](cluster-architecture-and-reconciliation.md) | P0 | Content v1 | Pending |
-| [Workloads, Networking và Storage](workloads-networking-and-storage.md) | P0 | Content v1 | Pending |
-| [Kubernetes Security, Observability và Operations](kubernetes-security-observability-and-operations.md) | P0 | Content v1 | Pending |
-
-## Dependency map
-
-~~~mermaid
+```mermaid
 flowchart TD
-    PRE["Module 14"] --> CURRENT["Module 15<br/>Kubernetes"]
-    CURRENT --> NEXT["Module 16<br/>Observability"]
-    CURRENT -. "Project spine / production evidence" .-> PROJECT["Architecture artifact"]
-~~~
+    U[kubectl / CI] --> API[API Server]
+    API --> ETCD[(etcd)]
+    API --> CTRL[Controllers]
+    API --> SCH[Scheduler]
+    CTRL --> API
+    SCH --> API
+    API --> K[Kubelet on Node]
+    K --> P[Pods / Containers]
+    P --> API
+```
 
-## Cách học
+Kubernetes liên tục cố đưa:
 
-1. Đọc mental model và dependency trước syntax.
-2. Chạy hoặc thiết kế lab bounded, lưu output.
-3. Review theo Senior Engineer, Security, Performance, Operations và Architect.
-4. Chỉ chuyển module khi exit criteria và evidence đạt.
+```text
+observed state
+        ↓ reconcile
+closer to desired state
+```
 
-## Evidence tối thiểu
+Ví dụ:
 
-- Một diagram/contract nối input, core state, resources và recovery.
-- Một failure/overload/security experiment có expected outcome.
-- Một performance/operations note và rollback/recovery path.
-- Một decision record nói rõ phương án đơn giản hơn, cost và trigger migrate.
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: orders-api
+  template:
+    metadata:
+      labels:
+        app: orders-api
+    spec:
+      containers:
+        - name: api
+          image: registry.example/orders-api@sha256:replace-me
+          ports:
+            - containerPort: 8080
+```
 
-## Tiếp tục từ đây
+Bạn khai báo `replicas: 3`; controller cố duy trì 3 Pod matching desired state.
 
-Sau module này, mở Module 16 — Observability khi content v1; không bỏ qua prerequisite chỉ vì đã đọc syntax.
+---
+
+# 1. Không bắt đầu bằng YAML — bắt đầu bằng object model
+
+```text
+Deployment
+    ↓ creates/manages
+ReplicaSet
+    ↓ creates/manages
+Pods
+    ↓ contain
+Containers
+```
+
+Network:
+
+```text
+Client
+  ↓
+Ingress / Gateway / LoadBalancer
+  ↓
+Service
+  ↓ selector
+Pods
+```
+
+Config:
+
+```text
+ConfigMap / Secret
+        ↓
+Pod environment / files
+```
+
+Storage:
+
+```text
+Pod
+ ↓ PVC
+PersistentVolume
+ ↓
+Storage provider
+```
+
+---
+
+# 2. First workload
+
+`deployment.yaml`:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: demo-api
+  template:
+    metadata:
+      labels:
+        app: demo-api
+    spec:
+      containers:
+        - name: api
+          image: your-image:dev
+          ports:
+            - name: http
+              containerPort: 8080
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+```
+
+Apply:
+
+```bash
+kubectl apply -f deployment.yaml
+kubectl get deployments
+kubectl get replicasets
+kubectl get pods -o wide
+```
+
+Observe, không chỉ apply:
+
+```bash
+kubectl describe deployment demo-api
+kubectl describe pod <pod-name>
+kubectl logs <pod-name>
+```
+
+---
+
+# 3. Service discovery
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-api
+spec:
+  selector:
+    app: demo-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+```
+
+Service cung cấp stable virtual endpoint/DNS abstraction phía trước Pods có lifecycle thay đổi.
+
+```text
+demo-api
+  ↓ Service
+Pod A
+Pod B
+```
+
+Pod IP không phải application contract ổn định để caller lưu/call trực tiếp.
+
+---
+
+# 4. Rollout
+
+Update image:
+
+```bash
+kubectl set image deployment/demo-api \
+  api=registry.example/demo-api@sha256:new-digest
+```
+
+Watch:
+
+```bash
+kubectl rollout status deployment/demo-api
+kubectl get pods -w
+```
+
+History:
+
+```bash
+kubectl rollout history deployment/demo-api
+```
+
+Rollback:
+
+```bash
+kubectl rollout undo deployment/demo-api
+```
+
+Rollback app không tự rollback database schema/data side effect. Migration compatibility vẫn phải thiết kế.
+
+---
+
+# 5. Requests vs limits
+
+```yaml
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    memory: 512Mi
+```
+
+Mental model:
+
+```text
+request
+→ scheduler capacity / guaranteed reservation signal
+
+limit
+→ runtime upper bound depending resource semantics
+```
+
+Đừng copy `100m/128Mi` cho mọi service.
+
+Đo workload rồi set dựa trên:
+
+```text
+normal usage
+peak
+GC behavior
+P95/P99 latency
+OOM risk
+node capacity
+```
+
+---
+
+# 6. Probe semantics
+
+Readiness:
+
+```text
+"Có nên gửi traffic tới Pod này không?"
+```
+
+Liveness:
+
+```text
+"Process có bị stuck tới mức restart hữu ích không?"
+```
+
+Startup probe:
+
+```text
+"App này cần startup lâu; đừng để liveness giết quá sớm"
+```
+
+Bad design:
+
+```text
+liveness calls DB
+DB outage
+↓
+all Pods restart repeatedly
+↓
+DB vẫn outage + cluster churn tăng
+```
+
+---
+
+# 7. ConfigMap và Secret
+
+ConfigMap:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orders-config
+data:
+  Feature__NewCheckout: "true"
+```
+
+Deployment:
+
+```yaml
+envFrom:
+  - configMapRef:
+      name: orders-config
+```
+
+Secret object dùng cho sensitive configuration, nhưng base Kubernetes Secret không phải toàn bộ secret-management architecture.
+
+Bạn còn phải nghĩ:
+
+```text
+encryption at rest
+RBAC
+workload identity
+external secret store
+rotation
+audit
+```
+
+---
+
+# 8. Debug flow
+
+Pod Pending:
+
+```bash
+kubectl describe pod <pod>
+```
+
+Look for:
+
+```text
+insufficient CPU/memory
+node selector/affinity mismatch
+PVC binding
+image pull secret
+quota
+```
+
+Pod CrashLoopBackOff:
+
+```bash
+kubectl logs <pod> --previous
+kubectl describe pod <pod>
+```
+
+Pod Running but not Ready:
+
+```bash
+kubectl describe pod <pod>
+kubectl logs <pod>
+kubectl get endpointslices
+```
+
+Service not reachable:
+
+```text
+labels/selectors
+Service port/targetPort
+Pod readiness
+DNS
+NetworkPolicy
+application listen address
+```
+
+---
+
+# 9. Failure experiments
+
+## A — delete a Pod
+
+```bash
+kubectl delete pod <pod-name>
+```
+
+Observe Deployment controller create replacement.
+
+## B — break readiness
+
+Deploy version where `/health/ready` returns 503. Observe Pod Running nhưng không nhận traffic qua Service endpoints.
+
+## C — OOM
+
+Set memory limit thấp, run allocation-heavy endpoint, observe:
+
+```bash
+kubectl describe pod <pod>
+kubectl get pod <pod> -o jsonpath='{.status.containerStatuses[0].lastState}'
+```
+
+## D — wrong image
+
+```bash
+kubectl set image deployment/demo-api api=does-not-exist:broken
+```
+
+Observe `ImagePullBackOff`, rollout status và rollback.
+
+## E — wrong selector
+
+Change Service selector không match Pod labels. DNS vẫn resolve Service nhưng không có working backend endpoints.
+
+---
+
+# 10. Khi nào không cần Kubernetes
+
+Không dùng Kubernetes chỉ vì:
+
+```text
+"production thì phải Kubernetes"
+"microservices thì phải K8s"
+"team muốn học K8s"
+```
+
+Managed container platform/VM/Compose có thể đơn giản hơn nếu:
+
+```text
+few services
+low deployment frequency
+single-region/simple availability
+no need cluster-level scheduling/policy
+team nhỏ và platform toil không đáng
+```
+
+Kubernetes hợp lý khi orchestration requirements thực sự bù được complexity.
+
+---
+
+# 11. Lộ trình module
+
+| Guide | Nội dung |
+| --- | --- |
+| [Cluster Architecture và Reconciliation](cluster-architecture-and-reconciliation.md) | API server, etcd, scheduler, controller, kubelet, desired/observed state |
+| [Workloads, Networking và Storage](workloads-networking-and-storage.md) | Deployment, Service, probes, ConfigMap, Secret, PVC, resources |
+| [Security, Observability và Operations](kubernetes-security-observability-and-operations.md) | RBAC, ServiceAccount, NetworkPolicy, telemetry, rollout, incident/runbook |
+
+Sau đó đi [Module 16 Observability](../00-roadmap/master-roadmap.md) và [Module 17 Distributed Systems](../17-distributed-systems/README.md) khi available.
+
+---
+
+# 12. Exit criteria
+
+Bạn hoàn thành Kubernetes khi có thể:
+
+- giải thích reconciliation thay vì chỉ `kubectl apply`;
+- đi Deployment → ReplicaSet → Pod;
+- expose workload bằng Service và debug selector;
+- thiết kế readiness/liveness đúng semantics;
+- set requests/limits từ measurement;
+- debug Pending/CrashLoop/NotReady/ImagePull;
+- rollout và rollback image;
+- giải thích ConfigMap/Secret/PVC boundaries;
+- delete Pod và giải thích self-healing;
+- nói được khi **không nên** dùng Kubernetes.
 
 ## Official references
 
-Xem [references.md](references.md) để lấy source of truth. Roadmap discovery không thay behavior/specification.
+Xem [references.md](references.md). English Kubernetes docs là source of truth; bản dịch tiếng Việt dùng để hỗ trợ đọc khi version còn phù hợp.
 
 ## Verification metadata
 
-- Verified: 2026-08-11.
-- Content status: Content v1; learner evidence pending.
-- Technology focus: Kubernetes.
-- Context7 queries used: none; callable tool unavailable in this run.
-
-<!-- Mermaid.js Script CDN hỗ trợ tự động render sơ đồ Mermaid trên GitHub Pages (Jekyll) -->
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({ startOnLoad: true, theme: 'default' });
-
-  document.addEventListener("DOMContentLoaded", function () {
-    const elements = document.querySelectorAll("pre.language-mermaid, code.language-mermaid, .language-mermaid pre, pre code.language-mermaid");
-    elements.forEach((el) => {
-      const container = el.tagName.toLowerCase() === "code" ? el.parentElement : el;
-      const div = document.createElement("div");
-      div.className = "mermaid";
-      div.textContent = el.textContent;
-      if (container && container.parentNode) {
-        container.parentNode.replaceChild(div, container);
-      }
-    });
-    mermaid.run({ querySelector: '.mermaid' });
-  });
-</script>
+- Verified: 2026-08-12.
+- Status: code-first deep rewrite in progress.
+- Baseline: Kubernetes 1.36.x theo technology baseline.
