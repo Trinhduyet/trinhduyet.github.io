@@ -1,199 +1,530 @@
 # Resilience, Security và Middleware Production
 
-> [← Module 07 overview](README.md) · [ASP.NET Core references](references.md)
+> [← ASP.NET Core overview](README.md) · [References](references.md)
 
-## Mục tiêu / Learning Objectives
+## Hiểu trong 5 phút
 
-- giải thích resilience, security và middleware production bằng mental model và boundary;
-- implement một minimal path có bound, invariant và observable output;
-- phân tích failure, security, performance, reliability và operational ownership;
-- đối chiếu behavior với nguồn chính thức thay vì dựa vào folklore;
-- viết decision note và biết trigger để chuyển sang alternative.
+Production API phải xử lý bốn loại pressure khác nhau:
 
-## Tại sao cần học? / Why It Matters
+```text
+Bad input / unauthorized
+        ↓
+reject correctly
 
-Timeout, retry, circuit breaker, rate limit, headers, auth và failure classification. Đây là boundary nơi một quyết định nhỏ có thể đổi correctness, latency, security và operational ownership.
+Too much traffic
+        ↓
+rate limit / shed load
 
-## Tổng quan / Overview
+Dependency slow / transient failure
+        ↓
+time budget + carefully-scoped resilience
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Resilience, Security và Middleware Production"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+Unexpected exception
+        ↓
+stable error contract + telemetry
+```
 
-## Mental Model
+Không có một `retry middleware` chung giải quyết tất cả.
 
-| Boundary | Câu hỏi | Evidence |
-| --- | --- | --- |
-| Input | Dữ liệu/traffic đến từ đâu và bound nào? | Contract, validation, limit |
-| Core | Invariant/state transition nào phải đúng? | Test, query/plan, policy |
-| Resource | CPU, memory, network, storage, quota nào tiêu thụ? | Metrics, profile, capacity |
-| Recovery | Khi dependency/change fail thì ai xử lý? | Retry, rollback, runbook |
+---
 
-Timeout, retry, circuit breaker, rate limit, headers, auth và failure classification. Học stable concept trước version/tool syntax; mọi claim production phải có measurement hoặc source.
+# 1. Error handling bằng Problem Details
 
-## Thuật ngữ / Terminology
+Setup:
 
-| Thuật ngữ | Ý nghĩa |
-| --- | --- |
-| Contract | Cam kết giữa producer và consumer |
-| Version | Identity của behavior/schema |
-| Compatibility | Cũ và mới cùng hoạt động |
-| Deadline | Thời gian còn lại cho operation |
-| Replay | Thực hiện lại có kiểm soát |
-| Audit | Record cho điều tra |
+```csharp
+var builder = WebApplication.CreateBuilder(args);
 
-## Prerequisites
+builder.Services.AddProblemDetails();
 
-- [Module 06 prerequisite](../06-api-design/README.md).
-- [Roadmap dependency graph](../00-roadmap/prerequisites.md).
-- Có thể ghi failure hypothesis và output reproducible.
+var app = builder.Build();
 
-## How It Works
+app.UseExceptionHandler();
+app.UseStatusCodePages();
+```
 
-Bắt đầu từ requirement, chọn primitive, đặt safety bound, quan sát behavior và xác định owner. Timeout, retry, circuit breaker, rate limit, headers, auth và failure classification. Không coi framework/platform abstraction là proof của correctness.
+Endpoint:
 
-## Minimal Example
+```csharp
+app.MapGet("/users/{id:int}", (int id) =>
+{
+    if (id <= 0)
+    {
+        return Results.BadRequest();
+    }
 
-~~~csharp
-app.UseExceptionHandler(); app.UseAuthentication(); app.UseAuthorization();
-~~~
+    return Results.Ok(new { Id = id });
+});
+```
 
-Minimal example chỉ chứng minh shape; production cần validation, cancellation/timeout, migration, security và test tùy boundary.
+Mục tiêu là giữ public error contract ổn định và không leak stack trace/database detail.
 
-## Production Example
+Custom business result nên explicit:
 
-Timeout, retry, circuit breaker, rate limit, headers, auth và failure classification. Production path bổ sung contract test, structured telemetry, failure classification, rollout/rollback và data/privacy policy.
+```csharp
+return Results.Problem(
+    statusCode: StatusCodes.Status409Conflict,
+    title: "Order state conflict",
+    detail: "The order has already been completed.");
+```
 
-~~~text
-decision = requirement + workload + failure + security + cost
-evidence = implementation + test + measurement + runbook
-~~~
+---
 
-## .NET Integration
+# 2. Authentication != Authorization
 
-- DI/configuration/host composition giữ lifetime và ownership rõ.
-- Cancellation, timeout và disposal phải đi xuyên boundary; không fire-and-forget vô chủ.
-- HTTP/API layer map lỗi thành contract ổn định, không leak exception nội bộ.
-- Persistence/cache/queue adapter không che transaction, consistency hoặc retry semantics.
-- Metrics/traces/logs dùng low-cardinality labels và retention/privacy policy.
+```text
+Authentication
+"Bạn là ai?"
 
-## Internals
+Authorization
+"Identity này được phép làm gì với resource này?"
+```
 
-Đọc access path/state machine/controller/plan theo đúng module để giải thích observed behavior. Provider, runtime, platform và version có thể thay đổi implementation detail; giữ normative claim ở official docs.
+Setup JWT bearer:
 
-## Common Mistakes
+```csharp
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer();
 
-- retry hoặc scale trước khi phân loại failure.
-- coi timeout là rollback.
-- bỏ qua tenant/secret/audit boundary.
-- dùng cache/queue/platform như source of truth mặc định.
-- không test partial failure.
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("orders.write", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim("scope", "orders.write");
+    });
+});
+```
 
-## Performance Considerations
+Pipeline:
 
-Đo workload representative với warm-up, concurrency, payload mix và tail latency. Bound state/queue/cache trước khi micro-optimize; so sánh before/after cùng environment và tính cả cost của measurement.
+```csharp
+app.UseAuthentication();
+app.UseAuthorization();
+```
 
-## Security Considerations
+Endpoint:
 
-Threat model asset, identity, trust boundary, input abuse, secret handling và artifact access. Least privilege, data minimization, encryption, audit và expiry phải có negative test.
+```csharp
+app.MapPost("/orders/{id:long}/cancel", CancelOrderAsync)
+    .RequireAuthorization("orders.write");
+```
 
-## Reliability / Failure Modes
+Nhưng policy `orders.write` vẫn chưa đủ nếu user chỉ được sửa Orders thuộc tenant/resource của họ.
 
-| Failure | Signal | Response |
-| --- | --- | --- |
-| Invalid input/state | 4xx, constraint/test failure | Reject rõ, không partial side effect |
-| Dependency slow/unavailable | Timeout, queue/latency tăng | Deadline, bounded retry, fallback hoặc shed |
-| Capacity exhausted | CPU/memory/quota/429 | Backpressure, scale, degrade hoặc stop |
-| Change incompatible | Error/contract drift | Canary, migration, rollback/forward fix |
-| Operator mistake | Audit/event anomaly | Least privilege, approval, runbook |
+Resource authorization phải nằm gần business operation:
 
-## Observability
+```csharp
+var order = await db.Orders
+    .SingleOrDefaultAsync(
+        x => x.Id == id && x.TenantId == tenantId,
+        cancellationToken);
 
-Ghi success/error rate, latency percentile, resource usage, state transitions và version/deployment. Trace nối request → core operation → dependency; log structured theo operation ID. Alert theo SLO/error budget.
+if (order is null)
+{
+    return Results.NotFound();
+}
+```
 
-## Operational Considerations
+Không nhận `TenantId` từ request rồi tin trực tiếp nếu tenant identity đã có trong authenticated principal.
 
-- Pin tool/provider/image/schema version phù hợp.
-- Readiness không báo healthy trước invariant cần thiết.
-- Runbook có preflight, read-only command, rollback và artifact retention.
-- Rehearse backup/restore, key rotation, failover, drift hoặc upgrade tùy module.
-- Manual exception có owner, expiry và post-incident review.
+---
 
-## Architect Perspective
+# 3. Rate limiting
 
-Resilience, Security và Middleware Production trở thành architectural boundary khi ảnh hưởng ownership, consistency, deployment, capacity hoặc team topology. Chọn phương án đơn giản nhất thỏa NFR; document điều gì đổi ở 10x/100x và trigger migrate.
+Đăng ký service:
 
-## Trade-offs
+```csharp
+using System.Threading.RateLimiting;
 
-| Lựa chọn | Lợi ích | Chi phí/rủi ro |
-| --- | --- | --- |
-| Simple/local | Dễ hiểu, ít toil | Giới hạn scale/durability |
-| Specialized/distributed | Capacity/feature tốt | Coupling, failure và vận hành |
-| Managed/platform | Giảm control-plane toil | Quota, lock-in và cost |
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("writes", limiter =>
+    {
+        limiter.PermitLimit = 20;
+        limiter.Window = TimeSpan.FromSeconds(1);
+        limiter.QueueLimit = 0;
+        limiter.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+    });
+});
+```
 
-## When NOT to Use It
+Pipeline:
 
-- Không dùng pattern này nếu requirement chưa chứng minh need hoặc không có owner vận hành.
-- Không dùng abstraction để che failure/latency/consistency semantics.
-- Không chọn managed/distributed option chỉ vì production-ready mà thiếu cost/capacity evidence.
-- Không mở rộng privilege, retention hoặc data exposure để làm lab nhanh hơn.
-- Không tối ưu một metric nếu làm hỏng SLO, security hoặc rollback.
+```csharp
+app.UseRateLimiter();
+```
 
-## Alternatives
+Endpoint:
 
-- Giữ local/simple implementation khi scale và durability chưa yêu cầu.
-- Dùng managed service khi team không muốn sở hữu control plane và cost hợp lý.
-- Dùng queue/batch/stream hoặc synchronous path tùy latency/durability.
-- Dùng immutable artifact/configuration và migration thay manual mutation.
-- Dùng standard protocol/contract trước custom framework.
+```csharp
+app.MapPost("/orders", CreateOrderAsync)
+    .RequireRateLimiting("writes");
+```
 
-## Review Questions
+Rate limit không chỉ để chống attack. Nó còn bảo vệ bounded capacity phía sau.
 
-1. Invariant nào phải đúng dù request/retry/deploy lặp lại?
-2. Boundary nào sở hữu state, timeout, cleanup hoặc rollback?
-3. Evidence nào chứng minh bottleneck/security/reliability claim?
-4. Điều gì sẽ hỏng khi dependency chậm hoặc state stale?
-5. Cost và operational toil tăng theo scale nào?
-6. Khi nào phương án đơn giản hơn là lựa chọn tốt hơn?
+Nhưng policy phải load-test. `20 req/s` không có nghĩa backend chắc chắn chịu được hoặc business muốn limit theo global IP.
 
-## Hands-on Lab
+Bạn phải chọn partition key phù hợp:
 
-Tạo một experiment bounded cho resilience, security và middleware production: ghi workload, expected output, failure scenario và safety bound; chạy baseline rồi so sánh; lưu decision note. Không đưa credential, production data hoặc diagnostic artifact nhạy cảm vào repository.
+```text
+anonymous public API → IP/client key?
+authenticated SaaS     → tenant/user/client app?
+expensive report       → user + endpoint?
+```
 
-## Exit Criteria
+---
 
-- Giải thích được timeout, retry, circuit breaker, rate limit, headers, auth và failure classification..
-- Implement minimal example có validation/bound phù hợp.
-- Mô tả failure, security, performance và operational response.
-- Có evidence reproducible và decision note.
-- Biết dependency tiếp theo và trigger cần nghiên cứu thêm.
+# 4. QueueLimit = 0 hay queue?
 
-## Related Topics
+Nếu bạn cho rate limiter queue 10,000 requests, bạn đã biến overload thành latency explosion.
 
-- [Module 06 prerequisite](../06-api-design/README.md).
-- [Pipeline, Hosting và Configuration](pipeline-hosting-and-configuration.md).
-- [Resilience, Security và Middleware Production](resilience-security-and-middleware.md).
-- [Deployment, Observability và ASP.NET Operations](deployment-observability-and-operations.md).
-- Module 08 — Testing và Code Review khi content được mở.
+Mental model:
+
+```text
+incoming > capacity
+
+Option A: reject early
+→ 429 nhanh, caller retry/backoff
+
+Option B: queue
+→ có thể smooth burst nhỏ
+→ nhưng queue tăng memory + tail latency
+```
+
+Queue phải bounded và có lý do.
+
+---
+
+# 5. Timeout budget
+
+Một request có total budget 2 giây không nên để downstream call có timeout 10 giây.
+
+```text
+HTTP request budget: 2s
+    ↓
+application work: 200ms
+    ↓
+database: 500ms
+    ↓
+external API: 800ms
+    ↓
+remaining buffer
+```
+
+Không cần chia cứng như trên cho mọi request, nhưng phải có deadline thinking.
+
+Typed client:
+
+```csharp
+builder.Services.AddHttpClient<InventoryClient>(client =>
+{
+    client.BaseAddress = new Uri(
+        builder.Configuration["Inventory:BaseUrl"]!);
+
+    client.Timeout = TimeSpan.FromSeconds(2);
+});
+```
+
+---
+
+# 6. Resilient HttpClient
+
+Với package `Microsoft.Extensions.Http.Resilience`, .NET cung cấp standard resilience handler:
+
+```csharp
+builder.Services
+    .AddHttpClient<InventoryClient>(client =>
+    {
+        client.BaseAddress = new Uri(
+            builder.Configuration["Inventory:BaseUrl"]!);
+    })
+    .AddStandardResilienceHandler();
+```
+
+Điều quan trọng hơn API call là semantics:
+
+```text
+GET inventory
+→ retry transient failure có thể hợp lý
+
+POST charge credit card
+→ retry mù có thể duplicate side effect
+```
+
+Nếu operation không idempotent, thiết kế idempotency/dedup trước khi thêm retry.
+
+---
+
+# 7. Idempotency ở API write
+
+Client có thể retry vì timeout mà server đã commit thành công.
+
+Request:
+
+```http
+POST /payments
+Idempotency-Key: 8cc8c723-4af4-4450-b4da-01b95ca1a896
+```
+
+Storage concept:
+
+```text
+(IdempotencyKey, Principal/Tenant, RequestHash)
+        ↓
+Processing / Completed
+        ↓
+Stored response/result reference
+```
+
+Pseudo-code:
+
+```csharp
+var existing = await idempotencyStore.GetAsync(
+    tenantId,
+    idempotencyKey,
+    cancellationToken);
+
+if (existing is not null)
+{
+    return existing.ToHttpResult();
+}
+
+var result = await paymentService.CreateAsync(
+    request,
+    cancellationToken);
+
+await idempotencyStore.CompleteAsync(
+    tenantId,
+    idempotencyKey,
+    result,
+    cancellationToken);
+
+return Results.Ok(result);
+```
+
+Thực tế cần transaction/race protection. Hai request cùng key tới đồng thời không được cùng execute side effect.
+
+---
+
+# 8. Validation boundary
+
+Bad:
+
+```csharp
+app.MapPost("/orders", async (CreateOrderRequest request) =>
+{
+    // assumes everything is valid
+});
+```
+
+Simple validation:
+
+```csharp
+app.MapPost("/orders", async (
+    CreateOrderRequest request,
+    OrderService service,
+    CancellationToken cancellationToken) =>
+{
+    var errors = new Dictionary<string, string[]>();
+
+    if (request.Quantity <= 0)
+    {
+        errors["quantity"] = ["Quantity must be greater than zero."];
+    }
+
+    if (errors.Count > 0)
+    {
+        return Results.ValidationProblem(errors);
+    }
+
+    var result = await service.CreateAsync(request, cancellationToken);
+    return Results.Created($"/orders/{result.Id}", result);
+});
+```
+
+Business invariant vẫn cần enforce ở application/database dưới concurrency. Input validation không thay transaction constraint.
+
+---
+
+# 9. Exception classification
+
+Đừng biến mọi exception thành `500 Internal Server Error` rồi retry.
+
+```text
+Validation / client error
+→ 400/422-like contract, no retry
+
+Unauthorized / forbidden
+→ 401/403, no retry
+
+Not found
+→ 404
+
+Conflict / concurrency
+→ 409 or domain-specific mapping
+
+Transient dependency failure
+→ maybe 503 / retry policy
+
+Unexpected bug
+→ 500 + trace/log
+```
+
+Mapping phải consistent và tránh leak internal detail.
+
+---
+
+# 10. Security headers không thay auth
+
+Bạn có thể harden response headers, HTTPS, CORS, cookie settings, nhưng chúng không thay authorization.
+
+CORS đặc biệt:
+
+```text
+CORS controls browser cross-origin behavior
+≠
+API authorization
+```
+
+Backend-to-backend caller không bị browser CORS policy bảo vệ.
+
+---
+
+# 11. Middleware order example
+
+```csharp
+app.UseExceptionHandler();
+app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseRateLimiter();
+
+app.MapControllers();
+```
+
+Order chính xác phụ thuộc middleware/endpoint routing setup, nhưng bạn phải biết component nào cần chạy trước component nào và verify với integration tests.
+
+---
+
+# 12. Failure experiment — retry duplicate side effect
+
+Tạo fake payment dependency:
+
+```csharp
+public sealed class FakePaymentGateway
+{
+    private int _charges;
+
+    public int Charges => _charges;
+
+    public async Task ChargeAsync(
+        CancellationToken cancellationToken)
+    {
+        Interlocked.Increment(ref _charges);
+        await Task.Delay(100, cancellationToken);
+        throw new HttpRequestException("Response lost after side effect");
+    }
+}
+```
+
+Nếu caller retry mù, `Charges` có thể thành 2.
+
+Mục tiêu lab:
+
+1. reproduce duplicate;
+2. thêm idempotency key/dedup;
+3. verify retry không duplicate business effect.
+
+---
+
+# 13. Failure experiment — rate limit
+
+Load endpoint:
+
+```bash
+seq 1 100 | xargs -n1 -P20 -I{} \
+  curl -s -o /dev/null -w "%{http_code}\n" \
+  http://localhost:5000/expensive
+```
+
+Evidence:
+
+```text
+200 count
+429 count
+P95 latency
+CPU
+DB calls
+```
+
+Goal: chứng minh limiter bảo vệ downstream, không chỉ chứng minh có response 429.
+
+---
+
+# 14. Integration test cho authorization
+
+```csharp
+[Fact]
+public async Task CancelOrder_without_scope_returns_forbidden()
+{
+    using var client = factory.CreateClient();
+    client.DefaultRequestHeaders.Authorization =
+        FakeJwt("orders.read");
+
+    var response = await client.PostAsync(
+        "/orders/42/cancel",
+        content: null);
+
+    Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+}
+```
+
+Thêm test cross-tenant/resource access chứ không chỉ role/scope test.
+
+---
+
+# 15. Architect questions
+
+- Nên reject overload ở gateway, API hay downstream?
+- Retry ở layer nào để tránh retry amplification?
+- Write endpoint có idempotency contract không?
+- AuthZ rule thuộc endpoint, application service hay domain/resource boundary?
+- Rate-limit partition key có công bằng giữa tenants không?
+- Timeout budget của request đi qua 3 dependency được phân bổ thế nào?
+- Khi dependency down, degrade/fail-closed/fail-open semantics là gì?
+
+---
+
+# 16. Exit criteria
+
+Bạn hoàn thành chapter khi có thể:
+
+- cấu hình và test rate limiting;
+- phân biệt authentication/authorization/resource authorization;
+- thiết kế stable error contract bằng Problem Details;
+- giải thích retry có thể gây duplicate side effect;
+- thiết kế idempotency key boundary;
+- đặt timeout/deadline hợp lý;
+- load-test limiter và measure downstream protection;
+- viết negative tests cho auth/cross-tenant access.
 
 ## Official English Sources
 
-- [ASP.NET Core fundamentals](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/?view=aspnetcore-10.0).
-- [Middleware](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware?view=aspnetcore-10.0).
-- [Configuration](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-10.0).
-- [Health checks](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-10.0).
-- [Rate limiting](https://learn.microsoft.com/en-us/aspnet/core/performance/rate-limit?view=aspnetcore-10.0).
+- [Handle errors in ASP.NET Core APIs](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/error-handling-api?view=aspnetcore-10.0)
+- [Rate limiting middleware](https://learn.microsoft.com/en-us/aspnet/core/performance/rate-limit?view=aspnetcore-10.0)
+- [ASP.NET Core authentication](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-10.0)
+- [ASP.NET Core authorization](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/introduction?view=aspnetcore-10.0)
+- [.NET HTTP resilience](https://learn.microsoft.com/en-us/dotnet/core/resilience/http-resilience)
 
-## Vietnamese Resources
+## Verification metadata
 
-- Dùng [glossary](../00-roadmap/glossary.md) để giữ canonical English term.
-- Viết reflection bằng tiếng Việt nhưng giữ tên API/protocol/metric chính xác.
-- Tuân thủ [source policy](../00-roadmap/source-policy.md) cho claim version-sensitive.
-
-## Verification Metadata
-
-- Verified: 2026-08-11.
-- Technology version: ASP.NET Core content v1; refresh version-sensitive behavior before production.
-- Context7 queries used: none; callable tool unavailable in this run.
-- Notes: content v1 không thay thế learner evidence; cần lab/review/production artifact để nâng level.
+- Verified: 2026-08-12.
+- Current docs confirm `AddRateLimiter` + `UseRateLimiter` pattern for ASP.NET Core 10.
+- `AddStandardResilienceHandler()` verified against current Microsoft.Extensions.Http.Resilience 10.x docs.
+- Status: code-first deep rewrite.
