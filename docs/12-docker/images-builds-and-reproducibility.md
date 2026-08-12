@@ -1,199 +1,476 @@
 # Images, Builds và Reproducibility
 
-> [← Module 12 overview](README.md) · [Docker references](references.md)
+> [← Docker overview](README.md) · [References](references.md)
 
-## Mục tiêu / Learning Objectives
+## Hiểu trong 5 phút
 
-- giải thích images, builds và reproducibility bằng mental model và boundary;
-- implement một minimal path có bound, invariant và observable output;
-- phân tích failure, security, performance, reliability và operational ownership;
-- đối chiếu behavior với nguồn chính thức thay vì dựa vào folklore;
-- viết decision note và biết trigger để chuyển sang alternative.
+Docker image là deployment artifact. Dockerfile là build recipe.
 
-## Tại sao cần học? / Why It Matters
-
-Layers, Dockerfile, multi-stage build, digest pinning và SBOM. Đây là boundary nơi một quyết định nhỏ có thể đổi correctness, latency, security và operational ownership.
-
-## Tổng quan / Overview
-
-~~~mermaid
+```mermaid
 flowchart LR
-    A["Input / workload"] --> B["Images, Builds và Reproducibility"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+    A[Source] --> B[Dockerfile]
+    B --> C[Build layers/cache]
+    C --> D[Image]
+    D --> E[Registry]
+    E --> F[Runtime container]
+```
 
-## Mental Model
+Một build production tốt cần:
 
-| Boundary | Câu hỏi | Evidence |
-| --- | --- | --- |
-| Input | Dữ liệu/traffic đến từ đâu và bound nào? | Contract, validation, limit |
-| Core | Invariant/state transition nào phải đúng? | Test, query/plan, policy |
-| Resource | CPU, memory, network, storage, quota nào tiêu thụ? | Metrics, profile, capacity |
-| Recovery | Khi dependency/change fail thì ai xử lý? | Retry, rollback, runbook |
+```text
+reproducible inputs
+small attack surface
+cache-friendly layers
+no baked secrets
+traceable source → image digest
+```
 
-Layers, Dockerfile, multi-stage build, digest pinning và SBOM. Học stable concept trước version/tool syntax; mọi claim production phải có measurement hoặc source.
+---
 
-## Thuật ngữ / Terminology
+# 1. Multi-stage .NET Dockerfile
 
-| Thuật ngữ | Ý nghĩa |
-| --- | --- |
-| Invariant | Điều kiện luôn phải đúng |
-| Boundary | Nơi ownership/semantics đổi |
-| Estimate | Dự đoán cost trước runtime |
-| Backpressure | Buộc producer theo capacity |
-| Evidence | Output dùng để quyết định |
-| Rollback | Đường quay về trạng thái an toàn |
+```dockerfile
+# syntax=docker/dockerfile:1
 
-## Prerequisites
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS restore
+WORKDIR /src
 
-- [Module 11 prerequisite](../11-redis-caching/README.md).
-- [Roadmap dependency graph](../00-roadmap/prerequisites.md).
-- Có thể ghi failure hypothesis và output reproducible.
+COPY MyApi.csproj .
+RUN dotnet restore MyApi.csproj
 
-## How It Works
+FROM restore AS build
+COPY . .
+RUN dotnet publish MyApi.csproj \
+    -c Release \
+    -o /app/publish \
+    --no-restore
 
-Bắt đầu từ requirement, chọn primitive, đặt safety bound, quan sát behavior và xác định owner. Layers, Dockerfile, multi-stage build, digest pinning và SBOM. Không coi framework/platform abstraction là proof của correctness.
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+WORKDIR /app
 
-## Minimal Example
+COPY --from=build /app/publish .
 
-~~~yaml
-FROM sdk AS build -> publish -> runtime image
-~~~
+EXPOSE 8080
+ENTRYPOINT ["dotnet", "MyApi.dll"]
+```
 
-Minimal example chỉ chứng minh shape; production cần validation, cancellation/timeout, migration, security và test tùy boundary.
+Why multi-stage:
 
-## Production Example
+```text
+SDK/compiler/build cache
+    stay in build stages
 
-Layers, Dockerfile, multi-stage build, digest pinning và SBOM. Production path bổ sung contract test, structured telemetry, failure classification, rollout/rollback và data/privacy policy.
+runtime image
+    only needs published app + runtime
+```
 
-~~~text
-decision = requirement + workload + failure + security + cost
-evidence = implementation + test + measurement + runbook
-~~~
+Không copy toàn SDK vào production image nếu không có requirement.
 
-## .NET Integration
+---
 
-- DI/configuration/host composition giữ lifetime và ownership rõ.
-- Cancellation, timeout và disposal phải đi xuyên boundary; không fire-and-forget vô chủ.
-- HTTP/API layer map lỗi thành contract ổn định, không leak exception nội bộ.
-- Persistence/cache/queue adapter không che transaction, consistency hoặc retry semantics.
-- Metrics/traces/logs dùng low-cardinality labels và retention/privacy policy.
+# 2. Cache-friendly ordering
 
-## Internals
+Bad:
 
-Đọc access path/state machine/controller/plan theo đúng module để giải thích observed behavior. Provider, runtime, platform và version có thể thay đổi implementation detail; giữ normative claim ở official docs.
+```dockerfile
+COPY . .
+RUN dotnet restore
+RUN dotnet publish -c Release
+```
 
-## Common Mistakes
+Mỗi source-code change có thể invalidate restore layer.
 
-- copy syntax trước khi xác định invariant.
-- bỏ qua input/size/concurrency bound.
-- trả success khi side effect chưa commit.
-- dùng một metric cho mọi workload.
-- để implementation detail thành public contract.
+Better:
 
-## Performance Considerations
+```dockerfile
+COPY MyApi.csproj .
+RUN dotnet restore MyApi.csproj
 
-Đo workload representative với warm-up, concurrency, payload mix và tail latency. Bound state/queue/cache trước khi micro-optimize; so sánh before/after cùng environment và tính cả cost của measurement.
+COPY . .
+RUN dotnet publish MyApi.csproj -c Release --no-restore
+```
 
-## Security Considerations
+Dependency file thay đổi ít hơn source files, giúp cache reuse tốt hơn.
 
-Threat model asset, identity, trust boundary, input abuse, secret handling và artifact access. Least privilege, data minimization, encryption, audit và expiry phải có negative test.
+Với solution nhiều project, cần copy đúng project files/dependency graph trước restore.
 
-## Reliability / Failure Modes
+---
 
-| Failure | Signal | Response |
-| --- | --- | --- |
-| Invalid input/state | 4xx, constraint/test failure | Reject rõ, không partial side effect |
-| Dependency slow/unavailable | Timeout, queue/latency tăng | Deadline, bounded retry, fallback hoặc shed |
-| Capacity exhausted | CPU/memory/quota/429 | Backpressure, scale, degrade hoặc stop |
-| Change incompatible | Error/contract drift | Canary, migration, rollback/forward fix |
-| Operator mistake | Audit/event anomaly | Least privilege, approval, runbook |
+# 3. `.dockerignore`
 
-## Observability
+```text
+**/bin/
+**/obj/
+.git/
+.vs/
+.idea/
+TestResults/
+coverage/
+.env
+*.user
+```
 
-Ghi success/error rate, latency percentile, resource usage, state transitions và version/deployment. Trace nối request → core operation → dependency; log structured theo operation ID. Alert theo SLO/error budget.
+Mục tiêu:
 
-## Operational Considerations
+```text
+smaller build context
+less accidental secret/artifact copy
+better cache behavior
+```
 
-- Pin tool/provider/image/schema version phù hợp.
-- Readiness không báo healthy trước invariant cần thiết.
-- Runbook có preflight, read-only command, rollback và artifact retention.
-- Rehearse backup/restore, key rotation, failover, drift hoặc upgrade tùy module.
-- Manual exception có owner, expiry và post-incident review.
+Đừng blindly ignore file mà build thực sự cần.
 
-## Architect Perspective
+---
 
-Images, Builds và Reproducibility trở thành architectural boundary khi ảnh hưởng ownership, consistency, deployment, capacity hoặc team topology. Chọn phương án đơn giản nhất thỏa NFR; document điều gì đổi ở 10x/100x và trigger migrate.
+# 4. Build context là security boundary
 
-## Trade-offs
+Nếu bạn chạy:
 
-| Lựa chọn | Lợi ích | Chi phí/rủi ro |
-| --- | --- | --- |
-| Simple/local | Dễ hiểu, ít toil | Giới hạn scale/durability |
-| Specialized/distributed | Capacity/feature tốt | Coupling, failure và vận hành |
-| Managed/platform | Giảm control-plane toil | Quota, lock-in và cost |
+```bash
+docker build .
+```
 
-## When NOT to Use It
+build context có thể chứa nhiều file hơn bạn nghĩ.
 
-- Không dùng pattern này nếu requirement chưa chứng minh need hoặc không có owner vận hành.
-- Không dùng abstraction để che failure/latency/consistency semantics.
-- Không chọn managed/distributed option chỉ vì production-ready mà thiếu cost/capacity evidence.
-- Không mở rộng privilege, retention hoặc data exposure để làm lab nhanh hơn.
-- Không tối ưu một metric nếu làm hỏng SLO, security hoặc rollback.
+Check:
 
-## Alternatives
+```bash
+find . -maxdepth 2 -type f | sort
+```
 
-- Giữ local/simple implementation khi scale và durability chưa yêu cầu.
-- Dùng managed service khi team không muốn sở hữu control plane và cost hợp lý.
-- Dùng queue/batch/stream hoặc synchronous path tùy latency/durability.
-- Dùng immutable artifact/configuration và migration thay manual mutation.
-- Dùng standard protocol/contract trước custom framework.
+Secrets trong build context có thể bị copy vào layer nếu Dockerfile sai, kể cả sau đó file bị delete ở layer khác.
 
-## Review Questions
+Bad:
 
-1. Invariant nào phải đúng dù request/retry/deploy lặp lại?
-2. Boundary nào sở hữu state, timeout, cleanup hoặc rollback?
-3. Evidence nào chứng minh bottleneck/security/reliability claim?
-4. Điều gì sẽ hỏng khi dependency chậm hoặc state stale?
-5. Cost và operational toil tăng theo scale nào?
-6. Khi nào phương án đơn giản hơn là lựa chọn tốt hơn?
+```dockerfile
+COPY . .
+RUN cat .env && rm .env
+```
 
-## Hands-on Lab
+Delete ở layer sau không magically xóa secret khỏi previous layer history.
 
-Tạo một experiment bounded cho images, builds và reproducibility: ghi workload, expected output, failure scenario và safety bound; chạy baseline rồi so sánh; lưu decision note. Không đưa credential, production data hoặc diagnostic artifact nhạy cảm vào repository.
+---
 
-## Exit Criteria
+# 5. Không truyền secret bằng `ARG` để bake image
 
-- Giải thích được layers, dockerfile, multi-stage build, digest pinning và sbom..
-- Implement minimal example có validation/bound phù hợp.
-- Mô tả failure, security, performance và operational response.
-- Có evidence reproducible và decision note.
-- Biết dependency tiếp theo và trigger cần nghiên cứu thêm.
+Bad:
 
-## Related Topics
+```dockerfile
+ARG NUGET_TOKEN
+RUN dotnet nuget add source ... --password "$NUGET_TOKEN"
+```
 
-- [Module 11 prerequisite](../11-redis-caching/README.md).
-- [Images, Builds và Reproducibility](images-builds-and-reproducibility.md).
-- [Container Runtime, Networking, Storage và Resources](runtime-networking-storage-and-resources.md).
-- [Docker Security, Compose và Operations](docker-security-compose-and-operations.md).
-- Module 13 — DevOps và IaC khi content được mở.
+Build args/history/cache có thể tạo leak risk nếu dùng sai.
+
+Khi build cần private dependency, dùng BuildKit secret mount hoặc CI credential mechanism phù hợp.
+
+Conceptual BuildKit:
+
+```dockerfile
+RUN --mount=type=secret,id=nuget_config,target=/root/.nuget/NuGet/NuGet.Config \
+    dotnet restore MyApi.csproj
+```
+
+Build:
+
+```bash
+docker build \
+  --secret id=nuget_config,src="$HOME/.nuget/NuGet/NuGet.Config" \
+  -t my-api:dev .
+```
+
+Secret phục vụ build nhưng không nên trở thành runtime image layer.
+
+---
+
+# 6. Inspect image
+
+```bash
+docker image ls my-api
+docker image inspect my-api:dev
+docker history my-api:dev
+```
+
+Questions:
+
+```text
+Image size bao nhiêu?
+Layer nào lớn bất thường?
+Có build tool/source file không cần thiết trong runtime image không?
+Config/secret có xuất hiện trong history không?
+```
+
+---
+
+# 7. Verify runtime contents
+
+```bash
+docker run --rm \
+  --entrypoint sh \
+  my-api:dev \
+  -c 'find /app -maxdepth 2 -type f | sort | head -100'
+```
+
+Không assume multi-stage đúng chỉ vì Dockerfile nhìn đẹp.
+
+---
+
+# 8. Tag vs digest
+
+Build/tag:
+
+```bash
+docker build -t registry.example/my-api:1.4.2 .
+```
+
+Tag giúp human-friendly release identity nhưng có thể mutable tùy registry policy.
+
+Sau push, deployment evidence nên capture digest:
+
+```text
+registry.example/my-api@sha256:abc...
+```
+
+Traceability:
+
+```text
+Git commit 1a2b3c
+↓
+CI build run 998
+↓
+image digest sha256:...
+↓
+deployment prod-eu
+```
+
+---
+
+# 9. Build metadata
+
+Có thể thêm OCI labels:
+
+```dockerfile
+ARG VCS_REF
+ARG VERSION
+
+LABEL org.opencontainers.image.revision=$VCS_REF \
+      org.opencontainers.image.version=$VERSION \
+      org.opencontainers.image.source="https://github.com/example/my-api"
+```
+
+CI:
+
+```bash
+docker build \
+  --build-arg VCS_REF="$GITHUB_SHA" \
+  --build-arg VERSION="$VERSION" \
+  -t "$IMAGE" .
+```
+
+Không đặt secret vào labels.
+
+---
+
+# 10. Pinning trade-off
+
+Loose base:
+
+```dockerfile
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
+```
+
+Pros:
+
+```text
+easier to receive patched base on rebuild
+```
+
+Cons:
+
+```text
+same Dockerfile rebuilt later may resolve different base digest
+```
+
+Digest pinning:
+
+```dockerfile
+FROM mcr.microsoft.com/dotnet/aspnet:10.0@sha256:...
+```
+
+Pros:
+
+```text
+strong reproducibility / exact identity
+```
+
+Cons:
+
+```text
+you must intentionally update digest to receive patches
+```
+
+Production answer thường là automation + controlled update, không phải "always tag" hay "always digest" tuyệt đối.
+
+---
+
+# 11. Build once, promote same artifact
+
+Bad delivery model:
+
+```text
+build dev image
+build staging image again
+build prod image again
+```
+
+Mỗi rebuild có thể khác dependency/base/input.
+
+Prefer:
+
+```text
+commit
+↓
+build once
+↓
+scan/test
+↓
+image digest
+↓
+promote same digest dev → staging → prod
+```
+
+Runtime environment-specific config được inject khi deploy.
+
+---
+
+# 12. Reproducibility test
+
+1. Checkout same commit.
+2. Build twice trong clean environment.
+3. Compare runtime behavior, package lock inputs, base digest, image metadata.
+4. Nếu digest khác, giải thích source of nondeterminism thay vì assume bug.
+
+Exact bit-for-bit reproducibility có thể phụ thuộc build ecosystem. Goal chính là **controlled and auditable inputs**.
+
+---
+
+# 13. Image size experiment
+
+Version A:
+
+```dockerfile
+FROM mcr.microsoft.com/dotnet/sdk:10.0
+COPY . /app
+WORKDIR /app
+ENTRYPOINT ["dotnet", "run"]
+```
+
+Version B: multi-stage publish runtime image.
+
+Compare:
+
+```bash
+docker image ls
+```
+
+Measure:
+
+```text
+image size
+build duration cold/warm
+startup time
+files in runtime image
+vulnerability scan result if scanner available
+```
+
+Không kết luận smaller image always faster app runtime, nhưng smaller artifact thường giảm transfer/storage/attack surface concerns.
+
+---
+
+# 14. CI build example
+
+```yaml
+name: image
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build image
+        run: |
+          docker build \
+            --build-arg VCS_REF="$GITHUB_SHA" \
+            -t my-api:test \
+            ./src/MyApi
+
+      - name: Smoke test
+        run: |
+          docker run -d --rm \
+            --name my-api-smoke \
+            -p 8080:8080 \
+            my-api:test
+
+          for i in {1..30}; do
+            if curl --fail http://localhost:8080/health/live; then
+              exit 0
+            fi
+            sleep 1
+          done
+
+          docker logs my-api-smoke
+          exit 1
+```
+
+Release workflow có thể thêm registry login/push/sign/SBOM theo supply-chain requirements.
+
+---
+
+# 15. Common mistakes
+
+- `COPY . .` trước restore làm cache kém;
+- build context chứa `.env`, test dumps, credentials;
+- dùng SDK image làm runtime mặc định;
+- runtime image chứa source/build artifacts không cần thiết;
+- rebuild riêng từng environment;
+- deploy bằng mutable `latest` mà không capture digest;
+- không biết base image đang dùng digest nào;
+- thêm package/debug tool production không có owner/security review.
+
+---
+
+# 16. Exit criteria
+
+Bạn hoàn thành chapter khi có thể:
+
+- viết multi-stage .NET Dockerfile;
+- giải thích cache invalidation;
+- kiểm soát build context bằng `.dockerignore`;
+- giữ build secret khỏi image layers;
+- inspect history/runtime files;
+- map git commit → image digest;
+- giải thích tag/digest pin trade-off;
+- build once/promote same artifact;
+- tạo CI smoke test cho image.
 
 ## Official English Sources
 
-- [Docker overview](https://docs.docker.com/get-started/docker-overview/).
-- [Dockerfile reference](https://docs.docker.com/reference/dockerfile/).
-- [Docker Compose](https://docs.docker.com/compose/).
-- [Docker build best practices](https://docs.docker.com/build/building/best-practices/).
-- [Docker security](https://docs.docker.com/engine/security/).
+- [Dockerfile reference](https://docs.docker.com/reference/dockerfile/)
+- [Docker build best practices](https://docs.docker.com/build/building/best-practices/)
+- [Build secrets](https://docs.docker.com/build/building/secrets/)
+- [Build cache](https://docs.docker.com/build/cache/)
 
-## Vietnamese Resources
+## Verification metadata
 
-- Dùng [glossary](../00-roadmap/glossary.md) để giữ canonical English term.
-- Viết reflection bằng tiếng Việt nhưng giữ tên API/protocol/metric chính xác.
-- Tuân thủ [source policy](../00-roadmap/source-policy.md) cho claim version-sensitive.
-
-## Verification Metadata
-
-- Verified: 2026-08-11.
-- Technology version: Docker content v1; refresh version-sensitive behavior before production.
-- Context7 queries used: none; callable tool unavailable in this run.
-- Notes: content v1 không thay thế learner evidence; cần lab/review/production artifact để nâng level.
+- Verified: 2026-08-12.
+- Baseline: Docker Engine / BuildKit current repository baseline.
+- Status: code-first deep rewrite.
