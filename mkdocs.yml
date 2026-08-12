@@ -128,6 +128,7 @@ nav:
           - Relational Model & Schema: 05-sql/relational-model-schema-and-sql.md
           - Transactions & Concurrency: 05-sql/transactions-isolation-and-concurrency.md
           - Indexes & Execution Plans: 05-sql/indexes-execution-plans-and-operations.md
+          - EF Core → SQL → Execution Plan: 05-sql/ef-core-query-shape-and-sql.md
       - API Design:
           - 06-api-design/README.md
           - HTTP Resource Contracts: 06-api-design/http-resource-contracts-and-semantics.md
@@ -180,6 +181,11 @@ nav:
           - Architecture & Reconciliation: 15-kubernetes/cluster-architecture-and-reconciliation.md
           - Workloads, Network & Storage: 15-kubernetes/workloads-networking-and-storage.md
           - Security & Observability: 15-kubernetes/kubernetes-security-observability-and-operations.md
+  - Distributed Systems:
+      - Overview: 17-distributed-systems/README.md
+      - Partial Failure, Retry & Idempotency: 17-distributed-systems/partial-failure-timeouts-retries-and-idempotency.md
+      - Messaging, Outbox, Inbox & Dedup: 17-distributed-systems/messaging-outbox-inbox-and-dedup.md
+      - Consistency, Ordering, Saga & Backpressure: 17-distributed-systems/consistency-ordering-saga-and-backpressure.md
   - AI Engineering:
       - AI Engineering Overview: 19-ai-engineering/README.md
       - Structured Output & Tool Calling: 19-ai-engineering/structured-output-and-tool-calling.md
