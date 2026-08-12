@@ -1,199 +1,532 @@
 # Docker Security, Compose và Operations
 
-> [← Module 12 overview](README.md) · [Docker references](references.md)
+> [← Docker overview](README.md) · [References](references.md)
 
-## Mục tiêu / Learning Objectives
+## Hiểu trong 5 phút
 
-- giải thích docker security, compose và operations bằng mental model và boundary;
-- implement một minimal path có bound, invariant và observable output;
-- phân tích failure, security, performance, reliability và operational ownership;
-- đối chiếu behavior với nguồn chính thức thay vì dựa vào folklore;
-- viết decision note và biết trigger để chuyển sang alternative.
+Docker Compose tốt cho local integration/dev/test và một số single-host deployments. Nó giúp bạn mô tả topology:
 
-## Tại sao cần học? / Why It Matters
-
-Least privilege, secrets, Compose topology, logging, cleanup và incident response. Đây là boundary nơi một quyết định nhỏ có thể đổi correctness, latency, security và operational ownership.
-
-## Tổng quan / Overview
-
-~~~mermaid
+```mermaid
 flowchart LR
-    A["Input / workload"] --> B["Docker Security, Compose và Operations"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+    U[Host / Client] --> API[api]
+    API --> SQL[sql]
+    API --> REDIS[redis]
+    WORKER[worker] --> SQL
+    WORKER --> REDIS
+    SQL --> VOL[(sql-data)]
+```
 
-## Mental Model
+Nhưng Compose không thay thế application resilience/security.
 
-| Boundary | Câu hỏi | Evidence |
-| --- | --- | --- |
-| Input | Dữ liệu/traffic đến từ đâu và bound nào? | Contract, validation, limit |
-| Core | Invariant/state transition nào phải đúng? | Test, query/plan, policy |
-| Resource | CPU, memory, network, storage, quota nào tiêu thụ? | Metrics, profile, capacity |
-| Recovery | Khi dependency/change fail thì ai xử lý? | Retry, rollback, runbook |
+```text
+depends_on ≠ dependency always available
+container restart ≠ business recovery
+secret mounted ≠ authorization
+healthcheck ≠ SLO
+```
 
-Least privilege, secrets, Compose topology, logging, cleanup và incident response. Học stable concept trước version/tool syntax; mọi claim production phải có measurement hoặc source.
+---
 
-## Thuật ngữ / Terminology
+# 1. Production-like local Compose
 
-| Thuật ngữ | Ý nghĩa |
-| --- | --- |
-| State | Dữ liệu/phase đang được quản lý |
-| Controller | Logic đưa observed về desired |
-| Quota | Giới hạn platform/dependency |
-| SLO | Mục tiêu user-visible |
-| Blast radius | Phạm vi khi failure |
-| Runbook | Hướng dẫn operator |
+```yaml
+services:
+  api:
+    build:
+      context: ./src/MyApi
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Sql: >-
+        Server=sql;Database=AppDb;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
+      Redis__ConnectionString: redis:6379
+    depends_on:
+      sql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-## Prerequisites
+  worker:
+    build:
+      context: ./src/MyWorker
+    environment:
+      ConnectionStrings__Sql: >-
+        Server=sql;Database=AppDb;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
+      Redis__ConnectionString: redis:6379
+    depends_on:
+      sql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
 
-- [Module 11 prerequisite](../11-redis-caching/README.md).
-- [Roadmap dependency graph](../00-roadmap/prerequisites.md).
-- Có thể ghi failure hypothesis và output reproducible.
+  sql:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${SA_PASSWORD}
+    volumes:
+      - sql-data:/var/opt/mssql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$${MSSQL_SA_PASSWORD}" -C -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
-## How It Works
+  redis:
+    image: redis:8
 
-Bắt đầu từ requirement, chọn primitive, đặt safety bound, quan sát behavior và xác định owner. Least privilege, secrets, Compose topology, logging, cleanup và incident response. Không coi framework/platform abstraction là proof của correctness.
+volumes:
+  sql-data:
+```
 
-## Minimal Example
+Đây là **learning stack**, không phải production recommendation cho mọi workload.
 
-~~~yaml
-read_only + cap_drop=ALL + image@sha256:digest
-~~~
+---
 
-Minimal example chỉ chứng minh shape; production cần validation, cancellation/timeout, migration, security và test tùy boundary.
+# 2. `.env` không phải secret manager
 
-## Production Example
+Local `.env`:
 
-Least privilege, secrets, Compose topology, logging, cleanup và incident response. Production path bổ sung contract test, structured telemetry, failure classification, rollout/rollback và data/privacy policy.
+```text
+SA_PASSWORD=LocalOnlyStrongPassword123!
+```
 
-~~~text
-decision = requirement + workload + failure + security + cost
-evidence = implementation + test + measurement + runbook
-~~~
+`.gitignore`:
 
-## .NET Integration
+```text
+.env
+.env.*
+!.env.example
+```
 
-- DI/configuration/host composition giữ lifetime và ownership rõ.
-- Cancellation, timeout và disposal phải đi xuyên boundary; không fire-and-forget vô chủ.
-- HTTP/API layer map lỗi thành contract ổn định, không leak exception nội bộ.
-- Persistence/cache/queue adapter không che transaction, consistency hoặc retry semantics.
-- Metrics/traces/logs dùng low-cardinality labels và retention/privacy policy.
+`.env.example`:
 
-## Internals
+```text
+SA_PASSWORD=replace-me
+```
 
-Đọc access path/state machine/controller/plan theo đúng module để giải thích observed behavior. Provider, runtime, platform và version có thể thay đổi implementation detail; giữ normative claim ở official docs.
+Không commit actual secrets.
 
-## Common Mistakes
+Production nên dùng secret mechanism của platform/cloud phù hợp thay vì copy `.env` lên server.
 
-- rollout không có canary hoặc rollback.
-- drift/manual change không audit.
-- alert theo resource mà thiếu SLO.
-- abstraction/tooling tăng blast radius.
-- không rehearsal restore/failover/upgrade.
+---
 
-## Performance Considerations
+# 3. Compose secrets
 
-Đo workload representative với warm-up, concurrency, payload mix và tail latency. Bound state/queue/cache trước khi micro-optimize; so sánh before/after cùng environment và tính cả cost của measurement.
+Local file:
 
-## Security Considerations
+```text
+./secrets/api-key.txt
+```
 
-Threat model asset, identity, trust boundary, input abuse, secret handling và artifact access. Least privilege, data minimization, encryption, audit và expiry phải có negative test.
+Compose:
 
-## Reliability / Failure Modes
+```yaml
+services:
+  api:
+    secrets:
+      - api_key
 
-| Failure | Signal | Response |
-| --- | --- | --- |
-| Invalid input/state | 4xx, constraint/test failure | Reject rõ, không partial side effect |
-| Dependency slow/unavailable | Timeout, queue/latency tăng | Deadline, bounded retry, fallback hoặc shed |
-| Capacity exhausted | CPU/memory/quota/429 | Backpressure, scale, degrade hoặc stop |
-| Change incompatible | Error/contract drift | Canary, migration, rollback/forward fix |
-| Operator mistake | Audit/event anomaly | Least privilege, approval, runbook |
+secrets:
+  api_key:
+    file: ./secrets/api-key.txt
+```
 
-## Observability
+Container nhận file thường qua `/run/secrets/api_key`.
 
-Ghi success/error rate, latency percentile, resource usage, state transitions và version/deployment. Trace nối request → core operation → dependency; log structured theo operation ID. Alert theo SLO/error budget.
+.NET helper:
 
-## Operational Considerations
+```csharp
+static string ReadRequiredSecret(string path)
+{
+    if (!File.Exists(path))
+    {
+        throw new InvalidOperationException($"Secret file not found: {path}");
+    }
 
-- Pin tool/provider/image/schema version phù hợp.
-- Readiness không báo healthy trước invariant cần thiết.
-- Runbook có preflight, read-only command, rollback và artifact retention.
-- Rehearse backup/restore, key rotation, failover, drift hoặc upgrade tùy module.
-- Manual exception có owner, expiry và post-incident review.
+    return File.ReadAllText(path).Trim();
+}
 
-## Architect Perspective
+var apiKey = ReadRequiredSecret("/run/secrets/api_key");
+```
 
-Docker Security, Compose và Operations trở thành architectural boundary khi ảnh hưởng ownership, consistency, deployment, capacity hoặc team topology. Chọn phương án đơn giản nhất thỏa NFR; document điều gì đổi ở 10x/100x và trigger migrate.
+Secret file mount vẫn cần permissions, rotation và exposure review. Nó không magically solve secret lifecycle.
 
-## Trade-offs
+---
 
-| Lựa chọn | Lợi ích | Chi phí/rủi ro |
-| --- | --- | --- |
-| Simple/local | Dễ hiểu, ít toil | Giới hạn scale/durability |
-| Specialized/distributed | Capacity/feature tốt | Coupling, failure và vận hành |
-| Managed/platform | Giảm control-plane toil | Quota, lock-in và cost |
+# 4. Least privilege
 
-## When NOT to Use It
+Questions:
 
-- Không dùng pattern này nếu requirement chưa chứng minh need hoặc không có owner vận hành.
-- Không dùng abstraction để che failure/latency/consistency semantics.
-- Không chọn managed/distributed option chỉ vì production-ready mà thiếu cost/capacity evidence.
-- Không mở rộng privilege, retention hoặc data exposure để làm lab nhanh hơn.
-- Không tối ưu một metric nếu làm hỏng SLO, security hoặc rollback.
+```text
+Container có cần root không?
+Có cần write root filesystem không?
+Có cần Linux capability nào không?
+Có cần mount Docker socket không?
+Có cần host network không?
+```
 
-## Alternatives
+Dangerous:
 
-- Giữ local/simple implementation khi scale và durability chưa yêu cầu.
-- Dùng managed service khi team không muốn sở hữu control plane và cost hợp lý.
-- Dùng queue/batch/stream hoặc synchronous path tùy latency/durability.
-- Dùng immutable artifact/configuration và migration thay manual mutation.
-- Dùng standard protocol/contract trước custom framework.
+```yaml
+privileged: true
+```
 
-## Review Questions
+hoặc:
 
-1. Invariant nào phải đúng dù request/retry/deploy lặp lại?
-2. Boundary nào sở hữu state, timeout, cleanup hoặc rollback?
-3. Evidence nào chứng minh bottleneck/security/reliability claim?
-4. Điều gì sẽ hỏng khi dependency chậm hoặc state stale?
-5. Cost và operational toil tăng theo scale nào?
-6. Khi nào phương án đơn giản hơn là lựa chọn tốt hơn?
+```yaml
+volumes:
+  - /var/run/docker.sock:/var/run/docker.sock
+```
 
-## Hands-on Lab
+Docker socket có quyền rất lớn trên host. Không mount chỉ để app "dễ điều khiển containers".
 
-Tạo một experiment bounded cho docker security, compose và operations: ghi workload, expected output, failure scenario và safety bound; chạy baseline rồi so sánh; lưu decision note. Không đưa credential, production data hoặc diagnostic artifact nhạy cảm vào repository.
+---
 
-## Exit Criteria
+# 5. Read-only filesystem test
 
-- Giải thích được least privilege, secrets, compose topology, logging, cleanup và incident response..
-- Implement minimal example có validation/bound phù hợp.
-- Mô tả failure, security, performance và operational response.
-- Có evidence reproducible và decision note.
-- Biết dependency tiếp theo và trigger cần nghiên cứu thêm.
+```yaml
+services:
+  api:
+    read_only: true
+    tmpfs:
+      - /tmp
+```
 
-## Related Topics
+Start:
 
-- [Module 11 prerequisite](../11-redis-caching/README.md).
-- [Images, Builds và Reproducibility](images-builds-and-reproducibility.md).
-- [Container Runtime, Networking, Storage và Resources](runtime-networking-storage-and-resources.md).
-- [Docker Security, Compose và Operations](docker-security-compose-and-operations.md).
-- Module 13 — DevOps và IaC khi content được mở.
+```bash
+docker compose up --build
+```
+
+Nếu app crash vì cố ghi `/app/foo.log`, đây là discovery tốt.
+
+Production logging nên đi stdout/stderr hoặc approved sink/path, không dựa vào random local files trong container.
+
+---
+
+# 6. Capability drop
+
+```yaml
+cap_drop:
+  - ALL
+```
+
+Nếu app thực sự cần capability cụ thể, add explicit thay vì giữ default rộng hơn cần thiết.
+
+Lab:
+
+1. run with default capabilities;
+2. run with `cap_drop: ALL`;
+3. identify capability requirement nếu app break;
+4. document why.
+
+---
+
+# 7. Image scanning / SBOM boundary
+
+Delivery pipeline nên biết:
+
+```text
+source dependencies
+base image packages
+image digest
+known vulnerabilities
+SBOM/artifact metadata
+```
+
+Tool choice tùy platform, nhưng policy cần trả lời:
+
+```text
+severity nào block release?
+who owns false positive/exception?
+exception expires khi nào?
+base image patch cadence?
+```
+
+Không dùng scan report như bằng chứng duy nhất rằng image "secure".
+
+---
+
+# 8. Compose profiles cho optional tooling
+
+```yaml
+services:
+  adminer:
+    image: adminer
+    profiles: [debug]
+```
+
+Normal:
+
+```bash
+docker compose up
+```
+
+Debug:
+
+```bash
+docker compose --profile debug up
+```
+
+Không expose debug/admin tooling mặc định chỉ vì local tiện.
+
+---
+
+# 9. Logs
+
+```bash
+docker compose logs -f api
+docker compose logs --tail=200 worker
+```
+
+Application log phải structured:
+
+```csharp
+logger.LogInformation(
+    "Processing notification {NotificationId} for tenant {TenantId}",
+    notificationId,
+    tenantId);
+```
+
+Container logs không thay metrics/traces.
+
+---
+
+# 10. Log rotation
+
+Local/single-host JSON logs có thể consume disk nếu không bound.
+
+```yaml
+logging:
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+```
+
+Production centralized logging architecture có thể dùng driver/collector khác; principle là storage/retention phải có owner và bound.
+
+---
+
+# 11. Startup sequencing
+
+`depends_on` có thể help ordering, nhưng application vẫn phải handle dependency outage sau startup.
+
+Bad mental model:
+
+```text
+Compose started SQL first
+→ SQL can never fail later
+```
+
+Correct:
+
+```text
+dependency lifecycle is independent
+→ app must classify and recover/fail predictably
+```
+
+---
+
+# 12. Health condition
+
+Compose:
+
+```yaml
+depends_on:
+  sql:
+    condition: service_healthy
+```
+
+Điều này có thể giảm startup race, nhưng SQL health command phải tồn tại trong image và chính health check cần bounded.
+
+Bạn vẫn cần app readiness/recovery nếu SQL fail sau đó.
+
+---
+
+# 13. Restart policies
+
+Ví dụ:
+
+```yaml
+restart: unless-stopped
+```
+
+Restart có thể giúp process crash recovery, nhưng hãy hỏi:
+
+```text
+Process crash vì transient OS issue?
+Hay crash loop vì invalid config/schema?
+```
+
+Auto restart invalid app có thể tạo log storm/pressure thay vì recovery.
+
+---
+
+# 14. Debug workflow
+
+Khi API không connect SQL:
+
+```bash
+docker compose ps
+docker compose logs api
+docker compose logs sql
+docker compose exec api getent hosts sql
+docker inspect <api-container>
+```
+
+Classify:
+
+```text
+DNS
+TCP
+TLS
+credentials
+database missing
+migration/schema
+query timeout
+```
+
+Không sửa bằng restart trước khi biết failure class, trừ khi incident policy yêu cầu immediate mitigation.
+
+---
+
+# 15. Cleanup có chủ đích
+
+Stop containers:
+
+```bash
+docker compose down
+```
+
+Stop + delete named volumes:
+
+```bash
+docker compose down -v
+```
+
+Hai command có data semantics khác nhau.
+
+Lab phải ghi rõ expected persistence trước khi cleanup.
+
+---
+
+# 16. Backup mindset
+
+Docker volume không phải backup.
+
+```text
+volume
+→ persistent local data lifecycle
+
+backup
+→ independently restorable copy with retention/recovery process
+```
+
+Đối với SQL Server production, backup/restore strategy thuộc database/platform architecture, không được thay bằng "volume exists".
+
+---
+
+# 17. Full failure drill
+
+Chạy stack rồi làm tuần tự:
+
+```bash
+docker compose stop redis
+docker compose start redis
+
+docker compose stop sql
+docker compose start sql
+
+docker compose restart worker
+```
+
+Mỗi bước lưu:
+
+```text
+API behavior
+worker behavior
+health status
+logs/traces
+recovery time
+lost/duplicate work?
+```
+
+Đây là evidence tốt hơn screenshot `docker compose up` thành công.
+
+---
+
+# 18. Khi nào Compose đủ?
+
+Compose có thể đủ khi:
+
+```text
+single-host/local integration
+small controlled deployment
+manual/simple failover acceptable
+team không cần cluster scheduler
+```
+
+Kubernetes bắt đầu có lý khi bạn có requirements như:
+
+```text
+multi-node scheduling
+self-healing across nodes
+rolling rollout at scale
+service abstraction in cluster
+declarative reconciliation
+resource scheduling
+platform policy
+```
+
+Nhưng Kubernetes thêm control-plane/operational complexity đáng kể.
+
+---
+
+# 19. Exit criteria
+
+Bạn hoàn thành chapter khi có thể:
+
+- chạy API/Worker/SQL/Redis bằng Compose;
+- quản lý config/secrets không commit credential;
+- giải thích read-only fs/capability/privileged/socket risks;
+- bound logs/resources;
+- debug DNS/TCP/auth dependency issue;
+- test SQL/Redis outage + recovery;
+- phân biệt persistent volume và backup;
+- quyết định Compose vs orchestration bằng NFR.
 
 ## Official English Sources
 
-- [Docker overview](https://docs.docker.com/get-started/docker-overview/).
-- [Dockerfile reference](https://docs.docker.com/reference/dockerfile/).
-- [Docker Compose](https://docs.docker.com/compose/).
-- [Docker build best practices](https://docs.docker.com/build/building/best-practices/).
-- [Docker security](https://docs.docker.com/engine/security/).
+- [Docker Compose](https://docs.docker.com/compose/)
+- [Compose file reference](https://docs.docker.com/reference/compose-file/)
+- [Docker security](https://docs.docker.com/engine/security/)
+- [Docker secrets](https://docs.docker.com/compose/how-tos/use-secrets/)
 
-## Vietnamese Resources
+## Verification metadata
 
-- Dùng [glossary](../00-roadmap/glossary.md) để giữ canonical English term.
-- Viết reflection bằng tiếng Việt nhưng giữ tên API/protocol/metric chính xác.
-- Tuân thủ [source policy](../00-roadmap/source-policy.md) cho claim version-sensitive.
-
-## Verification Metadata
-
-- Verified: 2026-08-11.
-- Technology version: Docker content v1; refresh version-sensitive behavior before production.
-- Context7 queries used: none; callable tool unavailable in this run.
-- Notes: content v1 không thay thế learner evidence; cần lab/review/production artifact để nâng level.
+- Verified: 2026-08-12.
+- Baseline: Docker/Compose current repository baseline.
+- Status: code-first deep rewrite.
