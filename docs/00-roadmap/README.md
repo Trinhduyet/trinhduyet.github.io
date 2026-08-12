@@ -1,6 +1,6 @@
 # Lộ trình AI-enabled Software Architect
 
-> [← README tổng quan của repository](../../README.md)
+> [← Trang chủ tài liệu](../index.md)
 
 Kho tri thức này dành cho kỹ sư phần mềm Việt Nam đi từ năng lực triển khai C#/.NET đến năng lực thiết kế, vận hành và bảo vệ hệ thống có AI trong production.
 
@@ -17,17 +17,17 @@ Kho tri thức này dành cho kỹ sư phần mềm Việt Nam đi từ năng l�
 | Module 02 — Linux, Git và Networking | Content v1 hoàn thành 7/7; learner evidence pending | [Module overview](../02-linux-git-networking/README.md) |
 | Module 03 — C#/.NET Runtime | Content v1 hoàn thành 5/5; RuntimeLab buildable; learner evidence pending | [Module overview](../03-dotnet/README.md) |
 | Module 04 — Backend | Content v1 hoàn thành 4/4; BackendLab buildable; learner evidence pending | [Module overview](../04-backend/README.md) |
-| Module 05 — SQL | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](../05-sql/README.md) |
-| Module 06 — API Design | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](../06-api-design/README.md) |
-| Module 07 — ASP.NET Core | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](../07-aspnet-core/README.md) |
-| Module 08 — Testing và Code Review | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](../08-testing-code-review/README.md) |
-| Module 09 — Security và DevSecOps | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](../09-security-devsecops/README.md) |
-| Module 10 — Performance | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](../10-performance/README.md) |
-| Module 11 — Redis và Caching | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](../11-redis-caching/README.md) |
-| Module 12 — Docker | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](../12-docker/README.md) |
-| Module 13 — DevOps và IaC | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](../13-devops-iac/README.md) |
-| Module 14 — Cloud | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](../14-cloud/README.md) |
-| Module 15 — Kubernetes | Content v1 hoàn thành 3/3; learner evidence pending | [Module overview](../15-kubernetes/README.md) |
+| Module 05 — SQL | Structure/coverage v1; deep content review pending | [Module overview](../05-sql/README.md) |
+| Module 06 — API Design | Structure/coverage v1; deep content review pending | [Module overview](../06-api-design/README.md) |
+| Module 07 — ASP.NET Core | Structure/coverage v1; deep content review pending | [Module overview](../07-aspnet-core/README.md) |
+| Module 08 — Testing và Code Review | Structure/coverage v1; deep content review pending | [Module overview](../08-testing-code-review/README.md) |
+| Module 09 — Security và DevSecOps | Structure/coverage v1; deep content review pending | [Module overview](../09-security-devsecops/README.md) |
+| Module 10 — Performance | Structure/coverage v1; deep content review pending | [Module overview](../10-performance/README.md) |
+| Module 11 — Redis và Caching | Structure/coverage v1; deep content review pending | [Module overview](../11-redis-caching/README.md) |
+| Module 12 — Docker | Structure/coverage v1; deep content review pending | [Module overview](../12-docker/README.md) |
+| Module 13 — DevOps và IaC | Structure/coverage v1; deep content review pending | [Module overview](../13-devops-iac/README.md) |
+| Module 14 — Cloud | Structure/coverage v1; deep content review pending | [Module overview](../14-cloud/README.md) |
+| Module 15 — Kubernetes | Structure/coverage v1; deep content review pending | [Module overview](../15-kubernetes/README.md) |
 | Module 16–26 | Planned | [master-roadmap.md](master-roadmap.md) |
 
 ## Bắt đầu ở đâu?
@@ -38,12 +38,12 @@ Kho tri thức này dành cho kỹ sư phần mềm Việt Nam đi từ năng l�
 4. Bắt đầu [Computer Science Essentials](../01-computer-science/README.md), rồi nối evidence sang [Linux, Git và Networking](../02-linux-git-networking/README.md).
 5. Học [C#/.NET Runtime](../03-dotnet/README.md) và chạy RuntimeLab trước khi đi Backend/ASP.NET Core.
 6. Học [Backend request lifecycle](../04-backend/README.md) và chạy BackendLab trước SQL/EF Core.
-7. Đi theo Module 05–15 theo dependency map, mỗi module phải có decision/evidence trước khi chuyển tiếp.
-7. Tra [prerequisites.md](prerequisites.md) trước khi học một chủ đề nâng cao.
-8. Kiểm tra [technology-baseline.md](technology-baseline.md) trước khi viết code hoặc cấu hình phụ thuộc phiên bản.
-9. Tuân thủ [source-policy.md](source-policy.md) khi tạo hoặc cập nhật chương.
-10. Dùng [glossary.md](glossary.md) để giữ thuật ngữ Việt–Anh nhất quán.
-11. Ghi evidence bằng [progress-template.md](progress-template.md), không bằng checkbox “đã đọc”.
+7. Với Module 05–15, dùng nội dung hiện tại như structure/coverage baseline; chỉ nâng lên `Content v1` sau deep-review theo quality gate bên dưới.
+8. Tra [prerequisites.md](prerequisites.md) trước khi học một chủ đề nâng cao.
+9. Kiểm tra [technology-baseline.md](technology-baseline.md) trước khi viết code hoặc cấu hình phụ thuộc phiên bản.
+10. Tuân thủ [source-policy.md](source-policy.md) khi tạo hoặc cập nhật chương.
+11. Dùng [glossary.md](glossary.md) để giữ thuật ngữ Việt–Anh nhất quán.
+12. Ghi evidence bằng [progress-template.md](progress-template.md), không bằng checkbox “đã đọc”.
 
 ## Chuẩn năng lực
 
@@ -59,6 +59,20 @@ Mỗi chủ đề đi qua sáu lớp:
 | L5 — Architecture | Khi nào nên dùng, không nên dùng, và điều gì đổi ở 10x/100x scale? |
 
 Một chương chỉ được xem là hoàn thành khi có bằng chứng quan sát được: code chạy, test, execution plan, trace, benchmark có phương pháp, failure experiment, runbook, ADR hoặc architecture review.
+
+## Quality gate cho `Content v1`
+
+Một heading tồn tại **không có nghĩa section đã hoàn thành**. Chapter substantial chỉ đạt `Content v1` khi:
+
+- giải thích cơ chế topic-specific, không phải generic prose có thể copy sang công nghệ khác;
+- có mental model và concrete example đúng với công nghệ;
+- có production example và failure modes riêng của topic;
+- có performance, security, observability và operational reasoning khi liên quan;
+- có troubleshooting/evidence hoặc lab có thể verify;
+- có Architect Perspective: simpler alternative, trade-offs, when-not-to-use, 10x/100x impact;
+- claim phụ thuộc version/library đã được kiểm tra bằng official docs và Context7 khi phù hợp.
+
+Nếu mới có outline, đủ headings hoặc coverage tên chủ đề nhưng chưa có các cơ chế trên, trạng thái phải là `Structure/coverage v1` hoặc `Deep content pending`, không phải `Content v1 complete`.
 
 ## Nguyên tắc vận hành repository
 
@@ -88,28 +102,8 @@ Danh mục roadmap.sh hiện hành được dùng để phát hiện phạm vi v
 
 ## Verification metadata
 
-- Verified: 2026-08-11
+- Verified: 2026-08-12
 - Scope source: [roadmap.sh catalog](https://roadmap.sh/roadmaps/)
 - Technology versions: xem [technology-baseline.md](technology-baseline.md)
 - Context7 queries used: xem metadata trong [technology-baseline.md](technology-baseline.md)
-- Notes: repository hiện có content v1 cho Module 01, 02, 03 và 04; current level vẫn không tăng cho đến khi learner evidence đạt exit criteria.
-
-<!-- Mermaid.js Script CDN hỗ trợ tự động render sơ đồ Mermaid trên GitHub Pages (Jekyll) -->
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({ startOnLoad: true, theme: 'default' });
-
-  document.addEventListener("DOMContentLoaded", function () {
-    const elements = document.querySelectorAll("pre.language-mermaid, code.language-mermaid, .language-mermaid pre, pre code.language-mermaid");
-    elements.forEach((el) => {
-      const container = el.tagName.toLowerCase() === "code" ? el.parentElement : el;
-      const div = document.createElement("div");
-      div.className = "mermaid";
-      div.textContent = el.textContent;
-      if (container && container.parentNode) {
-        container.parentNode.replaceChild(div, container);
-      }
-    });
-    mermaid.run({ querySelector: '.mermaid' });
-  });
-</script>
+- Notes: Module 01–04 giữ làm quality reference; Module 05–15 cần deep-review trước khi nâng lại trạng thái `Content v1`.

@@ -55,17 +55,17 @@ Những phần repository cố ý nhấn mạnh hơn catalog:
 | 02-linux-git-networking | Production troubleshooting, Git, DNS/TCP/TLS/HTTP | P0 | L4 | Content v1 complete; learner evidence pending |
 | 03-dotnet | C#, runtime, async/concurrency, GC, hosting, diagnostics | P0 | L5 | Content v1 complete; learner evidence pending |
 | 04-backend | Request lifecycle, auth, validation, background/integration | P0 | L5 | Content v1 complete; learner evidence pending |
-| 05-sql | Relational model, SQL Server, transactions, plans, operations | P0 | L5 | Content v1 complete; learner evidence pending |
-| 06-api-design | Resource/contract design, evolution, REST/RPC/events | P0 | L5 | Content v1 complete; learner evidence pending |
-| 07-aspnet-core | Pipeline, hosting, security, resilience, deployment | P0 | L5 | Content v1 complete; learner evidence pending |
-| 08-testing-code-review | Test boundaries và multi-angle review | P0 | L4 | Content v1 complete; learner evidence pending |
-| 09-security-devsecops | Identity, app/API security, supply chain, gates | P0/P1 | L5 | Content v1 complete; learner evidence pending |
-| 10-performance | Measurement, profiling, load/capacity, bottlenecks | P0 | L5 | Content v1 complete; learner evidence pending |
-| 11-redis-caching | Cache/data structures, failure modes, coordination | P1 | L5 | Content v1 complete; learner evidence pending |
-| 12-docker | Images, runtime, networking, security, operations | P0 | L5 | Content v1 complete; learner evidence pending |
-| 13-devops-iac | CI/CD, artifacts, Terraform, drift, deployment strategy | P1 | L5 | Content v1 complete; learner evidence pending |
-| 14-cloud | Cloud-neutral primitives, regions/AZ, identity, DR | P1 | L4 | Content v1 complete; learner evidence pending |
-| 15-kubernetes | Reconciliation, workloads, networking, security, upgrades | P1 | L5 | Content v1 complete; learner evidence pending |
+| 05-sql | Relational model, SQL Server, transactions, plans, operations | P0 | L5 | Structure/coverage v1; deep content review pending |
+| 06-api-design | Resource/contract design, evolution, REST/RPC/events | P0 | L5 | Structure/coverage v1; deep content review pending |
+| 07-aspnet-core | Pipeline, hosting, security, resilience, deployment | P0 | L5 | Structure/coverage v1; deep content review pending |
+| 08-testing-code-review | Test boundaries và multi-angle review | P0 | L4 | Structure/coverage v1; deep content review pending |
+| 09-security-devsecops | Identity, app/API security, supply chain, gates | P0/P1 | L5 | Structure/coverage v1; deep content review pending |
+| 10-performance | Measurement, profiling, load/capacity, bottlenecks | P0 | L5 | Structure/coverage v1; deep content review pending |
+| 11-redis-caching | Cache/data structures, failure modes, coordination | P1 | L5 | Structure/coverage v1; deep content review pending |
+| 12-docker | Images, runtime, networking, security, operations | P0 | L5 | Structure/coverage v1; deep content review pending |
+| 13-devops-iac | CI/CD, artifacts, Terraform, drift, deployment strategy | P1 | L5 | Structure/coverage v1; deep content review pending |
+| 14-cloud | Cloud-neutral primitives, regions/AZ, identity, DR | P1 | L4 | Structure/coverage v1; deep content review pending |
+| 15-kubernetes | Reconciliation, workloads, networking, security, upgrades | P1 | L5 | Structure/coverage v1; deep content review pending |
 | 16-observability | Logs, metrics, traces, OTel, SLI/SLO, incidents | P0/P1 | L5 | Planned |
 | 17-distributed-systems | Partial failure, messaging, consistency, recovery | P0 | L5 | Planned |
 | 18-data-engineering | Ingestion, CDC, batch/stream, lineage, retention | P2 | L3 | Planned |
@@ -78,6 +78,24 @@ Những phần repository cố ý nhấn mạnh hơn catalog:
 | 25-software-architecture | Boundaries, styles, evolution, migration | P0 | L5 | Planned |
 | 26-architecture-documentation | C4, ADR, RFC, threat/failure/runbook | P1 | L5 | Planned |
 | projects | Bảy hệ thống tiến hóa, không phải toy collection | P0 | L2–L5 | Planned |
+
+## Content quality gate
+
+Một chapter substantial **không** được coi là hoàn thành chỉ vì có đủ headings.
+
+`Content v1` yêu cầu:
+
+- mental model và terminology riêng của topic;
+- cơ chế thực tế đủ để giải thích observed behavior;
+- minimal example và production example khi phù hợp;
+- failure modes, troubleshooting và verification/evidence riêng của công nghệ;
+- performance, security, observability, operations và cost khi liên quan;
+- Architect Perspective: simpler alternative, trade-offs, when-not-to-use, 10x/100x impact;
+- official sources cho technical claims và Context7 cho library/framework/version-sensitive details khi phù hợp.
+
+Generic prose có thể copy gần như nguyên văn sang một technology khác được xem là `Structure/coverage`, không phải deep content.
+
+Module 01–04 hiện được dùng làm quality reference. Module 05–15 cần deep-review theo gate này trước khi nâng lại trạng thái `Content v1 complete`.
 
 ## Scope theo track
 
@@ -176,12 +194,13 @@ Không lặp tutorial “gọi model đầu tiên”. Bắt đầu bằng assess
 - Có failure experiment, verification và exit criteria đo được.
 - Có official sources, Vietnamese resource khi đủ chất lượng và metadata.
 - Có cross-link, skills-matrix update và multi-role review.
+- Mỗi section phải có nội dung topic-specific; heading tồn tại một mình không được tính là completion.
 
 ## Verification metadata
 
-- Verified: 2026-08-11
+- Verified: 2026-08-12
 - Technology version: [technology-baseline.md](technology-baseline.md)
 - Official sources: từng module quản lý trong references.md
 - Roadmap sources: [catalog](https://roadmap.sh/roadmaps/), [Backend](https://roadmap.sh/backend), [ASP.NET Core](https://roadmap.sh/aspnet-core), [System Design](https://roadmap.sh/system-design), [AI Engineer](https://roadmap.sh/ai-engineer), [AI Agents](https://roadmap.sh/ai-agents), [Software Architect](https://roadmap.sh/software-architect)
 - Context7 queries used: xem [technology-baseline.md](technology-baseline.md)
-- Notes: thứ tự đã được tổ chức lại theo prerequisite, không sao chép thứ tự roadmap.sh.
+- Notes: thứ tự đã được tổ chức lại theo prerequisite, không sao chép thứ tự roadmap.sh; status Module 05–15 đã được hạ về structure/coverage để phản ánh đúng quality gate hiện tại.
