@@ -1,199 +1,697 @@
 # Relational Model, Schema và SQL
 
-> [← Module 05 overview](README.md) · [SQL references](references.md)
+> [← SQL overview](README.md) · [SQL references](references.md)
 
-## Mục tiêu / Learning Objectives
+## Hiểu trong 5 phút
 
-- giải thích relational model, schema và sql bằng mental model và boundary;
-- implement một minimal path có bound, invariant và observable output;
-- phân tích failure, security, performance, reliability và operational ownership;
-- đối chiếu behavior với nguồn chính thức thay vì dựa vào folklore;
-- viết decision note và biết trigger để chuyển sang alternative.
+Relational database không chỉ là nơi EF Core lưu object.
 
-## Tại sao cần học? / Why It Matters
+Schema là nơi bạn mô hình hóa:
 
-Mô hình quan hệ, keys, constraints, joins, NULL và query shape. Đây là boundary nơi một quyết định nhỏ có thể đổi correctness, latency, security và operational ownership.
+```text
+Entity identity
+Relationships
+Invariants
+Uniqueness
+Nullability
+Data types
+```
 
-## Tổng quan / Overview
+Một schema tốt giúp database từ chối state sai **kể cả khi application có bug hoặc nhiều requests chạy đồng thời**.
 
-~~~mermaid
+```mermaid
 flowchart LR
-    A["Input / workload"] --> B["Relational Model, Schema và SQL"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+    A[Business invariant] --> B[Schema]
+    B --> C[PK / FK / UNIQUE / CHECK]
+    C --> D[Queries]
+    D --> E[Indexes / Plans]
+    E --> F[Application behavior]
+```
 
-## Mental Model
+---
 
-| Boundary | Câu hỏi | Evidence |
-| --- | --- | --- |
-| Input | Dữ liệu/traffic đến từ đâu và bound nào? | Contract, validation, limit |
-| Core | Invariant/state transition nào phải đúng? | Test, query/plan, policy |
-| Resource | CPU, memory, network, storage, quota nào tiêu thụ? | Metrics, profile, capacity |
-| Recovery | Khi dependency/change fail thì ai xử lý? | Retry, rollback, runbook |
+# 1. Từ business rule tới schema
 
-Mô hình quan hệ, keys, constraints, joins, NULL và query shape. Học stable concept trước version/tool syntax; mọi claim production phải có measurement hoặc source.
+Business rules:
 
-## Thuật ngữ / Terminology
+```text
+Customer belongs to one Tenant.
+Order belongs to one Customer.
+External order id unique inside a Tenant.
+Order amount cannot be negative.
+```
 
-| Thuật ngữ | Ý nghĩa |
-| --- | --- |
-| Invariant | Điều kiện luôn phải đúng |
-| Boundary | Nơi ownership/semantics đổi |
-| Estimate | Dự đoán cost trước runtime |
-| Backpressure | Buộc producer theo capacity |
-| Evidence | Output dùng để quyết định |
-| Rollback | Đường quay về trạng thái an toàn |
+Schema:
 
-## Prerequisites
+```sql
+CREATE TABLE dbo.Customers
+(
+    Id          bigint        NOT NULL,
+    TenantId    int           NOT NULL,
+    Name        nvarchar(200) NOT NULL,
 
-- [Module 04 prerequisite](../04-backend/README.md).
-- [Roadmap dependency graph](../00-roadmap/prerequisites.md).
-- Có thể ghi failure hypothesis và output reproducible.
+    CONSTRAINT PK_Customers
+        PRIMARY KEY (Id),
 
-## How It Works
+    CONSTRAINT UX_Customers_Tenant_Id
+        UNIQUE (TenantId, Id)
+);
 
-Bắt đầu từ requirement, chọn primitive, đặt safety bound, quan sát behavior và xác định owner. Mô hình quan hệ, keys, constraints, joins, NULL và query shape. Không coi framework/platform abstraction là proof của correctness.
+CREATE TABLE dbo.Orders
+(
+    Id              bigint          NOT NULL,
+    TenantId        int             NOT NULL,
+    CustomerId      bigint          NOT NULL,
+    ExternalOrderId varchar(100)     NOT NULL,
+    Status          varchar(30)      NOT NULL,
+    TotalAmount     decimal(18, 2)  NOT NULL,
+    CreatedAt       datetime2       NOT NULL,
 
-## Minimal Example
+    CONSTRAINT PK_Orders
+        PRIMARY KEY (Id),
 
-~~~sql
-SELECT Id, Status FROM dbo.Items WHERE TenantId = @tenant ORDER BY Id;
-~~~
+    CONSTRAINT FK_Orders_Customers
+        FOREIGN KEY (TenantId, CustomerId)
+        REFERENCES dbo.Customers(TenantId, Id),
 
-Minimal example chỉ chứng minh shape; production cần validation, cancellation/timeout, migration, security và test tùy boundary.
+    CONSTRAINT UX_Orders_Tenant_ExternalOrderId
+        UNIQUE (TenantId, ExternalOrderId),
 
-## Production Example
+    CONSTRAINT CK_Orders_TotalAmount_NonNegative
+        CHECK (TotalAmount >= 0)
+);
+```
 
-Mô hình quan hệ, keys, constraints, joins, NULL và query shape. Production path bổ sung contract test, structured telemetry, failure classification, rollout/rollback và data/privacy policy.
+Composite FK `(TenantId, CustomerId)` helps enforce tenant/customer relationship instead of trusting application filter only.
 
-~~~text
-decision = requirement + workload + failure + security + cost
-evidence = implementation + test + measurement + runbook
-~~~
+---
 
-## .NET Integration
+# 2. Primary Key không chỉ để EF tracking
 
-- DI/configuration/host composition giữ lifetime và ownership rõ.
-- Cancellation, timeout và disposal phải đi xuyên boundary; không fire-and-forget vô chủ.
-- HTTP/API layer map lỗi thành contract ổn định, không leak exception nội bộ.
-- Persistence/cache/queue adapter không che transaction, consistency hoặc retry semantics.
-- Metrics/traces/logs dùng low-cardinality labels và retention/privacy policy.
+Primary Key defines row identity.
 
-## Internals
+```sql
+CONSTRAINT PK_Orders PRIMARY KEY (Id)
+```
 
-Đọc access path/state machine/controller/plan theo đúng module để giải thích observed behavior. Provider, runtime, platform và version có thể thay đổi implementation detail; giữ normative claim ở official docs.
+Questions:
 
-## Common Mistakes
+```text
+Identity global hay tenant-scoped?
+Natural key stable không?
+Surrogate key cần không?
+Key size ảnh hưởng indexes/FKs thế nào?
+```
 
-- copy syntax trước khi xác định invariant.
-- bỏ qua input/size/concurrency bound.
-- trả success khi side effect chưa commit.
-- dùng một metric cho mọi workload.
-- để implementation detail thành public contract.
+Không có rule “mọi PK phải GUID” hoặc “mọi PK phải bigint”. Chọn theo identity, distribution, write pattern và operational constraints.
 
-## Performance Considerations
+---
 
-Đo workload representative với warm-up, concurrency, payload mix và tail latency. Bound state/queue/cache trước khi micro-optimize; so sánh before/after cùng environment và tính cả cost của measurement.
+# 3. Surrogate Key + Business Unique Key
 
-## Security Considerations
+Common design:
 
-Threat model asset, identity, trust boundary, input abuse, secret handling và artifact access. Least privilege, data minimization, encryption, audit và expiry phải có negative test.
+```text
+Id = internal surrogate key
+ExternalOrderId = business/external identity
+```
 
-## Reliability / Failure Modes
+Enforce uniqueness:
 
-| Failure | Signal | Response |
-| --- | --- | --- |
-| Invalid input/state | 4xx, constraint/test failure | Reject rõ, không partial side effect |
-| Dependency slow/unavailable | Timeout, queue/latency tăng | Deadline, bounded retry, fallback hoặc shed |
-| Capacity exhausted | CPU/memory/quota/429 | Backpressure, scale, degrade hoặc stop |
-| Change incompatible | Error/contract drift | Canary, migration, rollback/forward fix |
-| Operator mistake | Audit/event anomaly | Least privilege, approval, runbook |
+```sql
+CREATE UNIQUE INDEX UX_Orders_Tenant_ExternalOrderId
+ON dbo.Orders(TenantId, ExternalOrderId);
+```
 
-## Observability
+Application lookup:
 
-Ghi success/error rate, latency percentile, resource usage, state transitions và version/deployment. Trace nối request → core operation → dependency; log structured theo operation ID. Alert theo SLO/error budget.
+```sql
+SELECT Id, Status, TotalAmount
+FROM dbo.Orders
+WHERE TenantId = @tenantId
+  AND ExternalOrderId = @externalOrderId;
+```
 
-## Operational Considerations
+Unique constraint/index is concurrency-safe invariant; `SELECT then INSERT` check alone is not.
 
-- Pin tool/provider/image/schema version phù hợp.
-- Readiness không báo healthy trước invariant cần thiết.
-- Runbook có preflight, read-only command, rollback và artifact retention.
-- Rehearse backup/restore, key rotation, failover, drift hoặc upgrade tùy module.
-- Manual exception có owner, expiry và post-incident review.
+---
 
-## Architect Perspective
+# 4. Foreign Key protects referential integrity
 
-Relational Model, Schema và SQL trở thành architectural boundary khi ảnh hưởng ownership, consistency, deployment, capacity hoặc team topology. Chọn phương án đơn giản nhất thỏa NFR; document điều gì đổi ở 10x/100x và trigger migrate.
+Without FK:
 
-## Trade-offs
+```text
+Order.CustomerId = 999999
+but customer does not exist
+```
 
-| Lựa chọn | Lợi ích | Chi phí/rủi ro |
-| --- | --- | --- |
-| Simple/local | Dễ hiểu, ít toil | Giới hạn scale/durability |
-| Specialized/distributed | Capacity/feature tốt | Coupling, failure và vận hành |
-| Managed/platform | Giảm control-plane toil | Quota, lock-in và cost |
+FK rejects invalid relationship.
 
-## When NOT to Use It
+```sql
+ALTER TABLE dbo.OrderItems
+ADD CONSTRAINT FK_OrderItems_Orders
+FOREIGN KEY (OrderId)
+REFERENCES dbo.Orders(Id);
+```
 
-- Không dùng pattern này nếu requirement chưa chứng minh need hoặc không có owner vận hành.
-- Không dùng abstraction để che failure/latency/consistency semantics.
-- Không chọn managed/distributed option chỉ vì production-ready mà thiếu cost/capacity evidence.
-- Không mở rộng privilege, retention hoặc data exposure để làm lab nhanh hơn.
-- Không tối ưu một metric nếu làm hỏng SLO, security hoặc rollback.
+Delete behavior needs explicit business decision:
 
-## Alternatives
+```text
+RESTRICT / NO ACTION
+CASCADE
+soft delete
+archive
+```
 
-- Giữ local/simple implementation khi scale và durability chưa yêu cầu.
-- Dùng managed service khi team không muốn sở hữu control plane và cost hợp lý.
-- Dùng queue/batch/stream hoặc synchronous path tùy latency/durability.
-- Dùng immutable artifact/configuration và migration thay manual mutation.
-- Dùng standard protocol/contract trước custom framework.
+Don't enable cascade delete on large/deep graph without understanding lock/log/operational impact.
 
-## Review Questions
+---
 
-1. Invariant nào phải đúng dù request/retry/deploy lặp lại?
-2. Boundary nào sở hữu state, timeout, cleanup hoặc rollback?
-3. Evidence nào chứng minh bottleneck/security/reliability claim?
-4. Điều gì sẽ hỏng khi dependency chậm hoặc state stale?
-5. Cost và operational toil tăng theo scale nào?
-6. Khi nào phương án đơn giản hơn là lựa chọn tốt hơn?
+# 5. NULL is a domain decision
 
-## Hands-on Lab
+Bad habit:
 
-Tạo một experiment bounded cho relational model, schema và sql: ghi workload, expected output, failure scenario và safety bound; chạy baseline rồi so sánh; lưu decision note. Không đưa credential, production data hoặc diagnostic artifact nhạy cảm vào repository.
+```text
+Make every column nullable because migration is easier.
+```
 
-## Exit Criteria
+Ask:
 
-- Giải thích được mô hình quan hệ, keys, constraints, joins, null và query shape..
-- Implement minimal example có validation/bound phù hợp.
-- Mô tả failure, security, performance và operational response.
-- Có evidence reproducible và decision note.
-- Biết dependency tiếp theo và trigger cần nghiên cứu thêm.
+```text
+Can this value genuinely be unknown/not-applicable?
+Or is NULL hiding incomplete state?
+```
 
-## Related Topics
+Example:
 
-- [Module 04 prerequisite](../04-backend/README.md).
-- [Relational Model, Schema và SQL](relational-model-schema-and-sql.md).
-- [Transactions, Isolation và Concurrency](transactions-isolation-and-concurrency.md).
-- [Indexes, Execution Plans và SQL Operations](indexes-execution-plans-and-operations.md).
-- Module 06 — API Design khi content được mở.
+```sql
+PaidAt datetime2 NULL
+```
+
+may be valid because unpaid order has no payment time.
+
+But:
+
+```sql
+TenantId int NULL
+```
+
+may be invalid if every Order must belong to tenant.
+
+---
+
+# 6. `CHECK` constraint
+
+```sql
+ALTER TABLE dbo.OrderItems
+ADD CONSTRAINT CK_OrderItems_Quantity_Positive
+CHECK (Quantity > 0);
+```
+
+Application still validates for friendly response:
+
+```csharp
+if (request.Quantity <= 0)
+{
+    return Results.ValidationProblem(new Dictionary<string, string[]>
+    {
+        ["quantity"] = ["Quantity must be greater than zero."]
+    });
+}
+```
+
+Two layers solve different concerns:
+
+```text
+Application validation → UX / early rejection
+DB constraint           → invariant under all writers/concurrency
+```
+
+---
+
+# 7. Data type choices matter
+
+Money:
+
+```sql
+TotalAmount decimal(18, 2)
+```
+
+Avoid floating-point for exact monetary values.
+
+Text:
+
+```sql
+nvarchar(200)
+```
+
+Bound length if domain has meaningful limit; unlimited columns affect storage/index/options.
+
+Time:
+
+```sql
+CreatedAt datetime2
+```
+
+For distributed systems, be explicit about UTC/offset semantics at application boundary.
+
+EF model:
+
+```csharp
+public sealed class Order
+{
+    public long Id { get; set; }
+    public int TenantId { get; set; }
+    public decimal TotalAmount { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
+```
+
+Do not assume .NET type mapping automatically reflects desired precision/length.
+
+---
+
+# 8. EF Core schema configuration
+
+```csharp
+modelBuilder.Entity<Order>(entity =>
+{
+    entity.ToTable("Orders", "dbo");
+
+    entity.HasKey(x => x.Id);
+
+    entity.Property(x => x.ExternalOrderId)
+        .HasMaxLength(100)
+        .IsRequired();
+
+    entity.Property(x => x.Status)
+        .HasMaxLength(30)
+        .IsRequired();
+
+    entity.Property(x => x.TotalAmount)
+        .HasPrecision(18, 2);
+
+    entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.ExternalOrderId
+        })
+        .IsUnique();
+});
+```
+
+Migration output must still be reviewed as SQL/schema change, not accepted blindly because EF generated it.
+
+---
+
+# 9. Basic query shape
+
+```sql
+SELECT
+    o.Id,
+    o.Status,
+    o.TotalAmount,
+    c.Name AS CustomerName
+FROM dbo.Orders AS o
+JOIN dbo.Customers AS c
+  ON c.TenantId = o.TenantId
+ AND c.Id = o.CustomerId
+WHERE o.TenantId = @tenantId
+  AND o.CreatedAt >= @from
+ORDER BY o.CreatedAt DESC;
+```
+
+Review:
+
+```text
+Filter selective không?
+Join relationship/index hỗ trợ không?
+Rows bounded không?
+Sort có index support không?
+Projection có thừa columns không?
+```
+
+---
+
+# 10. INNER JOIN vs LEFT JOIN
+
+INNER JOIN:
+
+```sql
+SELECT o.Id, p.PaymentId
+FROM dbo.Orders o
+JOIN dbo.Payments p
+  ON p.OrderId = o.Id;
+```
+
+Only Orders having matching Payment.
+
+LEFT JOIN:
+
+```sql
+SELECT o.Id, p.PaymentId
+FROM dbo.Orders o
+LEFT JOIN dbo.Payments p
+  ON p.OrderId = o.Id;
+```
+
+Returns Orders even without Payment; payment columns become NULL.
+
+Choice is business semantics, not style preference.
+
+---
+
+# 11. Aggregation
+
+```sql
+SELECT
+    CustomerId,
+    COUNT(*) AS OrderCount,
+    SUM(TotalAmount) AS Revenue
+FROM dbo.Orders
+WHERE TenantId = @tenantId
+GROUP BY CustomerId
+HAVING SUM(TotalAmount) > 10000
+ORDER BY Revenue DESC;
+```
+
+Distinguish:
+
+```text
+WHERE  → filters rows before grouping
+HAVING → filters groups after aggregation
+```
+
+---
+
+# 12. CTE
+
+```sql
+WITH PaidOrders AS
+(
+    SELECT
+        Id,
+        CustomerId,
+        TotalAmount,
+        CreatedAt
+    FROM dbo.Orders
+    WHERE TenantId = @tenantId
+      AND Status = 'Paid'
+)
+SELECT
+    CustomerId,
+    SUM(TotalAmount) AS Revenue
+FROM PaidOrders
+GROUP BY CustomerId;
+```
+
+CTE improves query expression/readability in many cases. It is not automatically materialized cache/table.
+
+Execution behavior still comes from optimizer/plan.
+
+---
+
+# 13. Window function
+
+```sql
+SELECT
+    CustomerId,
+    CreatedAt,
+    TotalAmount,
+    ROW_NUMBER() OVER
+    (
+        PARTITION BY CustomerId
+        ORDER BY CreatedAt DESC
+    ) AS OrderNumber,
+    SUM(TotalAmount) OVER
+    (
+        PARTITION BY CustomerId
+        ORDER BY CreatedAt
+    ) AS RunningRevenue
+FROM dbo.Orders
+WHERE TenantId = @tenantId;
+```
+
+Useful for ranking/running aggregates without collapsing rows like `GROUP BY`.
+
+Still inspect Sort/Window operators and indexes on large workloads.
+
+---
+
+# 14. Normalization first
+
+Order data:
+
+Bad denormalized repetition:
+
+```text
+Orders
+- CustomerName
+- CustomerEmail
+- CustomerAddress
+- Product1Name
+- Product2Name
+...
+```
+
+Better normalized model:
+
+```text
+Customers
+Orders
+OrderItems
+Products
+```
+
+Benefits:
+
+```text
+less update anomaly
+clear ownership/invariants
+reusable relationships
+```
+
+But read path may require joins/projections. Denormalization is later trade-off, not default beginner shortcut.
+
+---
+
+# 15. Denormalization when justified
+
+Example immutable snapshot field:
+
+```text
+Order.ShippingAddressJson
+```
+
+May be valid because business needs address-at-order-time, not current Customer address.
+
+This is **business snapshot semantics**, not just performance hack.
+
+Other denormalization/read model cases:
+
+```text
+reporting tables
+materialized projections
+search index
+cached aggregates
+```
+
+Need source-of-truth + rebuild/update semantics.
+
+---
+
+# 16. Multi-tenant query safety
+
+Danger:
+
+```sql
+SELECT *
+FROM dbo.Orders
+WHERE Id = @id;
+```
+
+If ID can be guessed across tenants, app-level authorization must prevent cross-tenant access.
+
+Safer query boundary when tenant identity part of ownership:
+
+```sql
+SELECT Id, Status, TotalAmount
+FROM dbo.Orders
+WHERE TenantId = @tenantId
+  AND Id = @id;
+```
+
+Also enforce tenant relationship constraints where possible.
+
+Security is not solved by adding `TenantId` column alone. Every access path, background job, export/admin tool must respect policy.
+
+---
+
+# 17. Pagination needs deterministic ordering
+
+Bad:
+
+```sql
+SELECT Id, CreatedAt
+FROM dbo.Orders
+ORDER BY CreatedAt DESC
+OFFSET @skip ROWS
+FETCH NEXT @take ROWS ONLY;
+```
+
+If many rows share same `CreatedAt`, ordering may be non-deterministic across pages.
+
+Add tie-breaker:
+
+```sql
+ORDER BY CreatedAt DESC, Id DESC
+```
+
+Then index/query design can align.
+
+---
+
+# 18. Avoid `SELECT *`
+
+Instead:
+
+```sql
+SELECT
+    Id,
+    Status,
+    TotalAmount,
+    CreatedAt
+FROM dbo.Orders
+WHERE TenantId = @tenantId;
+```
+
+Reasons:
+
+```text
+network payload
+materialization cost
+contract coupling to schema
+covering-index possibilities
+future large columns
+```
+
+---
+
+# 19. Migration review
+
+Generated migration:
+
+```csharp
+migrationBuilder.AddColumn<string>(
+    name: "ExternalOrderId",
+    table: "Orders",
+    type: "varchar(100)",
+    nullable: false,
+    defaultValue: "");
+```
+
+Questions:
+
+```text
+Existing millions of rows get what value?
+Unique constraint can be added immediately?
+Table lock/log impact?
+Can old app version work with new schema during rolling deploy?
+Need expand/backfill/contract rollout?
+```
+
+Migration code compiling is not production migration proof.
+
+---
+
+# 20. Failure experiment — constraint under concurrency
+
+Without unique constraint:
+
+```text
+Request A checks ExternalOrderId absent
+Request B checks ExternalOrderId absent
+A inserts
+B inserts
+```
+
+Both may succeed.
+
+Add unique index:
+
+```sql
+CREATE UNIQUE INDEX UX_Orders_Tenant_ExternalOrderId
+ON dbo.Orders(TenantId, ExternalOrderId);
+```
+
+Run concurrent insert test and verify database enforces invariant.
+
+---
+
+# 21. Failure experiment — orphan data
+
+In a disposable DB without FK, insert `OrderItem.OrderId` nonexistent and observe success.
+
+Add FK, repeat, observe rejection.
+
+Goal: understand why application code alone is insufficient if multiple writers/concurrency exist.
+
+---
+
+# 22. Failure experiment — nullable misuse
+
+Create rows with NULL in field that business actually requires. Follow downstream report/API logic and observe extra invalid-state branches.
+
+Then migrate to explicit invariant after data cleanup.
+
+---
+
+# 23. Review checklist
+
+```text
+[ ] Table maps clear business entity/snapshot/read model?
+[ ] PK identity semantics clear?
+[ ] Business uniqueness enforced?
+[ ] FK relationships enforce tenant/ownership where possible?
+[ ] NULL has domain meaning?
+[ ] decimal/string/time precision intentional?
+[ ] CHECK constraints protect simple invariants?
+[ ] Query projection bounded?
+[ ] Join type matches semantics?
+[ ] Pagination deterministic?
+[ ] Multi-tenant filter/auth path reviewed?
+[ ] Migration safe for existing data + rolling versions?
+```
+
+---
+
+# 24. Exit criteria
+
+Bạn hoàn thành khi có thể:
+
+- translate business rules into PK/FK/UNIQUE/CHECK/nullability;
+- design surrogate + business key intentionally;
+- write JOIN/GROUP BY/CTE/window queries;
+- explain normalization and valid denormalization;
+- create deterministic pagination;
+- configure EF Core precision/length/indexes;
+- review migration impact on existing data;
+- prove uniqueness/FK constraints under failure/concurrency.
+
+Next:
+
+- [Transactions, Isolation và Concurrency](transactions-isolation-and-concurrency.md)
+- [Indexes, Execution Plans và SQL Operations](indexes-execution-plans-and-operations.md)
 
 ## Official English Sources
 
-- [SQL Server constraints](https://learn.microsoft.com/en-us/sql/relational-databases/tables/primary-and-foreign-key-constraints?view=sql-server-ver17).
-- [SELECT Transact-SQL](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-transact-sql?view=sql-server-ver17).
-- [Locking and row versioning](https://learn.microsoft.com/en-us/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide?view=sql-server-ver17).
-- [Query Store](https://learn.microsoft.com/en-us/sql/relational-databases/performance/monitoring-performance-by-using-the-query-store?view=sql-server-ver17).
-- [SQL Server indexes](https://learn.microsoft.com/en-us/sql/relational-databases/indexes/indexes?view=sql-server-ver17).
+- [Primary and foreign key constraints](https://learn.microsoft.com/en-us/sql/relational-databases/tables/primary-and-foreign-key-constraints?view=sql-server-ver17)
+- [Unique constraints and check constraints](https://learn.microsoft.com/en-us/sql/relational-databases/tables/unique-constraints-and-check-constraints?view=sql-server-ver17)
+- [SELECT](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-transact-sql?view=sql-server-ver17)
+- [EF Core modeling](https://learn.microsoft.com/en-us/ef/core/modeling/)
 
-## Vietnamese Resources
+## Verification metadata
 
-- Dùng [glossary](../00-roadmap/glossary.md) để giữ canonical English term.
-- Viết reflection bằng tiếng Việt nhưng giữ tên API/protocol/metric chính xác.
-- Tuân thủ [source policy](../00-roadmap/source-policy.md) cho claim version-sensitive.
-
-## Verification Metadata
-
-- Verified: 2026-08-11.
-- Technology version: SQL content v1; refresh version-sensitive behavior before production.
-- Context7 queries used: none; callable tool unavailable in this run.
-- Notes: content v1 không thay thế learner evidence; cần lab/review/production artifact để nâng level.
+- Verified: 2026-08-12.
+- Target: SQL Server + EF Core 10.
+- Status: code-first deep rewrite.
