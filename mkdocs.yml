@@ -12,7 +12,9 @@ validation:
     omitted_files: info
     not_found: warn
   links:
-    not_found: warn
+    # Existing learning docs intentionally link to executable evidence in repo-level labs/.
+    # MkDocs only resolves files under docs/, so keep these as informational during migration.
+    not_found: info
     absolute_links: relative_to_docs
     unrecognized_links: info
 
