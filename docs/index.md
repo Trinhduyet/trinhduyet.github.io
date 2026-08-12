@@ -1,40 +1,43 @@
 # AI-Enabled Software Architect Roadmap
 
-> **Đọc tiếng Việt · giữ thuật ngữ English · học bằng code + failure experiment + architecture reasoning.**
+> **Tiếng Việt để hiểu nhanh · thuật ngữ English giữ nguyên · học bằng code + failure experiment + architecture reasoning.**
 
-Nếu tài liệu trước đây làm bạn thấy quá dài, hãy bắt đầu bằng [Cách đọc tài liệu này](00-roadmap/how-to-read.md). Không cần đọc từ đầu đến cuối.
+Nếu tài liệu dài, bắt đầu bằng [Cách đọc tài liệu này](00-roadmap/how-to-read.md). Bạn không cần đọc từ đầu tới cuối.
 
 ## Chọn điểm bắt đầu
 
-### Tôi muốn củng cố .NET Backend
-
-Đi theo:
+### .NET Backend
 
 ```text
 C#/.NET → Backend → SQL → API Design → ASP.NET Core
 ```
 
-Bắt đầu tại [C#/.NET Runtime](03-dotnet/README.md).
+Bắt đầu: [C#/.NET Runtime](03-dotnet/README.md).
 
-### Tôi đã làm Backend và muốn học Production/Architect
+Các phần code-heavy đã rewrite:
 
-Đi theo:
+- [SQL / SQL Server](05-sql/README.md)
+- [ASP.NET Core](07-aspnet-core/README.md)
+
+### Production / Platform / Distributed
 
 ```text
-Testing/Security/Performance
-→ Docker/DevOps/Kubernetes
+Docker
+→ Kubernetes
 → Distributed Systems
-→ System Design
-→ Architecture
 ```
 
-Xem [Master Roadmap](00-roadmap/master-roadmap.md).
+Bắt đầu:
 
-### Tôi muốn học AI Engineering ngay
+- [Docker](12-docker/README.md)
+- [Kubernetes](15-kubernetes/README.md)
+- [Distributed Systems](17-distributed-systems/README.md)
 
-Bắt đầu tại **[AI Engineering cho .NET](19-ai-engineering/README.md)**.
+### AI Engineering
 
-Bạn sẽ có code cho:
+Bắt đầu: **[AI Engineering cho .NET](19-ai-engineering/README.md)**.
+
+Có code cho:
 
 - `IChatClient` và provider abstraction;
 - structured output;
@@ -44,17 +47,17 @@ Bạn sẽ có code cho:
 - evaluation/regression gate;
 - AI observability.
 
-### Tôi dùng Codex / Copilot / Claude Code hoặc coding agents nhiều
+### AI Coding Agents
 
-Bắt đầu tại **[AI Coding Agents](21-ai-coding-agents/README.md)**.
+Bắt đầu: **[AI Coding Agents](21-ai-coding-agents/README.md)**.
 
-Bạn sẽ học theo workflow thật:
+Workflow:
 
 ```text
 Task
 → inspect repo
 → plan
-→ edit
+→ scoped edit
 → build/test
 → inspect diff
 → security checks
@@ -62,7 +65,7 @@ Task
 → human review
 ```
 
-và có ví dụ `AGENTS.md`, shell discovery, MCP/context boundary, CI YAML, regression test và agent evaluation.
+Có ví dụ `AGENTS.md`, shell discovery, MCP/context boundary, CI YAML, regression tests và coding-agent evaluation.
 
 ---
 
@@ -70,73 +73,115 @@ và có ví dụ `AGENTS.md`, shell discovery, MCP/context boundary, CI YAML, re
 
 ```mermaid
 flowchart TD
-    A[Foundations\nCS · Linux · Git · Networking] --> B[.NET Backend\nC# · ASP.NET Core · SQL · API]
+    A[Foundations\nCS · Linux · Git · Networking] --> B[.NET Backend\nC# · SQL · API · ASP.NET Core]
     B --> C[Production\nTesting · Security · Performance]
     C --> D[Platform\nDocker · DevOps · Cloud · Kubernetes]
-    D --> E[Distributed Systems\nMessaging · Resilience · Consistency]
+    D --> E[Distributed Systems\nFailure · Messaging · Consistency]
     B --> F[AI Engineering\nLLM · Structured Output · Tools · RAG · Evals]
     E --> F
-    F --> CA[AI Coding Agents\nContext · MCP · Tests · PR workflow]
+    F --> CA[AI Coding Agents\nContext · MCP · Tests · PR]
     F --> AG[Business AI Agents\nTools · Workflow · HITL · Security]
-    CA --> S[System Design]
+    E --> S[System Design]
+    CA --> S
     AG --> S
-    E --> S
     S --> H[Software / AI Architecture]
 ```
+
+---
 
 ## Cách học mỗi chapter
 
 ```text
 1. Hiểu trong 5 phút
-2. Chạy code
+2. Chạy code/config
 3. Vẽ mental model
 4. Cố tình làm hỏng
-5. Quan sát logs/tests/trace
+5. Quan sát test/log/trace/plan
 6. Đọc internals
 7. Trả lời trade-offs
 ```
 
-Xem chi tiết: [How to Read](00-roadmap/how-to-read.md).
+---
 
-## Những trang code-heavy mới
+## Code-heavy pages mới
 
-1. [AI Engineering cho .NET](19-ai-engineering/README.md)
-2. [Structured Output và Tool Calling](19-ai-engineering/structured-output-and-tool-calling.md)
-3. [RAG, Evaluation và Observability](19-ai-engineering/rag-evaluation-and-observability.md)
-4. [AI Coding Agents](21-ai-coding-agents/README.md)
-5. [Repository Context, MCP và Instructions](21-ai-coding-agents/repository-context-mcp-and-instructions.md)
-6. [Safe Agentic Coding Workflow](21-ai-coding-agents/safe-agentic-coding-workflow.md)
+### SQL
+
+1. [SQL Overview](05-sql/README.md)
+2. [Transactions / Isolation / Concurrency](05-sql/transactions-isolation-and-concurrency.md)
+3. [Indexes / Execution Plans](05-sql/indexes-execution-plans-and-operations.md)
+4. [EF Core → SQL → Execution Plan](05-sql/ef-core-query-shape-and-sql.md)
+
+### ASP.NET Core
+
+5. [ASP.NET Core Overview](07-aspnet-core/README.md)
+6. [Pipeline / Hosting / Configuration](07-aspnet-core/pipeline-hosting-and-configuration.md)
+7. [Resilience / Security / Middleware](07-aspnet-core/resilience-security-and-middleware.md)
+8. [Deployment / OTel / Operations](07-aspnet-core/deployment-observability-and-operations.md)
+
+### Docker / Kubernetes
+
+9. [Docker Overview](12-docker/README.md)
+10. [Docker Build / Images](12-docker/images-builds-and-reproducibility.md)
+11. [Docker Runtime / Network / Storage](12-docker/runtime-networking-storage-and-resources.md)
+12. [Kubernetes Overview](15-kubernetes/README.md)
+13. [Kubernetes Architecture / Reconciliation](15-kubernetes/cluster-architecture-and-reconciliation.md)
+14. [Kubernetes Workloads / Network / Storage](15-kubernetes/workloads-networking-and-storage.md)
+15. [Kubernetes Security / Operations](15-kubernetes/kubernetes-security-observability-and-operations.md)
+
+### Distributed Systems
+
+16. [Distributed Systems Overview](17-distributed-systems/README.md)
+17. [Partial Failure / Retry / Idempotency](17-distributed-systems/partial-failure-timeouts-retries-and-idempotency.md)
+18. [Messaging / Outbox / Inbox / Dedup](17-distributed-systems/messaging-outbox-inbox-and-dedup.md)
+19. [Consistency / Ordering / Saga / Backpressure](17-distributed-systems/consistency-ordering-saga-and-backpressure.md)
+
+### AI
+
+20. [AI Engineering cho .NET](19-ai-engineering/README.md)
+21. [Structured Output / Tool Calling](19-ai-engineering/structured-output-and-tool-calling.md)
+22. [RAG / Evaluation / Observability](19-ai-engineering/rag-evaluation-and-observability.md)
+23. [AI Coding Agents](21-ai-coding-agents/README.md)
+24. [Repository Context / MCP / Instructions](21-ai-coding-agents/repository-context-mcp-and-instructions.md)
+25. [Safe Agentic Coding Workflow](21-ai-coding-agents/safe-agentic-coding-workflow.md)
+
+---
 
 ## Quality model
 
 | Level | Bạn phải làm được |
 | --- | --- |
-| L0 | Nói được công nghệ giải quyết vấn đề gì |
-| L1 | Vẽ được mental model |
-| L2 | Viết/chạy được code cơ bản |
-| L3 | Debug failure, security, performance |
-| L4 | Giải thích behavior bằng internals |
-| L5 | Chọn hoặc loại giải pháp bằng requirements + trade-offs |
+| L0 | nói được công nghệ giải quyết vấn đề gì |
+| L1 | vẽ được mental model |
+| L2 | viết/chạy được code cơ bản |
+| L3 | debug failure, security, performance |
+| L4 | giải thích behavior bằng internals |
+| L5 | chọn/loại giải pháp bằng requirements + trade-offs |
 
-Một chapter P0/P1 không được gọi là `Content v1` nếu chỉ có prose. Tối thiểu phải có **minimal code/config + production example + failure experiment + verification** khi chủ đề cho phép.
+Một chapter P0/P1 implementation-heavy không được gọi là deep content nếu chỉ có prose. Tối thiểu cần **code/config + production example + failure experiment + verification** khi chủ đề cho phép.
 
 ## Trạng thái hiện tại
 
-- Module 01–04: quality reference hiện tại.
-- Module 05–15: structure/coverage đã có; đang cần deep rewrite và thêm code.
-- **Module 19 AI Engineering: code-first v1 đã bắt đầu.**
-- **Module 21 AI Coding Agents: code-first v1 đã bắt đầu.**
-- Module 16–18, 20, 22–26: tiếp tục triển khai theo dependency và nhu cầu thực tế.
+- Module 01–04: quality reference.
+- **Module 05 SQL: code-first deep rewrite v1.**
+- **Module 07 ASP.NET Core: code-first deep rewrite v1.**
+- **Module 12 Docker: code-first deep rewrite v1.**
+- **Module 15 Kubernetes: code-first deep rewrite v1.**
+- **Module 17 Distributed Systems: code-first v1.**
+- **Module 19 AI Engineering: code-first v1.**
+- **AI Coding Agents: code-first v1.**
+- Các module còn lại tiếp tục được rewrite/triển khai theo cùng quality gate.
 
 ## Đích đến
 
-**AI-enabled Software Architect** không cần thuộc mọi tool. Bạn cần có khả năng trả lời bằng evidence:
+**AI-enabled Software Architect** không cần thuộc mọi tool. Bạn cần trả lời bằng evidence:
 
 - requirement/NFR là gì;
 - boundary nằm ở đâu;
-- data/AI/tool nào được phép truy cập gì;
-- failure/retry/idempotency ra sao;
-- latency/cost/quality được đo thế nào;
-- khi nào cần agent, khi nào deterministic workflow đơn giản hơn;
-- coding agent được sandbox, test và review như thế nào;
-- kiến trúc sẽ thay đổi thế nào ở 10x/100x scale.
+- transaction/consistency/retry/idempotency ra sao;
+- queue/backpressure/order/failure recovery thế nào;
+- data/AI/tool được phép truy cập gì;
+- latency/cost/quality được đo ra sao;
+- khi nào dùng agent và khi nào deterministic workflow đơn giản hơn;
+- coding agent được sandbox/test/review thế nào;
+- kiến trúc đổi ra sao ở 10x/100x scale.
