@@ -1,12 +1,12 @@
 # Roadmap Overview
 
-> Nếu bạn thấy tài liệu dài và khó đọc, bắt đầu bằng **[Cách đọc tài liệu này](how-to-read.md)**.
+> Nếu tài liệu dài, bắt đầu bằng **[Cách đọc tài liệu này](how-to-read.md)**. Mục tiêu là chạy code và failure experiment, không đọc tuần tự hàng trăm trang.
 
-Kho tri thức này dành cho kỹ sư .NET/Backend muốn tiến tới **AI-enabled Software Architect** bằng code, test, failure experiment và architecture reasoning.
+Kho tri thức này đi từ .NET Backend tới **AI-enabled Software Architect**.
 
-## Bắt đầu theo mục tiêu
+## Chọn điểm bắt đầu
 
-### Backend/.NET
+### .NET Backend
 
 ```text
 C#/.NET → Backend → SQL → API Design → ASP.NET Core
@@ -14,17 +14,22 @@ C#/.NET → Backend → SQL → API Design → ASP.NET Core
 
 Điểm vào: [Module 03 — .NET](../03-dotnet/README.md).
 
-### Production/DevOps/Architect
+### Production / Distributed Systems
 
 ```text
-Testing/Security/Performance
-→ Docker/DevOps/Kubernetes
+ASP.NET Core
+→ Docker
+→ Kubernetes
 → Distributed Systems
-→ System Design
-→ Architecture
 ```
 
-Điểm vào: [Master Roadmap](master-roadmap.md).
+Các module code-first hiện có:
+
+- [SQL / SQL Server](../05-sql/README.md)
+- [ASP.NET Core](../07-aspnet-core/README.md)
+- [Docker](../12-docker/README.md)
+- [Kubernetes](../15-kubernetes/README.md)
+- [Distributed Systems](../17-distributed-systems/README.md)
 
 ### AI Engineering
 
@@ -52,24 +57,32 @@ Task
 → human review
 ```
 
-Điểm vào: **[Module 21A — AI Coding Agents](../21-ai-coding-agents/README.md)**.
+Điểm vào: **[AI Coding Agents](../21-ai-coding-agents/README.md)**.
 
 ---
 
-## Trạng thái
+## Trạng thái hiện tại
 
 | Phạm vi | Trạng thái |
 | --- | --- |
 | Module 00–04 | Content v1 / quality reference |
-| Module 05–15 | Structure/coverage v1; deep rewrite + code pending |
-| Module 16–18 | Planned |
-| **Module 19 AI Engineering** | **Code-first v1 available** |
-| Module 20 RAG | Foundation đã có trong Module 19; deep module planned |
+| **Module 05 SQL** | **Code-first deep rewrite v1: 4 guides** |
+| Module 06 API Design | Structure v1; deep rewrite pending |
+| **Module 07 ASP.NET Core** | **Code-first deep rewrite v1: 3 guides** |
+| Module 08–11 | Structure v1; deep rewrite pending |
+| **Module 12 Docker** | **Code-first deep rewrite v1: 3 guides** |
+| Module 13–14 | Structure v1; deep rewrite pending |
+| **Module 15 Kubernetes** | **Code-first deep rewrite v1: 3 guides** |
+| Module 16 Observability | foundation đã tích hợp vào ASP.NET/K8s; dedicated module planned |
+| **Module 17 Distributed Systems** | **Code-first v1: 4 guides + references** |
+| Module 18 Data Engineering | Planned |
+| **Module 19 AI Engineering** | **Code-first v1** |
+| Module 20 RAG | foundation trong Module 19; dedicated deep module planned |
 | Module 21 Business AI Agents/MCP | Planned — advanced-first |
-| **Module 21A AI Coding Agents** | **Code-first v1 available** |
+| **AI Coding Agents** | **Code-first v1** |
 | Module 22–26 | Planned |
 
-Chi tiết đầy đủ: [Master Roadmap](master-roadmap.md).
+Chi tiết: [Master Roadmap](master-roadmap.md).
 
 ---
 
@@ -84,35 +97,46 @@ Vẽ mental model
   ↓
 Cố tình làm hỏng
   ↓
-Quan sát test/log/trace
+Quan sát test/log/trace/plan
   ↓
 Đọc internals
   ↓
 Trả lời trade-offs
 ```
 
-Một chapter implementation-heavy không được gọi là deep content nếu thiếu code/config và verification.
-
 ---
 
-## Quality Gate
+## Code-heavy pages nên đọc
 
-### Tối thiểu cho P0/P1
+### SQL
 
-- mental model riêng của topic;
-- minimal code/config;
-- production-oriented example;
-- failure experiment;
-- verification/test;
-- common mistakes;
-- security/performance/observability khi liên quan;
-- Architect Perspective.
+1. [SQL Overview](../05-sql/README.md)
+2. [Transactions, Isolation và Concurrency](../05-sql/transactions-isolation-and-concurrency.md)
+3. [Indexes & Execution Plans](../05-sql/indexes-execution-plans-and-operations.md)
+4. [EF Core → SQL → Execution Plan](../05-sql/ef-core-query-shape-and-sql.md)
 
-Generic prose có thể copy sang technology khác chỉ là **outline/structure**, không phải `Content v1`.
+### ASP.NET Core
 
----
+1. [ASP.NET Core Overview](../07-aspnet-core/README.md)
+2. [Pipeline / Hosting / Configuration](../07-aspnet-core/pipeline-hosting-and-configuration.md)
+3. [Resilience / Security / Middleware](../07-aspnet-core/resilience-security-and-middleware.md)
+4. [Deployment / OTel / Operations](../07-aspnet-core/deployment-observability-and-operations.md)
 
-## Các trang code-heavy nên đọc trước
+### Docker / Kubernetes
+
+- [Docker Overview](../12-docker/README.md)
+- [Docker Runtime / Network / Storage](../12-docker/runtime-networking-storage-and-resources.md)
+- [Kubernetes Overview](../15-kubernetes/README.md)
+- [Kubernetes Architecture / Reconciliation](../15-kubernetes/cluster-architecture-and-reconciliation.md)
+- [Kubernetes Workloads / Network / Storage](../15-kubernetes/workloads-networking-and-storage.md)
+- [Kubernetes Security / Operations](../15-kubernetes/kubernetes-security-observability-and-operations.md)
+
+### Distributed Systems
+
+1. [Distributed Systems Overview](../17-distributed-systems/README.md)
+2. [Partial Failure / Retry / Idempotency](../17-distributed-systems/partial-failure-timeouts-retries-and-idempotency.md)
+3. [Messaging / Outbox / Inbox / Dedup](../17-distributed-systems/messaging-outbox-inbox-and-dedup.md)
+4. [Consistency / Ordering / Saga / Backpressure](../17-distributed-systems/consistency-ordering-saga-and-backpressure.md)
 
 ### AI
 
@@ -123,12 +147,22 @@ Generic prose có thể copy sang technology khác chỉ là **outline/structure
 5. [Repository Context, MCP và Instructions](../21-ai-coding-agents/repository-context-mcp-and-instructions.md)
 6. [Safe Agentic Coding Workflow](../21-ai-coding-agents/safe-agentic-coding-workflow.md)
 
-### .NET/Backend
+---
 
-- [Async/Await, Cancellation và Task Lifecycle](../03-dotnet/async-await-cancellation-and-task-lifecycle.md)
-- [Request Lifecycle và Endpoint Contract](../04-backend/request-lifecycle-and-endpoint-contract.md)
+## Quality Gate
 
-Hai chapter này tiếp tục là quality reference cho cách viết sâu.
+Một chapter P0/P1 implementation-heavy cần, khi phù hợp:
+
+- `Hiểu trong 5 phút`;
+- mental model riêng của topic;
+- minimal runnable code/config;
+- production-oriented example;
+- broken/failure example;
+- command/test để verify;
+- security/performance/observability;
+- Architect Perspective.
+
+Generic prose có thể copy sang technology khác chỉ là **outline**, không phải deep content.
 
 ---
 
@@ -147,7 +181,7 @@ Evidence tốt:
 
 ```text
 code chạy
-unit/integration test
+test
 execution plan
 trace
 load/eval report
@@ -163,14 +197,13 @@ ADR/runbook
 ## Quy tắc nguồn
 
 - Official English documentation là source of truth.
-- Vietnamese resources dùng để giải thích nhanh, không ghi đè behavior/version mới hơn.
-- Framework/library API phụ thuộc version phải được kiểm tra official docs và Context7 khi có.
-- roadmap.sh dùng để xác định breadth/scope, không dùng làm canonical implementation docs.
+- Vietnamese resources hỗ trợ giải thích, không ghi đè behavior/version mới hơn.
+- Framework/library API phụ thuộc version phải kiểm tra official docs và Context7 khi có.
+- roadmap.sh dùng để phát hiện breadth/scope, không phải canonical implementation docs.
 
 Xem [Source Policy](source-policy.md) và [Technology Baseline](technology-baseline.md).
 
 ## Verification metadata
 
 - Verified: 2026-08-12
-- Scope: roadmap.sh + official technology documentation
-- New active tracks: AI Engineering + AI Coding Agents
+- Active code-first tracks: SQL, ASP.NET Core, Docker, Kubernetes, Distributed Systems, AI Engineering, AI Coding Agents
