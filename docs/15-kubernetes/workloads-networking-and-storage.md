@@ -1,199 +1,632 @@
 # Workloads, Networking và Storage
 
-> [← Module 15 overview](README.md) · [Kubernetes references](references.md)
+> [← Kubernetes overview](README.md) · [References](references.md)
 
-## Mục tiêu / Learning Objectives
+## Hiểu trong 5 phút
 
-- giải thích workloads, networking và storage bằng mental model và boundary;
-- implement một minimal path có bound, invariant và observable output;
-- phân tích failure, security, performance, reliability và operational ownership;
-- đối chiếu behavior với nguồn chính thức thay vì dựa vào folklore;
-- viết decision note và biết trigger để chuyển sang alternative.
+Một web workload production tối thiểu thường nối các primitives:
 
-## Tại sao cần học? / Why It Matters
-
-Deployments, StatefulSets, Services, Ingress, ConfigMaps, PVCs và probes. Đây là boundary nơi một quyết định nhỏ có thể đổi correctness, latency, security và operational ownership.
-
-## Tổng quan / Overview
-
-~~~mermaid
+```mermaid
 flowchart LR
-    A["Input / workload"] --> B["Workloads, Networking và Storage"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+    D[Deployment] --> P1[Pod]
+    D --> P2[Pod]
+    S[Service] --> P1
+    S --> P2
+    C[ConfigMap] --> P1
+    SEC[Secret] --> P1
+    PVC[PVC] --> P1
+```
 
-## Mental Model
+Mỗi primitive giải một problem khác nhau. Đừng dùng Pod YAML đơn lẻ rồi gọi đó là deployment architecture.
 
-| Boundary | Câu hỏi | Evidence |
-| --- | --- | --- |
-| Input | Dữ liệu/traffic đến từ đâu và bound nào? | Contract, validation, limit |
-| Core | Invariant/state transition nào phải đúng? | Test, query/plan, policy |
-| Resource | CPU, memory, network, storage, quota nào tiêu thụ? | Metrics, profile, capacity |
-| Recovery | Khi dependency/change fail thì ai xử lý? | Retry, rollback, runbook |
+---
 
-Deployments, StatefulSets, Services, Ingress, ConfigMaps, PVCs và probes. Học stable concept trước version/tool syntax; mọi claim production phải có measurement hoặc source.
+# 1. Deployment production-like
 
-## Thuật ngữ / Terminology
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: orders-api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: orders-api
+    spec:
+      containers:
+        - name: api
+          image: registry.example/orders-api@sha256:replace-me
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: orders-config
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+```
 
-| Thuật ngữ | Ý nghĩa |
-| --- | --- |
-| Contract | Cam kết giữa producer và consumer |
-| Version | Identity của behavior/schema |
-| Compatibility | Cũ và mới cùng hoạt động |
-| Deadline | Thời gian còn lại cho operation |
-| Replay | Thực hiện lại có kiểm soát |
-| Audit | Record cho điều tra |
+Các numbers chỉ là example. Production values phải từ measurement.
 
-## Prerequisites
+---
 
-- [Module 14 prerequisite](../14-cloud/README.md).
-- [Roadmap dependency graph](../00-roadmap/prerequisites.md).
-- Có thể ghi failure hypothesis và output reproducible.
+# 2. Service
 
-## How It Works
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-api
+spec:
+  selector:
+    app: orders-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+```
 
-Bắt đầu từ requirement, chọn primitive, đặt safety bound, quan sát behavior và xác định owner. Deployments, StatefulSets, Services, Ingress, ConfigMaps, PVCs và probes. Không coi framework/platform abstraction là proof của correctness.
+Caller trong cluster có thể dùng DNS:
 
-## Minimal Example
+```text
+http://orders-api
+```
 
-~~~yaml
-Pod -> Service -> Ingress -> Storage
-~~~
+Nếu khác namespace:
 
-Minimal example chỉ chứng minh shape; production cần validation, cancellation/timeout, migration, security và test tùy boundary.
+```text
+orders-api.<namespace>.svc.cluster.local
+```
 
-## Production Example
+Thường short service DNS đủ trong same namespace.
 
-Deployments, StatefulSets, Services, Ingress, ConfigMaps, PVCs và probes. Production path bổ sung contract test, structured telemetry, failure classification, rollout/rollback và data/privacy policy.
+---
 
-~~~text
-decision = requirement + workload + failure + security + cost
-evidence = implementation + test + measurement + runbook
-~~~
+# 3. Debug Service selector
 
-## .NET Integration
+Pods:
 
-- DI/configuration/host composition giữ lifetime và ownership rõ.
-- Cancellation, timeout và disposal phải đi xuyên boundary; không fire-and-forget vô chủ.
-- HTTP/API layer map lỗi thành contract ổn định, không leak exception nội bộ.
-- Persistence/cache/queue adapter không che transaction, consistency hoặc retry semantics.
-- Metrics/traces/logs dùng low-cardinality labels và retention/privacy policy.
+```bash
+kubectl get pods -l app=orders-api --show-labels
+```
 
-## Internals
+Service:
 
-Đọc access path/state machine/controller/plan theo đúng module để giải thích observed behavior. Provider, runtime, platform và version có thể thay đổi implementation detail; giữ normative claim ở official docs.
+```bash
+kubectl get service orders-api -o yaml
+```
 
-## Common Mistakes
+Endpoints:
 
-- retry hoặc scale trước khi phân loại failure.
-- coi timeout là rollback.
-- bỏ qua tenant/secret/audit boundary.
-- dùng cache/queue/platform như source of truth mặc định.
-- không test partial failure.
+```bash
+kubectl get endpointslices \
+  -l kubernetes.io/service-name=orders-api
+```
 
-## Performance Considerations
+Nếu Service có DNS nhưng không có ready endpoints, debug selector/readiness trước network magic.
 
-Đo workload representative với warm-up, concurrency, payload mix và tail latency. Bound state/queue/cache trước khi micro-optimize; so sánh before/after cùng environment và tính cả cost của measurement.
+---
 
-## Security Considerations
+# 4. App phải listen đúng interface
 
-Threat model asset, identity, trust boundary, input abuse, secret handling và artifact access. Least privilege, data minimization, encryption, audit và expiry phải có negative test.
+Nếu ASP.NET Core container chỉ listen `127.0.0.1:8080`, traffic từ Pod network bên ngoài process namespace có thể không tới như expected.
 
-## Reliability / Failure Modes
+Typical container binding:
 
-| Failure | Signal | Response |
-| --- | --- | --- |
-| Invalid input/state | 4xx, constraint/test failure | Reject rõ, không partial side effect |
-| Dependency slow/unavailable | Timeout, queue/latency tăng | Deadline, bounded retry, fallback hoặc shed |
-| Capacity exhausted | CPU/memory/quota/429 | Backpressure, scale, degrade hoặc stop |
-| Change incompatible | Error/contract drift | Canary, migration, rollback/forward fix |
-| Operator mistake | Audit/event anomaly | Least privilege, approval, runbook |
+```text
+http://0.0.0.0:8080
+```
 
-## Observability
+.NET container config có thể dùng environment/config appropriate to image/app.
 
-Ghi success/error rate, latency percentile, resource usage, state transitions và version/deployment. Trace nối request → core operation → dependency; log structured theo operation ID. Alert theo SLO/error budget.
+Verify trong Pod:
 
-## Operational Considerations
+```bash
+kubectl logs <pod>
+```
 
-- Pin tool/provider/image/schema version phù hợp.
-- Readiness không báo healthy trước invariant cần thiết.
-- Runbook có preflight, read-only command, rollback và artifact retention.
-- Rehearse backup/restore, key rotation, failover, drift hoặc upgrade tùy module.
-- Manual exception có owner, expiry và post-incident review.
+và endpoint/probe behavior, thay vì assume `containerPort` tự làm app listen.
 
-## Architect Perspective
+`containerPort` là metadata/config hint; nó không mở port nếu process không listen.
 
-Workloads, Networking và Storage trở thành architectural boundary khi ảnh hưởng ownership, consistency, deployment, capacity hoặc team topology. Chọn phương án đơn giản nhất thỏa NFR; document điều gì đổi ở 10x/100x và trigger migrate.
+---
 
-## Trade-offs
+# 5. ConfigMap
 
-| Lựa chọn | Lợi ích | Chi phí/rủi ro |
-| --- | --- | --- |
-| Simple/local | Dễ hiểu, ít toil | Giới hạn scale/durability |
-| Specialized/distributed | Capacity/feature tốt | Coupling, failure và vận hành |
-| Managed/platform | Giảm control-plane toil | Quota, lock-in và cost |
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orders-config
+data:
+  Features__NewCheckout: "true"
+  ExternalApis__Catalog__BaseUrl: "http://catalog-api"
+```
 
-## When NOT to Use It
+Use:
 
-- Không dùng pattern này nếu requirement chưa chứng minh need hoặc không có owner vận hành.
-- Không dùng abstraction để che failure/latency/consistency semantics.
-- Không chọn managed/distributed option chỉ vì production-ready mà thiếu cost/capacity evidence.
-- Không mở rộng privilege, retention hoặc data exposure để làm lab nhanh hơn.
-- Không tối ưu một metric nếu làm hỏng SLO, security hoặc rollback.
+```yaml
+envFrom:
+  - configMapRef:
+      name: orders-config
+```
 
-## Alternatives
+.NET reads environment variables via normal configuration pipeline.
 
-- Giữ local/simple implementation khi scale và durability chưa yêu cầu.
-- Dùng managed service khi team không muốn sở hữu control plane và cost hợp lý.
-- Dùng queue/batch/stream hoặc synchronous path tùy latency/durability.
-- Dùng immutable artifact/configuration và migration thay manual mutation.
-- Dùng standard protocol/contract trước custom framework.
+```csharp
+var enabled = builder.Configuration
+    .GetValue<bool>("Features:NewCheckout");
+```
 
-## Review Questions
+Double underscore maps nested configuration keys in environment variables.
 
-1. Invariant nào phải đúng dù request/retry/deploy lặp lại?
-2. Boundary nào sở hữu state, timeout, cleanup hoặc rollback?
-3. Evidence nào chứng minh bottleneck/security/reliability claim?
-4. Điều gì sẽ hỏng khi dependency chậm hoặc state stale?
-5. Cost và operational toil tăng theo scale nào?
-6. Khi nào phương án đơn giản hơn là lựa chọn tốt hơn?
+---
 
-## Hands-on Lab
+# 6. Secret
 
-Tạo một experiment bounded cho workloads, networking và storage: ghi workload, expected output, failure scenario và safety bound; chạy baseline rồi so sánh; lưu decision note. Không đưa credential, production data hoặc diagnostic artifact nhạy cảm vào repository.
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: orders-secret
+type: Opaque
+stringData:
+  ConnectionStrings__Sql: "replace-at-deploy"
+```
 
-## Exit Criteria
+Use:
 
-- Giải thích được deployments, statefulsets, services, ingress, configmaps, pvcs và probes..
-- Implement minimal example có validation/bound phù hợp.
-- Mô tả failure, security, performance và operational response.
-- Có evidence reproducible và decision note.
-- Biết dependency tiếp theo và trigger cần nghiên cứu thêm.
+```yaml
+envFrom:
+  - secretRef:
+      name: orders-secret
+```
 
-## Related Topics
+Do not commit real secret manifest values to Git.
 
-- [Module 14 prerequisite](../14-cloud/README.md).
-- [Cluster Architecture và Reconciliation](cluster-architecture-and-reconciliation.md).
-- [Workloads, Networking và Storage](workloads-networking-and-storage.md).
-- [Kubernetes Security, Observability và Operations](kubernetes-security-observability-and-operations.md).
-- Module 16 — Observability khi content được mở.
+Base64 encoding in YAML is not encryption.
+
+Production secret design cần xem external secret store/workload identity/RBAC/rotation/encryption-at-rest.
+
+---
+
+# 7. Secret as file
+
+```yaml
+volumes:
+  - name: signing-key
+    secret:
+      secretName: signing-key
+
+containers:
+  - name: api
+    volumeMounts:
+      - name: signing-key
+        mountPath: /var/run/secrets/signing
+        readOnly: true
+```
+
+App:
+
+```csharp
+var pem = await File.ReadAllTextAsync(
+    "/var/run/secrets/signing/key.pem",
+    cancellationToken);
+```
+
+File-based secret có rotation/update semantics riêng; app phải biết có reload hay cần restart.
+
+---
+
+# 8. Readiness probe
+
+ASP.NET Core:
+
+```csharp
+builder.Services
+    .AddHealthChecks()
+    .AddCheck<StartupHealthCheck>("startup", tags: ["ready"]);
+```
+
+```csharp
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = x => x.Tags.Contains("ready")
+});
+```
+
+Kubernetes:
+
+```yaml
+readinessProbe:
+  httpGet:
+    path: /health/ready
+    port: http
+```
+
+When readiness fails:
+
+```text
+Pod may remain Running
+but should stop receiving normal Service traffic
+```
+
+Đây khác liveness restart semantics.
+
+---
+
+# 9. Startup probe
+
+Nếu app legitimately startup lâu:
+
+```yaml
+startupProbe:
+  httpGet:
+    path: /health/live
+    port: http
+  periodSeconds: 5
+  failureThreshold: 30
+```
+
+Trong startup period, startup probe giúp tránh liveness giết app quá sớm.
+
+Nhưng app startup 10 phút vẫn cần architecture review; đừng dùng startupProbe để che pathological startup.
+
+---
+
+# 10. Requests và scheduler
+
+```yaml
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+```
+
+Scheduler uses requests as input for placement/capacity.
+
+If request quá cao:
+
+```text
+Pod Pending
+Events: Insufficient cpu/memory
+```
+
+If request quá thấp so reality:
+
+```text
+node overcommit / contention
+latency noisy
+capacity planning misleading
+```
+
+---
+
+# 11. Memory limit và OOM
+
+```yaml
+limits:
+  memory: 512Mi
+```
+
+Load test endpoint/worker. Observe:
+
+```bash
+kubectl top pod
+kubectl describe pod <pod>
+```
+
+After restart:
+
+```bash
+kubectl get pod <pod> \
+  -o jsonpath='{.status.containerStatuses[0].lastState.terminated.reason}'
+```
+
+Possible evidence:
+
+```text
+OOMKilled
+```
+
+Tune .NET allocations/GC/workload and limit based on measurement, not random increase.
+
+---
+
+# 12. PersistentVolumeClaim
+
+Example claim:
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: app-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+```
+
+Mount:
+
+```yaml
+volumes:
+  - name: data
+    persistentVolumeClaim:
+      claimName: app-data
+
+containers:
+  - name: app
+    volumeMounts:
+      - name: data
+        mountPath: /data
+```
+
+PVC is request/binding abstraction. It does not guarantee your data model is safe for multiple replicas.
+
+A SQLite file on one PVC is not magically a distributed database.
+
+---
+
+# 13. StatefulSets: only when identity/storage semantics need it
+
+Do not use StatefulSet because "database-like name" sounds production.
+
+StatefulSet provides stable ordinal identity/storage association patterns useful for some stateful apps.
+
+But managed databases often remain simpler/better than operating your own DB in Kubernetes unless team has strong reasons/skills.
+
+---
+
+# 14. Ingress vs Service
+
+Service:
+
+```text
+stable service abstraction inside/external depending type
+```
+
+Ingress/Gateway:
+
+```text
+HTTP routing from ingress boundary to Services
+```
+
+Example conceptual Ingress:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app
+spec:
+  rules:
+    - host: api.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: orders-api
+                port:
+                  number: 80
+```
+
+Actual controller/TLS/annotations are implementation-specific; don't copy cloud/controller config blindly.
+
+---
+
+# 15. Service types
+
+```text
+ClusterIP
+→ internal cluster service default
+
+LoadBalancer
+→ request external load balancer integration on supported platform
+
+NodePort
+→ exposes port on nodes; usually lower-level building block
+```
+
+Choose based on ingress/network architecture, not preference.
+
+---
+
+# 16. PodDisruptionBudget thinking
+
+For replicated API:
+
+```yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: orders-api
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: orders-api
+```
+
+PDB affects voluntary disruptions; it is not general HA guarantee and cannot create capacity that doesn't exist.
+
+Use with understanding of replica count, rollout and node maintenance.
+
+---
+
+# 17. Horizontal autoscaling mental model
+
+```text
+metric signal
+↓
+HPA computes desired replicas
+↓
+Deployment replicas change
+↓
+Scheduler places new Pods
+↓
+Pods become ready
+```
+
+Autoscaling has lag.
+
+If startup takes 2 minutes and traffic spike lasts 30 seconds, HPA may not save latency alone.
+
+Before autoscaling:
+
+```text
+resource requests accurate?
+metric meaningful?
+startup time?
+downstream DB capacity?
+```
+
+Scaling API 10x may overload SQL 10x.
+
+---
+
+# 18. Failure lab — broken Service selector
+
+Service:
+
+```yaml
+selector:
+  app: wrong-label
+```
+
+Observe:
+
+```bash
+kubectl get endpointslices \
+  -l kubernetes.io/service-name=orders-api
+```
+
+Expected: no matching endpoints.
+
+Fix selector and observe recovery without restarting Pods.
+
+---
+
+# 19. Failure lab — readiness false
+
+Make `/health/ready` return 503.
+
+Observe:
+
+```bash
+kubectl get pods
+kubectl describe pod <pod>
+kubectl get endpointslices
+```
+
+Lesson:
+
+```text
+Running != Ready
+```
+
+---
+
+# 20. Failure lab — config rollout
+
+ConfigMap changes don't always imply application process reload semantics you want.
+
+For env-var config, Pods generally need replacement to get new env values.
+
+Safe pattern often includes config checksum/version in deployment process or explicit rollout:
+
+```bash
+kubectl rollout restart deployment/orders-api
+kubectl rollout status deployment/orders-api
+```
+
+But controlled deployment/versioning is better than manual restart folklore.
+
+---
+
+# 21. Troubleshooting Service path
+
+```text
+Client
+↓
+DNS resolves Service?
+↓
+Service selector correct?
+↓
+EndpointSlice has ready endpoints?
+↓
+Pod Ready?
+↓
+targetPort correct?
+↓
+process listening on correct interface/port?
+↓
+NetworkPolicy permits traffic?
+```
+
+Debug layer by layer.
+
+---
+
+# 22. Exit criteria
+
+Bạn hoàn thành chapter khi có thể:
+
+- deploy replicated API;
+- expose bằng Service và debug endpoints;
+- inject ConfigMap/Secret đúng boundary;
+- giải thích readiness/liveness/startup probes;
+- set/measure requests và memory limit;
+- reproduce OOM/scheduling issue;
+- mount PVC và giải thích storage semantics;
+- phân biệt Deployment/StatefulSet;
+- debug Ingress→Service→Pod path;
+- giải thích autoscaling không tự tăng downstream capacity.
 
 ## Official English Sources
 
-- [Kubernetes concepts](https://kubernetes.io/docs/concepts/).
-- [Kubernetes workloads](https://kubernetes.io/docs/concepts/workloads/).
-- [Kubernetes services and networking](https://kubernetes.io/docs/concepts/services-networking/).
-- [Kubernetes security](https://kubernetes.io/docs/concepts/security/).
-- [Kubernetes observability](https://kubernetes.io/docs/concepts/cluster-administration/observability/).
+- [Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
+- [Services](https://kubernetes.io/docs/concepts/services-networking/service/)
+- [ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/)
+- [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/)
+- [Probes](https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/)
+- [Persistent Volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
 
-## Vietnamese Resources
+## Verification metadata
 
-- Dùng [glossary](../00-roadmap/glossary.md) để giữ canonical English term.
-- Viết reflection bằng tiếng Việt nhưng giữ tên API/protocol/metric chính xác.
-- Tuân thủ [source policy](../00-roadmap/source-policy.md) cho claim version-sensitive.
-
-## Verification Metadata
-
-- Verified: 2026-08-11.
-- Technology version: Kubernetes content v1; refresh version-sensitive behavior before production.
-- Context7 queries used: none; callable tool unavailable in this run.
-- Notes: content v1 không thay thế learner evidence; cần lab/review/production artifact để nâng level.
+- Verified: 2026-08-12.
+- Baseline: Kubernetes 1.36.x.
+- Status: code-first deep rewrite.
