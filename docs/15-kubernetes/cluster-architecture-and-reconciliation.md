@@ -1,199 +1,537 @@
 # Cluster Architecture và Reconciliation
 
-> [← Module 15 overview](README.md) · [Kubernetes references](references.md)
+> [← Kubernetes overview](README.md) · [References](references.md)
 
-## Mục tiêu / Learning Objectives
+## Hiểu trong 5 phút
 
-- giải thích cluster architecture và reconciliation bằng mental model và boundary;
-- implement một minimal path có bound, invariant và observable output;
-- phân tích failure, security, performance, reliability và operational ownership;
-- đối chiếu behavior với nguồn chính thức thay vì dựa vào folklore;
-- viết decision note và biết trigger để chuyển sang alternative.
+Kubernetes không "chạy YAML". Kubernetes lưu desired state rồi nhiều control loops liên tục reconcile observed state về desired state.
 
-## Tại sao cần học? / Why It Matters
+```mermaid
+flowchart TD
+    USER[kubectl / CI / API client] --> API[API Server]
+    API --> ETCD[(etcd)]
+    API --> CTRL[Controller Manager]
+    API --> SCH[Scheduler]
+    CTRL --> API
+    SCH --> API
+    API --> KUBELET[Kubelet]
+    KUBELET --> RUNTIME[Container Runtime]
+    RUNTIME --> POD[Pod]
+    KUBELET --> API
+```
 
-API server, desired state, controllers, scheduler, kubelet và eventual convergence. Đây là boundary nơi một quyết định nhỏ có thể đổi correctness, latency, security và operational ownership.
+Ví dụ desired state:
 
-## Tổng quan / Overview
+```yaml
+spec:
+  replicas: 3
+```
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Cluster Architecture và Reconciliation"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+Nếu observed state chỉ còn 2 Pods, controller tạo thêm work để quay lại 3.
 
-## Mental Model
+---
 
-| Boundary | Câu hỏi | Evidence |
-| --- | --- | --- |
-| Input | Dữ liệu/traffic đến từ đâu và bound nào? | Contract, validation, limit |
-| Core | Invariant/state transition nào phải đúng? | Test, query/plan, policy |
-| Resource | CPU, memory, network, storage, quota nào tiêu thụ? | Metrics, profile, capacity |
-| Recovery | Khi dependency/change fail thì ai xử lý? | Retry, rollback, runbook |
+# 1. API Server là front door của control plane
 
-API server, desired state, controllers, scheduler, kubelet và eventual convergence. Học stable concept trước version/tool syntax; mọi claim production phải có measurement hoặc source.
+Mọi client/control component làm việc qua Kubernetes API.
 
-## Thuật ngữ / Terminology
+```bash
+kubectl get deployment demo-api -o yaml
+```
 
-| Thuật ngữ | Ý nghĩa |
-| --- | --- |
-| Invariant | Điều kiện luôn phải đúng |
-| Boundary | Nơi ownership/semantics đổi |
-| Estimate | Dự đoán cost trước runtime |
-| Backpressure | Buộc producer theo capacity |
-| Evidence | Output dùng để quyết định |
-| Rollback | Đường quay về trạng thái an toàn |
+Bạn sẽ thấy hai nhóm quan trọng:
 
-## Prerequisites
+```text
+spec   → desired state
+status → observed state reported by controllers/kubelets
+```
 
-- [Module 14 prerequisite](../14-cloud/README.md).
-- [Roadmap dependency graph](../00-roadmap/prerequisites.md).
-- Có thể ghi failure hypothesis và output reproducible.
+Không edit `status` để "fix" resource. Controller sẽ tiếp tục reconcile từ `spec` và external observations.
 
-## How It Works
+---
 
-Bắt đầu từ requirement, chọn primitive, đặt safety bound, quan sát behavior và xác định owner. API server, desired state, controllers, scheduler, kubelet và eventual convergence. Không coi framework/platform abstraction là proof của correctness.
+# 2. etcd giữ cluster state
 
-## Minimal Example
+Mental model:
 
-~~~yaml
-manifest -> API server -> controller -> kubelet -> observed state
-~~~
+```text
+API objects / cluster state
+        ↓
+      etcd
+```
 
-Minimal example chỉ chứng minh shape; production cần validation, cancellation/timeout, migration, security và test tùy boundary.
+etcd là critical control-plane dependency. Application Pods không query etcd trực tiếp.
 
-## Production Example
+Managed Kubernetes có thể ẩn control-plane operations, nhưng architectural fact vẫn quan trọng cho backup/availability/control-plane failure reasoning.
 
-API server, desired state, controllers, scheduler, kubelet và eventual convergence. Production path bổ sung contract test, structured telemetry, failure classification, rollout/rollback và data/privacy policy.
+---
 
-~~~text
-decision = requirement + workload + failure + security + cost
-evidence = implementation + test + measurement + runbook
-~~~
+# 3. Controller là reconciliation loop
 
-## .NET Integration
+Conceptual pseudo-code:
 
-- DI/configuration/host composition giữ lifetime và ownership rõ.
-- Cancellation, timeout và disposal phải đi xuyên boundary; không fire-and-forget vô chủ.
-- HTTP/API layer map lỗi thành contract ổn định, không leak exception nội bộ.
-- Persistence/cache/queue adapter không che transaction, consistency hoặc retry semantics.
-- Metrics/traces/logs dùng low-cardinality labels và retention/privacy policy.
+```csharp
+while (!cancellationToken.IsCancellationRequested)
+{
+    var desired = ReadDesiredState();
+    var observed = ReadObservedState();
 
-## Internals
+    var actions = Compare(desired, observed);
 
-Đọc access path/state machine/controller/plan theo đúng module để giải thích observed behavior. Provider, runtime, platform và version có thể thay đổi implementation detail; giữ normative claim ở official docs.
+    foreach (var action in actions)
+    {
+        Apply(action);
+    }
 
-## Common Mistakes
+    await WaitForNextEventAsync(cancellationToken);
+}
+```
 
-- copy syntax trước khi xác định invariant.
-- bỏ qua input/size/concurrency bound.
-- trả success khi side effect chưa commit.
-- dùng một metric cho mọi workload.
-- để implementation detail thành public contract.
+Kubernetes controllers thực tế event/watch/retry phức tạp hơn, nhưng mental model trên giải thích vì sao platform **eventually converges** thay vì một imperative script hoàn thành mọi thứ ngay lập tức.
 
-## Performance Considerations
+---
 
-Đo workload representative với warm-up, concurrency, payload mix và tail latency. Bound state/queue/cache trước khi micro-optimize; so sánh before/after cùng environment và tính cả cost của measurement.
+# 4. Deployment → ReplicaSet → Pod
 
-## Security Considerations
+Apply:
 
-Threat model asset, identity, trust boundary, input abuse, secret handling và artifact access. Least privilege, data minimization, encryption, audit và expiry phải có negative test.
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: demo-api
+  template:
+    metadata:
+      labels:
+        app: demo-api
+    spec:
+      containers:
+        - name: api
+          image: nginx:alpine
+```
 
-## Reliability / Failure Modes
+```bash
+kubectl apply -f deployment.yaml
+kubectl get deployment demo-api
+kubectl get replicasets
+kubectl get pods -l app=demo-api
+```
 
-| Failure | Signal | Response |
-| --- | --- | --- |
-| Invalid input/state | 4xx, constraint/test failure | Reject rõ, không partial side effect |
-| Dependency slow/unavailable | Timeout, queue/latency tăng | Deadline, bounded retry, fallback hoặc shed |
-| Capacity exhausted | CPU/memory/quota/429 | Backpressure, scale, degrade hoặc stop |
-| Change incompatible | Error/contract drift | Canary, migration, rollback/forward fix |
-| Operator mistake | Audit/event anomaly | Least privilege, approval, runbook |
+Quan hệ:
 
-## Observability
+```text
+Deployment
+   ↓ owns
+ReplicaSet
+   ↓ owns
+Pods
+```
 
-Ghi success/error rate, latency percentile, resource usage, state transitions và version/deployment. Trace nối request → core operation → dependency; log structured theo operation ID. Alert theo SLO/error budget.
+Inspect owner references:
 
-## Operational Considerations
+```bash
+kubectl get pod <pod> -o jsonpath='{.metadata.ownerReferences}'
+```
 
-- Pin tool/provider/image/schema version phù hợp.
-- Readiness không báo healthy trước invariant cần thiết.
-- Runbook có preflight, read-only command, rollback và artifact retention.
-- Rehearse backup/restore, key rotation, failover, drift hoặc upgrade tùy module.
-- Manual exception có owner, expiry và post-incident review.
+---
 
-## Architect Perspective
+# 5. Self-healing lab
 
-Cluster Architecture và Reconciliation trở thành architectural boundary khi ảnh hưởng ownership, consistency, deployment, capacity hoặc team topology. Chọn phương án đơn giản nhất thỏa NFR; document điều gì đổi ở 10x/100x và trigger migrate.
+Delete một Pod:
 
-## Trade-offs
+```bash
+kubectl delete pod <pod-name>
+```
 
-| Lựa chọn | Lợi ích | Chi phí/rủi ro |
-| --- | --- | --- |
-| Simple/local | Dễ hiểu, ít toil | Giới hạn scale/durability |
-| Specialized/distributed | Capacity/feature tốt | Coupling, failure và vận hành |
-| Managed/platform | Giảm control-plane toil | Quota, lock-in và cost |
+Ngay sau đó:
 
-## When NOT to Use It
+```bash
+kubectl get pods -l app=demo-api -w
+```
 
-- Không dùng pattern này nếu requirement chưa chứng minh need hoặc không có owner vận hành.
-- Không dùng abstraction để che failure/latency/consistency semantics.
-- Không chọn managed/distributed option chỉ vì production-ready mà thiếu cost/capacity evidence.
-- Không mở rộng privilege, retention hoặc data exposure để làm lab nhanh hơn.
-- Không tối ưu một metric nếu làm hỏng SLO, security hoặc rollback.
+Expected:
 
-## Alternatives
+```text
+old Pod terminating
+new Pod created
+replica count returns to 3
+```
 
-- Giữ local/simple implementation khi scale và durability chưa yêu cầu.
-- Dùng managed service khi team không muốn sở hữu control plane và cost hợp lý.
-- Dùng queue/batch/stream hoặc synchronous path tùy latency/durability.
-- Dùng immutable artifact/configuration và migration thay manual mutation.
-- Dùng standard protocol/contract trước custom framework.
+Important: Kubernetes không "cứu" Pod identity cũ. Controller tạo replacement để thỏa desired state.
 
-## Review Questions
+Do đó application state không nên mặc định gắn với ephemeral Pod filesystem/identity.
 
-1. Invariant nào phải đúng dù request/retry/deploy lặp lại?
-2. Boundary nào sở hữu state, timeout, cleanup hoặc rollback?
-3. Evidence nào chứng minh bottleneck/security/reliability claim?
-4. Điều gì sẽ hỏng khi dependency chậm hoặc state stale?
-5. Cost và operational toil tăng theo scale nào?
-6. Khi nào phương án đơn giản hơn là lựa chọn tốt hơn?
+---
 
-## Hands-on Lab
+# 6. Scheduler làm gì?
 
-Tạo một experiment bounded cho cluster architecture và reconciliation: ghi workload, expected output, failure scenario và safety bound; chạy baseline rồi so sánh; lưu decision note. Không đưa credential, production data hoặc diagnostic artifact nhạy cảm vào repository.
+Khi Pod chưa có node assignment:
 
-## Exit Criteria
+```text
+Pod Pending
+↓
+Scheduler evaluates feasible nodes
+↓
+resource requests + constraints + policies
+↓
+Pod bound to Node
+```
 
-- Giải thích được api server, desired state, controllers, scheduler, kubelet và eventual convergence..
-- Implement minimal example có validation/bound phù hợp.
-- Mô tả failure, security, performance và operational response.
-- Có evidence reproducible và decision note.
-- Biết dependency tiếp theo và trigger cần nghiên cứu thêm.
+Inspect:
 
-## Related Topics
+```bash
+kubectl get pod <pod> -o wide
+kubectl describe pod <pod>
+```
 
-- [Module 14 prerequisite](../14-cloud/README.md).
-- [Cluster Architecture và Reconciliation](cluster-architecture-and-reconciliation.md).
-- [Workloads, Networking và Storage](workloads-networking-and-storage.md).
-- [Kubernetes Security, Observability và Operations](kubernetes-security-observability-and-operations.md).
-- Module 16 — Observability khi content được mở.
+Nếu Pod Pending, Events có thể nói:
+
+```text
+Insufficient cpu
+Insufficient memory
+node selector mismatch
+untolerated taint
+PVC scheduling constraint
+```
+
+Không restart Pod trước khi đọc scheduling reason.
+
+---
+
+# 7. Kubelet làm gì?
+
+Kubelet trên node quan sát Pods assigned cho node và làm việc với container runtime để hiện thực Pod spec.
+
+Mental model:
+
+```text
+API says:
+"Pod X belongs to Node A"
+
+Kubelet Node A:
+"ensure containers, volumes, probes and status for Pod X"
+```
+
+Kubelet report status về API server.
+
+---
+
+# 8. Desired state không có nghĩa instant state
+
+Bạn apply:
+
+```bash
+kubectl scale deployment demo-api --replicas=10
+```
+
+Immediately:
+
+```bash
+kubectl get deployment demo-api
+```
+
+Có thể thấy:
+
+```text
+DESIRED 10
+CURRENT 7
+AVAILABLE 5
+```
+
+System đang converging.
+
+Automation phải chờ condition, không assume `kubectl apply` return = rollout complete.
+
+```bash
+kubectl rollout status deployment/demo-api --timeout=2m
+```
+
+---
+
+# 9. `metadata.generation` và observed rollout thinking
+
+Khi spec thay đổi, controllers cần reconcile generation mới. Bạn không cần memorize every field, nhưng phải phân biệt:
+
+```text
+API accepted desired state
+≠
+controller observed it
+≠
+workload ready
+```
+
+CI/CD gate nên wait rollout/readiness, không chỉ exit code của `kubectl apply`.
+
+---
+
+# 10. Labels và selectors là control relationship
+
+Deployment selector:
+
+```yaml
+selector:
+  matchLabels:
+    app: demo-api
+```
+
+Pod template labels:
+
+```yaml
+metadata:
+  labels:
+    app: demo-api
+```
+
+Selectors sai tạo behavior rất khác expectation.
+
+Service cũng dùng labels để chọn Pods, nên labels không chỉ để "organize resources".
+
+---
+
+# 11. Reconciliation và manual mutation
+
+Nếu GitOps/CI declares:
+
+```yaml
+replicas: 3
+```
+
+operator chạy:
+
+```bash
+kubectl scale deployment demo-api --replicas=10
+```
+
+Một automation khác có thể reconcile về 3 sau đó.
+
+Bạn phải biết **source of truth**:
+
+```text
+Git manifest?
+Helm release?
+operator/custom controller?
+manual cluster mutation?
+```
+
+Drift không thể giải quyết nếu nhiều actors cùng sở hữu desired state không rõ ràng.
+
+---
+
+# 12. Deployment rollout internals đơn giản
+
+Khi Pod template đổi:
+
+```text
+Deployment
+↓ creates new ReplicaSet
+old ReplicaSet + new ReplicaSet coexist temporarily
+↓ scale old down / new up
+Pods transition readiness
+```
+
+Inspect:
+
+```bash
+kubectl get rs
+kubectl rollout history deployment/demo-api
+kubectl rollout status deployment/demo-api
+```
+
+---
+
+# 13. Failure lab — broken image
+
+```bash
+kubectl set image deployment/demo-api \
+  api=registry.example/not-found:v999
+```
+
+Watch:
+
+```bash
+kubectl get pods -w
+kubectl describe pod <new-pod>
+kubectl rollout status deployment/demo-api --timeout=60s
+```
+
+Expected: rollout không hoàn tất vì new Pods cannot pull/run image.
+
+Rollback:
+
+```bash
+kubectl rollout undo deployment/demo-api
+```
+
+Evidence:
+
+```text
+Events
+Pod status
+Deployment conditions
+ReplicaSets
+rollback result
+```
+
+---
+
+# 14. Failure lab — insufficient resources
+
+Set impossible request local cluster:
+
+```yaml
+resources:
+  requests:
+    cpu: "100"
+    memory: 100Gi
+```
+
+Apply rồi:
+
+```bash
+kubectl describe pod <pod>
+```
+
+Expected: Pod Pending; scheduler Events explain no feasible node.
+
+Lesson:
+
+```text
+container can be perfectly valid
+but workload cannot be scheduled
+```
+
+---
+
+# 15. Node operations
+
+Inspect nodes:
+
+```bash
+kubectl get nodes
+kubectl describe node <node>
+```
+
+Cordon:
+
+```bash
+kubectl cordon <node>
+```
+
+Node becomes unschedulable for new Pods.
+
+Drain in a disposable/local lab only:
+
+```bash
+kubectl drain <node> --ignore-daemonsets
+```
+
+Drain can disrupt workloads; understand PodDisruptionBudget/stateful behavior before production use.
+
+---
+
+# 16. Control plane failure thinking
+
+If API server temporarily unavailable:
+
+```text
+existing application containers may continue running
+but new desired-state changes/status/control operations are impaired
+```
+
+If scheduler unavailable:
+
+```text
+already-scheduled Pods may continue
+new unscheduled Pods cannot be placed normally
+```
+
+If a node/kubelet fails:
+
+```text
+workload availability depends on controllers, node detection and replacement capacity
+```
+
+Architect must separate **data-plane workload serving** from **control-plane reconciliation**.
+
+---
+
+# 17. Troubleshooting order
+
+When "deployment doesn't work":
+
+```text
+1. kubectl get deployment
+2. kubectl describe deployment
+3. kubectl get rs
+4. kubectl get pods -o wide
+5. kubectl describe pod
+6. kubectl logs / --previous
+7. inspect Service/EndpointSlice if traffic issue
+8. inspect node/resource/policy if scheduling issue
+```
+
+Đừng bắt đầu bằng delete/restart everything.
+
+---
+
+# 18. Architect perspective
+
+Kubernetes adds:
+
+```text
+declarative desired state
+continuous reconciliation
+cluster scheduler
+workload abstraction
+service discovery primitives
+policy/control plane
+```
+
+Nó cũng adds:
+
+```text
+control-plane complexity
+YAML/API evolution
+RBAC/policy complexity
+cluster/network/storage operations
+upgrade lifecycle
+new failure modes
+```
+
+Question không phải "Kubernetes có powerful không?" mà là:
+
+> Requirements có đáng để team sở hữu complexity này không?
+
+---
+
+# 19. Exit criteria
+
+Bạn hoàn thành chapter khi có thể:
+
+- giải thích API server/etcd/controller/scheduler/kubelet responsibility;
+- phân biệt desired vs observed state;
+- trace Deployment → ReplicaSet → Pod ownership;
+- delete Pod và giải thích replacement;
+- debug Pending từ scheduler Events;
+- wait rollout thay vì assume apply = ready;
+- rollback broken image rollout;
+- giải thích control plane vs data plane;
+- xác định source of truth tránh drift/manual ownership conflict.
 
 ## Official English Sources
 
-- [Kubernetes concepts](https://kubernetes.io/docs/concepts/).
-- [Kubernetes workloads](https://kubernetes.io/docs/concepts/workloads/).
-- [Kubernetes services and networking](https://kubernetes.io/docs/concepts/services-networking/).
-- [Kubernetes security](https://kubernetes.io/docs/concepts/security/).
-- [Kubernetes observability](https://kubernetes.io/docs/concepts/cluster-administration/observability/).
+- [Kubernetes components](https://kubernetes.io/docs/concepts/overview/components/)
+- [Kubernetes object management](https://kubernetes.io/docs/concepts/overview/working-with-objects/object-management/)
+- [Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
+- [Scheduling](https://kubernetes.io/docs/concepts/scheduling-eviction/)
 
-## Vietnamese Resources
+## Verification metadata
 
-- Dùng [glossary](../00-roadmap/glossary.md) để giữ canonical English term.
-- Viết reflection bằng tiếng Việt nhưng giữ tên API/protocol/metric chính xác.
-- Tuân thủ [source policy](../00-roadmap/source-policy.md) cho claim version-sensitive.
-
-## Verification Metadata
-
-- Verified: 2026-08-11.
-- Technology version: Kubernetes content v1; refresh version-sensitive behavior before production.
-- Context7 queries used: none; callable tool unavailable in this run.
-- Notes: content v1 không thay thế learner evidence; cần lab/review/production artifact để nâng level.
+- Verified: 2026-08-12.
+- Baseline: Kubernetes 1.36.x.
+- Status: code-first deep rewrite.

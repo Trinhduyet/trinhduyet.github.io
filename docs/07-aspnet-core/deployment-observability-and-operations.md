@@ -1,199 +1,544 @@
 # Deployment, Observability và ASP.NET Operations
 
-> [← Module 07 overview](README.md) · [ASP.NET Core references](references.md)
+> [← ASP.NET Core overview](README.md) · [References](references.md)
 
-## Mục tiêu / Learning Objectives
+## Hiểu trong 5 phút
 
-- giải thích deployment, observability và asp.net operations bằng mental model và boundary;
-- implement một minimal path có bound, invariant và observable output;
-- phân tích failure, security, performance, reliability và operational ownership;
-- đối chiếu behavior với nguồn chính thức thay vì dựa vào folklore;
-- viết decision note và biết trigger để chuyển sang alternative.
+Một API production không kết thúc ở `dotnet publish`.
 
-## Tại sao cần học? / Why It Matters
+Bạn phải vận hành được lifecycle:
 
-Health/readiness, structured logs, metrics/traces, rollout, rollback và incident runbook. Đây là boundary nơi một quyết định nhỏ có thể đổi correctness, latency, security và operational ownership.
-
-## Tổng quan / Overview
-
-~~~mermaid
+```mermaid
 flowchart LR
-    A["Input / workload"] --> B["Deployment, Observability và ASP.NET Operations"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+    A[Build] --> B[Artifact]
+    B --> C[Deploy]
+    C --> D[Start]
+    D --> E[Ready]
+    E --> F[Serve traffic]
+    F --> G[Observe]
+    G --> H[Stop / Replace]
+    H --> I[Rollback or next version]
+```
 
-## Mental Model
+Ba câu hỏi phải trả lời được:
 
-| Boundary | Câu hỏi | Evidence |
-| --- | --- | --- |
-| Input | Dữ liệu/traffic đến từ đâu và bound nào? | Contract, validation, limit |
-| Core | Invariant/state transition nào phải đúng? | Test, query/plan, policy |
-| Resource | CPU, memory, network, storage, quota nào tiêu thụ? | Metrics, profile, capacity |
-| Recovery | Khi dependency/change fail thì ai xử lý? | Retry, rollback, runbook |
+```text
+1. Instance này có sống không?        → liveness
+2. Instance này có nhận traffic được? → readiness
+3. Nếu request lỗi/chậm, evidence ở đâu? → logs + metrics + traces
+```
 
-Health/readiness, structured logs, metrics/traces, rollout, rollback và incident runbook. Học stable concept trước version/tool syntax; mọi claim production phải có measurement hoặc source.
+---
 
-## Thuật ngữ / Terminology
+# 1. Liveness vs readiness
 
-| Thuật ngữ | Ý nghĩa |
-| --- | --- |
-| State | Dữ liệu/phase đang được quản lý |
-| Controller | Logic đưa observed về desired |
-| Quota | Giới hạn platform/dependency |
-| SLO | Mục tiêu user-visible |
-| Blast radius | Phạm vi khi failure |
-| Runbook | Hướng dẫn operator |
+Liveness không nên biến thành deep dependency test.
 
-## Prerequisites
+```csharp
+builder.Services.AddHealthChecks();
 
-- [Module 06 prerequisite](../06-api-design/README.md).
-- [Roadmap dependency graph](../00-roadmap/prerequisites.md).
-- Có thể ghi failure hypothesis và output reproducible.
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+    Predicate = _ => false
+});
+```
 
-## How It Works
+Readiness có thể gồm dependency bắt buộc:
 
-Bắt đầu từ requirement, chọn primitive, đặt safety bound, quan sát behavior và xác định owner. Health/readiness, structured logs, metrics/traces, rollout, rollback và incident runbook. Không coi framework/platform abstraction là proof của correctness.
+```csharp
+builder.Services
+    .AddHealthChecks()
+    .AddSqlServer(
+        connectionString,
+        name: "sql",
+        tags: ["ready"]);
+```
 
-## Minimal Example
+```csharp
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("ready")
+});
+```
 
-~~~csharp
-app.MapHealthChecks("/health/ready");
-~~~
+Mental model:
 
-Minimal example chỉ chứng minh shape; production cần validation, cancellation/timeout, migration, security và test tùy boundary.
+```text
+liveness fails
+→ platform có thể restart instance
 
-## Production Example
+readiness fails
+→ instance nên rời traffic rotation
+```
 
-Health/readiness, structured logs, metrics/traces, rollout, rollback và incident runbook. Production path bổ sung contract test, structured telemetry, failure classification, rollout/rollback và data/privacy policy.
+Nếu dependency chung toàn hệ thống down, làm mọi pod fail liveness có thể tạo restart storm mà không chữa được root cause.
 
-~~~text
-decision = requirement + workload + failure + security + cost
-evidence = implementation + test + measurement + runbook
-~~~
+---
 
-## .NET Integration
+# 2. Health check phải cheap và bounded
 
-- DI/configuration/host composition giữ lifetime và ownership rõ.
-- Cancellation, timeout và disposal phải đi xuyên boundary; không fire-and-forget vô chủ.
-- HTTP/API layer map lỗi thành contract ổn định, không leak exception nội bộ.
-- Persistence/cache/queue adapter không che transaction, consistency hoặc retry semantics.
-- Metrics/traces/logs dùng low-cardinality labels và retention/privacy policy.
+Bad:
 
-## Internals
+```text
+/health/ready
+  ↓
+query 10 tables
+  ↓
+call 3 external APIs
+  ↓
+run expensive report
+```
 
-Đọc access path/state machine/controller/plan theo đúng module để giải thích observed behavior. Provider, runtime, platform và version có thể thay đổi implementation detail; giữ normative claim ở official docs.
+Nếu 100 instances check mỗi vài giây, health endpoint tự tạo load.
 
-## Common Mistakes
+Health check nên trả lời câu hỏi vận hành hẹp:
 
-- rollout không có canary hoặc rollback.
-- drift/manual change không audit.
-- alert theo resource mà thiếu SLO.
-- abstraction/tooling tăng blast radius.
-- không rehearsal restore/failover/upgrade.
+```text
+"Instance này có đủ điều kiện nhận traffic cho capability này không?"
+```
 
-## Performance Considerations
+---
 
-Đo workload representative với warm-up, concurrency, payload mix và tail latency. Bound state/queue/cache trước khi micro-optimize; so sánh before/after cùng environment và tính cả cost của measurement.
+# 3. Structured logging
 
-## Security Considerations
+Bad:
 
-Threat model asset, identity, trust boundary, input abuse, secret handling và artifact access. Least privilege, data minimization, encryption, audit và expiry phải có negative test.
+```csharp
+logger.LogInformation(
+    "Order " + orderId + " processed for tenant " + tenantId);
+```
 
-## Reliability / Failure Modes
+Better:
 
-| Failure | Signal | Response |
-| --- | --- | --- |
-| Invalid input/state | 4xx, constraint/test failure | Reject rõ, không partial side effect |
-| Dependency slow/unavailable | Timeout, queue/latency tăng | Deadline, bounded retry, fallback hoặc shed |
-| Capacity exhausted | CPU/memory/quota/429 | Backpressure, scale, degrade hoặc stop |
-| Change incompatible | Error/contract drift | Canary, migration, rollback/forward fix |
-| Operator mistake | Audit/event anomaly | Least privilege, approval, runbook |
+```csharp
+logger.LogInformation(
+    "Order {OrderId} processed for tenant {TenantId}",
+    orderId,
+    tenantId);
+```
 
-## Observability
+Structured fields cho phép query:
 
-Ghi success/error rate, latency percentile, resource usage, state transitions và version/deployment. Trace nối request → core operation → dependency; log structured theo operation ID. Alert theo SLO/error budget.
+```text
+TenantId = 42
+OrderId = 1001
+StatusCode >= 500
+DeploymentVersion = abc123
+```
 
-## Operational Considerations
+Không log secret/token/full sensitive payload chỉ để debug thuận tiện.
 
-- Pin tool/provider/image/schema version phù hợp.
-- Readiness không báo healthy trước invariant cần thiết.
-- Runbook có preflight, read-only command, rollback và artifact retention.
-- Rehearse backup/restore, key rotation, failover, drift hoặc upgrade tùy module.
-- Manual exception có owner, expiry và post-incident review.
+---
 
-## Architect Perspective
+# 4. Source-generated logging cho hot path
 
-Deployment, Observability và ASP.NET Operations trở thành architectural boundary khi ảnh hưởng ownership, consistency, deployment, capacity hoặc team topology. Chọn phương án đơn giản nhất thỏa NFR; document điều gì đổi ở 10x/100x và trigger migrate.
+```csharp
+internal static partial class Log
+{
+    [LoggerMessage(
+        EventId = 1001,
+        Level = LogLevel.Information,
+        Message = "Processed order {OrderId} in {ElapsedMs} ms")]
+    public static partial void OrderProcessed(
+        this ILogger logger,
+        long orderId,
+        double elapsedMs);
+}
+```
 
-## Trade-offs
+Use:
 
-| Lựa chọn | Lợi ích | Chi phí/rủi ro |
-| --- | --- | --- |
-| Simple/local | Dễ hiểu, ít toil | Giới hạn scale/durability |
-| Specialized/distributed | Capacity/feature tốt | Coupling, failure và vận hành |
-| Managed/platform | Giảm control-plane toil | Quota, lock-in và cost |
+```csharp
+logger.OrderProcessed(orderId, elapsed.TotalMilliseconds);
+```
 
-## When NOT to Use It
+Đừng tối ưu logging API trước khi đo, nhưng hot path có thể hưởng lợi từ generated logging.
 
-- Không dùng pattern này nếu requirement chưa chứng minh need hoặc không có owner vận hành.
-- Không dùng abstraction để che failure/latency/consistency semantics.
-- Không chọn managed/distributed option chỉ vì production-ready mà thiếu cost/capacity evidence.
-- Không mở rộng privilege, retention hoặc data exposure để làm lab nhanh hơn.
-- Không tối ưu một metric nếu làm hỏng SLO, security hoặc rollback.
+---
 
-## Alternatives
+# 5. OpenTelemetry traces + metrics
 
-- Giữ local/simple implementation khi scale và durability chưa yêu cầu.
-- Dùng managed service khi team không muốn sở hữu control plane và cost hợp lý.
-- Dùng queue/batch/stream hoặc synchronous path tùy latency/durability.
-- Dùng immutable artifact/configuration và migration thay manual mutation.
-- Dùng standard protocol/contract trước custom framework.
+Packages điển hình cho demo:
 
-## Review Questions
+```bash
+dotnet add package OpenTelemetry.Extensions.Hosting
+dotnet add package OpenTelemetry.Instrumentation.AspNetCore
+dotnet add package OpenTelemetry.Exporter.Console
+```
 
-1. Invariant nào phải đúng dù request/retry/deploy lặp lại?
-2. Boundary nào sở hữu state, timeout, cleanup hoặc rollback?
-3. Evidence nào chứng minh bottleneck/security/reliability claim?
-4. Điều gì sẽ hỏng khi dependency chậm hoặc state stale?
-5. Cost và operational toil tăng theo scale nào?
-6. Khi nào phương án đơn giản hơn là lựa chọn tốt hơn?
+Registration:
 
-## Hands-on Lab
+```csharp
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
-Tạo một experiment bounded cho deployment, observability và asp.net operations: ghi workload, expected output, failure scenario và safety bound; chạy baseline rồi so sánh; lưu decision note. Không đưa credential, production data hoặc diagnostic artifact nhạy cảm vào repository.
+builder.Services
+    .AddOpenTelemetry()
+    .ConfigureResource(resource => resource
+        .AddService(builder.Environment.ApplicationName))
+    .WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddConsoleExporter())
+    .WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddConsoleExporter());
+```
 
-## Exit Criteria
+Console exporter phù hợp local/demo; production thường export qua OTLP/collector/backend phù hợp.
 
-- Giải thích được health/readiness, structured logs, metrics/traces, rollout, rollback và incident runbook..
-- Implement minimal example có validation/bound phù hợp.
-- Mô tả failure, security, performance và operational response.
-- Có evidence reproducible và decision note.
-- Biết dependency tiếp theo và trigger cần nghiên cứu thêm.
+---
 
-## Related Topics
+# 6. Custom span cho business operation
 
-- [Module 06 prerequisite](../06-api-design/README.md).
-- [Pipeline, Hosting và Configuration](pipeline-hosting-and-configuration.md).
-- [Resilience, Security và Middleware Production](resilience-security-and-middleware.md).
-- [Deployment, Observability và ASP.NET Operations](deployment-observability-and-operations.md).
-- Module 08 — Testing và Code Review khi content được mở.
+```csharp
+private static readonly ActivitySource ActivitySource =
+    new("OrderService");
+
+public async Task ProcessAsync(
+    long orderId,
+    CancellationToken cancellationToken)
+{
+    using var activity = ActivitySource.StartActivity("order.process");
+
+    activity?.SetTag("order.id", orderId);
+
+    await LoadAsync(orderId, cancellationToken);
+    await ValidateAsync(orderId, cancellationToken);
+    await SaveAsync(orderId, cancellationToken);
+}
+```
+
+Nhưng tag cardinality phải được xem xét. `order.id` trên trace có thể ổn hơn đưa vào metric label cardinality cao.
+
+---
+
+# 7. Custom metrics
+
+```csharp
+private static readonly Meter Meter =
+    new("OrderService");
+
+private static readonly Counter<long> OrdersProcessed =
+    Meter.CreateCounter<long>("orders.processed");
+
+private static readonly Histogram<double> ProcessingDuration =
+    Meter.CreateHistogram<double>(
+        "orders.processing.duration",
+        unit: "ms");
+```
+
+Use:
+
+```csharp
+var started = Stopwatch.GetTimestamp();
+
+try
+{
+    await ProcessCoreAsync(orderId, cancellationToken);
+    OrdersProcessed.Add(1, new("result", "success"));
+}
+catch
+{
+    OrdersProcessed.Add(1, new("result", "failure"));
+    throw;
+}
+finally
+{
+    ProcessingDuration.Record(
+        Stopwatch.GetElapsedTime(started).TotalMilliseconds);
+}
+```
+
+Good metric dimensions:
+
+```text
+result=success|failure
+operation=process_order
+```
+
+Dangerous high-cardinality dimensions:
+
+```text
+order_id
+email
+full_url_with_query
+exception_message
+```
+
+---
+
+# 8. RED method cho API
+
+Theo endpoint/service:
+
+```text
+Rate     → requests/sec
+Errors   → error rate
+Duration → latency distribution
+```
+
+Ví dụ SLO:
+
+```text
+99.9% successful requests / 30 days
+P95 < 300 ms for GET /orders/{id}
+```
+
+Resource metric như CPU chỉ là supporting signal. User-visible SLO mới là outcome.
+
+---
+
+# 9. Trace một request end-to-end
+
+Bạn muốn nhìn:
+
+```text
+HTTP GET /orders/42            420 ms
+  ├─ auth                       5 ms
+  ├─ SQL SELECT Order         350 ms
+  └─ serialize                  8 ms
+```
+
+Nếu SQL span là 350ms, investigation chuyển sang DB.
+
+Nếu request mất 420ms nhưng child spans chỉ 100ms, có gap trong instrumentation hoặc queue/CPU wait cần điều tra.
+
+---
+
+# 10. Deployment version phải có trong telemetry
+
+Mỗi artifact/deploy nên có identity:
+
+```text
+git SHA
+image digest
+application version
+environment
+region / cluster
+```
+
+Log scope example:
+
+```csharp
+using var scope = logger.BeginScope(new Dictionary<string, object>
+{
+    ["DeploymentVersion"] = deploymentVersion
+});
+```
+
+Khi incident bắt đầu ngay sau deploy, query theo version giúp thu hẹp blast radius.
+
+---
+
+# 11. Graceful shutdown
+
+Worker:
+
+```csharp
+public sealed class CleanupWorker(
+    ILogger<CleanupWorker> logger) : BackgroundService
+{
+    protected override async Task ExecuteAsync(
+        CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            try
+            {
+                await RunOnceAsync(stoppingToken);
+            }
+            catch (OperationCanceledException)
+                when (stoppingToken.IsCancellationRequested)
+            {
+                break;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Cleanup iteration failed");
+            }
+        }
+    }
+}
+```
+
+Shutdown path cần biết:
+
+```text
+stop accepting new work
+cancel wait operations
+finish/rollback current transaction
+flush critical telemetry when possible
+exit before platform hard kill
+```
+
+---
+
+# 12. Readiness during startup
+
+Bad:
+
+```text
+process starts
+↓
+ready immediately
+↓
+receives traffic
+↓
+cache/schema/config initialization chưa xong
+```
+
+Nếu app có initialization thực sự bắt buộc, readiness chỉ nên healthy sau khi invariant đạt.
+
+Nhưng tránh biến startup thành hàng phút synchronous boot nếu work có thể lazy/background an toàn.
+
+---
+
+# 13. Deployment strategy
+
+## Rolling
+
+```text
+v1 v1 v1
+↓ replace gradually
+v1 v1 v2
+v1 v2 v2
+v2 v2 v2
+```
+
+Requires compatibility giữa old/new versions trong rollout window.
+
+## Blue/Green
+
+```text
+Blue v1  ← traffic
+Green v2 ← verify
+
+switch traffic
+```
+
+Rollback nhanh hơn nhưng cần duplicate capacity/topology.
+
+## Canary
+
+```text
+95% → v1
+ 5% → v2
+```
+
+Cần telemetry đủ tốt để so error/latency/business metrics.
+
+---
+
+# 14. Backward-compatible database deployment
+
+Application deploy và DB migration dễ tạo coupling.
+
+Safer evolution thường theo expand/contract:
+
+```text
+1. Add new nullable/backward-compatible column
+2. Deploy code đọc/ghi compatible cả old/new
+3. Backfill
+4. Switch reads
+5. Remove old path later
+```
+
+Không phải migration nào cũng cần quy trình này, nhưng breaking schema change trên zero-downtime system phải nghĩ rollout window.
+
+---
+
+# 15. Failure experiment — readiness
+
+1. Start API + SQL dependency.
+2. Verify `/health/ready` = healthy.
+3. Stop SQL.
+4. Observe readiness change.
+5. Verify liveness vẫn phản ánh process sống.
+6. Start SQL lại.
+7. Observe recovery.
+
+Evidence:
+
+```text
+status transition time
+traffic behavior
+log/trace evidence
+load created by health checks
+```
+
+---
+
+# 16. Failure experiment — deployment regression
+
+Deploy v2 có artificial latency:
+
+```csharp
+if (deploymentVersion == "v2")
+{
+    await Task.Delay(300, cancellationToken);
+}
+```
+
+Canary 5% traffic.
+
+Compare:
+
+```text
+v1 P95
+v2 P95
+v1 error rate
+v2 error rate
+business success
+```
+
+Then rollback v2.
+
+Goal: practice **detect → decide → rollback**, không chỉ deploy.
+
+---
+
+# 17. Incident checklist
+
+Khi API latency tăng:
+
+```text
+1. SLO/alert affected endpoint nào?
+2. Deployment/version nào?
+3. Rate/errors/duration thay đổi từ khi nào?
+4. Trace bottleneck ở app, SQL, HTTP hay queue?
+5. Có resource saturation không?
+6. Dependency có incident không?
+7. Có rollback an toàn không?
+8. Evidence nào phải giữ cho postmortem?
+```
+
+---
+
+# 18. Exit criteria
+
+Bạn hoàn thành chapter khi có thể:
+
+- phân biệt liveness/readiness;
+- tạo health checks không gây overload;
+- cấu hình OpenTelemetry traces + metrics;
+- thêm business span/metric có cardinality hợp lý;
+- correlate request với deployment version;
+- giải thích graceful shutdown;
+- chọn rolling/blue-green/canary bằng trade-off;
+- thiết kế rollback và schema compatibility window;
+- điều tra một latency regression bằng logs/metrics/traces.
 
 ## Official English Sources
 
-- [ASP.NET Core fundamentals](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/?view=aspnetcore-10.0).
-- [Middleware](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware?view=aspnetcore-10.0).
-- [Configuration](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-10.0).
-- [Health checks](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-10.0).
-- [Rate limiting](https://learn.microsoft.com/en-us/aspnet/core/performance/rate-limit?view=aspnetcore-10.0).
+- [ASP.NET Core health checks](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-10.0)
+- [OpenTelemetry .NET traces for ASP.NET Core](https://opentelemetry.io/docs/languages/dotnet/traces/getting-started-aspnetcore/)
+- [OpenTelemetry .NET metrics for ASP.NET Core](https://opentelemetry.io/docs/languages/dotnet/metrics/getting-started-aspnetcore/)
+- [.NET Generic Host](https://learn.microsoft.com/en-us/dotnet/core/extensions/generic-host)
 
-## Vietnamese Resources
+## Verification metadata
 
-- Dùng [glossary](../00-roadmap/glossary.md) để giữ canonical English term.
-- Viết reflection bằng tiếng Việt nhưng giữ tên API/protocol/metric chính xác.
-- Tuân thủ [source policy](../00-roadmap/source-policy.md) cho claim version-sensitive.
-
-## Verification Metadata
-
-- Verified: 2026-08-11.
-- Technology version: ASP.NET Core content v1; refresh version-sensitive behavior before production.
-- Context7 queries used: none; callable tool unavailable in this run.
-- Notes: content v1 không thay thế learner evidence; cần lab/review/production artifact để nâng level.
+- Verified: 2026-08-12.
+- OpenTelemetry registration shape verified against current OpenTelemetry .NET documentation.
+- Target: ASP.NET Core 10 / .NET 10.
+- Status: code-first deep rewrite.
