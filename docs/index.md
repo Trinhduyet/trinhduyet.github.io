@@ -1,58 +1,142 @@
-# AI-Enabled Software Architect Knowledge Roadmap
+# AI-Enabled Software Architect Roadmap
 
-Lộ trình thực chiến bằng tiếng Việt, giữ nguyên thuật ngữ kỹ thuật tiếng Anh: từ C#/.NET Backend đến Distributed Systems, AI Engineering, System Design và Software Architecture.
+> **Đọc tiếng Việt · giữ thuật ngữ English · học bằng code + failure experiment + architecture reasoning.**
+
+Nếu tài liệu trước đây làm bạn thấy quá dài, hãy bắt đầu bằng [Cách đọc tài liệu này](00-roadmap/how-to-read.md). Không cần đọc từ đầu đến cuối.
+
+## Chọn điểm bắt đầu
+
+### Tôi muốn củng cố .NET Backend
+
+Đi theo:
+
+```text
+C#/.NET → Backend → SQL → API Design → ASP.NET Core
+```
+
+Bắt đầu tại [C#/.NET Runtime](03-dotnet/README.md).
+
+### Tôi đã làm Backend và muốn học Production/Architect
+
+Đi theo:
+
+```text
+Testing/Security/Performance
+→ Docker/DevOps/Kubernetes
+→ Distributed Systems
+→ System Design
+→ Architecture
+```
+
+Xem [Master Roadmap](00-roadmap/master-roadmap.md).
+
+### Tôi muốn học AI Engineering ngay
+
+Bắt đầu tại **[AI Engineering cho .NET](19-ai-engineering/README.md)**.
+
+Bạn sẽ có code cho:
+
+- `IChatClient` và provider abstraction;
+- structured output;
+- tool calling;
+- authorization/idempotency cho AI tools;
+- RAG retrieval boundary;
+- evaluation/regression gate;
+- AI observability.
+
+### Tôi dùng Codex / Copilot / Claude Code hoặc coding agents nhiều
+
+Bắt đầu tại **[AI Coding Agents](21-ai-coding-agents/README.md)**.
+
+Bạn sẽ học theo workflow thật:
+
+```text
+Task
+→ inspect repo
+→ plan
+→ edit
+→ build/test
+→ inspect diff
+→ security checks
+→ PR
+→ human review
+```
+
+và có ví dụ `AGENTS.md`, shell discovery, MCP/context boundary, CI YAML, regression test và agent evaluation.
+
+---
+
+## Roadmap trong một hình
 
 ```mermaid
 flowchart TD
-    A[Foundations\nCS · Linux · Git · Networking] --> B[.NET Backend\nC# · ASP.NET Core · SQL · API Design]
-    B --> C[Production Engineering\nTesting · Security · Performance · Docker]
-    C --> D[Platform\nDevOps · IaC · Cloud · Kubernetes · Observability]
+    A[Foundations\nCS · Linux · Git · Networking] --> B[.NET Backend\nC# · ASP.NET Core · SQL · API]
+    B --> C[Production\nTesting · Security · Performance]
+    C --> D[Platform\nDocker · DevOps · Cloud · Kubernetes]
     D --> E[Distributed Systems\nMessaging · Resilience · Consistency]
-    E --> F[Production AI\nRAG · Agents · MCP · Evaluation · AI Security]
-    F --> G[System Design]
-    G --> H[Software / AI Architecture]
+    B --> F[AI Engineering\nLLM · Structured Output · Tools · RAG · Evals]
+    E --> F
+    F --> CA[AI Coding Agents\nContext · MCP · Tests · PR workflow]
+    F --> AG[Business AI Agents\nTools · Workflow · HITL · Security]
+    CA --> S[System Design]
+    AG --> S
+    E --> S
+    S --> H[Software / AI Architecture]
 ```
 
-## Cách sử dụng
+## Cách học mỗi chapter
 
-- Bắt đầu ở [Master Roadmap](00-roadmap/master-roadmap.md) để hiểu toàn bộ dependency và priority P0–P3.
-- Dùng [Learning Path](00-roadmap/learning-path.md) để học theo phase và phase gate.
-- Tự đánh giá bằng [Skills Matrix](00-roadmap/skills-matrix.md); không coi “đã đọc” là evidence.
-- Kiểm tra [Technology Baseline](00-roadmap/technology-baseline.md) trước khi viết code/config phụ thuộc phiên bản.
-- Dùng [Source Policy](00-roadmap/source-policy.md) để phân biệt official docs, Context7 và nguồn tham khảo.
+```text
+1. Hiểu trong 5 phút
+2. Chạy code
+3. Vẽ mental model
+4. Cố tình làm hỏng
+5. Quan sát logs/tests/trace
+6. Đọc internals
+7. Trả lời trade-offs
+```
+
+Xem chi tiết: [How to Read](00-roadmap/how-to-read.md).
+
+## Những trang code-heavy mới
+
+1. [AI Engineering cho .NET](19-ai-engineering/README.md)
+2. [Structured Output và Tool Calling](19-ai-engineering/structured-output-and-tool-calling.md)
+3. [RAG, Evaluation và Observability](19-ai-engineering/rag-evaluation-and-observability.md)
+4. [AI Coding Agents](21-ai-coding-agents/README.md)
+5. [Repository Context, MCP và Instructions](21-ai-coding-agents/repository-context-mcp-and-instructions.md)
+6. [Safe Agentic Coding Workflow](21-ai-coding-agents/safe-agentic-coding-workflow.md)
 
 ## Quality model
 
-Mỗi chủ đề đi qua sáu lớp:
-
-| Level | Năng lực |
+| Level | Bạn phải làm được |
 | --- | --- |
-| L0 — Overview | Biết công nghệ giải quyết vấn đề gì |
-| L1 — Fundamentals | Hiểu primitive và mental model |
-| L2 — Working Knowledge | Implement được use case điển hình |
-| L3 — Production Engineering | Xử lý failure, security, performance và operations |
-| L4 — Internals | Giải thích được behavior từ cơ chế bên trong |
-| L5 — Architecture | Chọn/loại giải pháp bằng requirements và trade-offs |
+| L0 | Nói được công nghệ giải quyết vấn đề gì |
+| L1 | Vẽ được mental model |
+| L2 | Viết/chạy được code cơ bản |
+| L3 | Debug failure, security, performance |
+| L4 | Giải thích behavior bằng internals |
+| L5 | Chọn hoặc loại giải pháp bằng requirements + trade-offs |
 
-Một chapter chỉ được coi là `Content v1` khi các phần substantial có nội dung **topic-specific**, không chỉ có đủ heading. Generic prose có thể copy sang công nghệ khác phải được xem là chưa hoàn thành deep content.
+Một chapter P0/P1 không được gọi là `Content v1` nếu chỉ có prose. Tối thiểu phải có **minimal code/config + production example + failure experiment + verification** khi chủ đề cho phép.
 
-## Trạng thái nội dung
+## Trạng thái hiện tại
 
-- Module 01–04: dùng làm quality reference hiện tại.
-- Module 05–15: đã có structure và coverage ban đầu; cần deep-review theo topic trước khi coi là hoàn thành L4/L5.
-- Module 16–26: triển khai sau khi depth của platform/backend core đạt quality gate.
-
-Xem chi tiết tại [Roadmap Overview](00-roadmap/README.md).
+- Module 01–04: quality reference hiện tại.
+- Module 05–15: structure/coverage đã có; đang cần deep rewrite và thêm code.
+- **Module 19 AI Engineering: code-first v1 đã bắt đầu.**
+- **Module 21 AI Coding Agents: code-first v1 đã bắt đầu.**
+- Module 16–18, 20, 22–26: tiếp tục triển khai theo dependency và nhu cầu thực tế.
 
 ## Đích đến
 
-**AI-enabled Software Architect** có thể trả lời bằng evidence:
+**AI-enabled Software Architect** không cần thuộc mọi tool. Bạn cần có khả năng trả lời bằng evidence:
 
-- Requirement và NFR thực sự là gì?
-- Boundary nào thuộc application, data, platform và AI?
-- Failure mode nào phải xử lý và recovery ra sao?
-- Security/trust boundary thay đổi thế nào?
-- Scale 10x/100x làm thay đổi quyết định nào?
-- Chi phí vận hành và complexity có xứng đáng không?
-- Khi nào nên giữ monolith, khi nào mới nên phân tán hệ thống?
-- Agent/RAG/MCP được evaluate, authorize, audit và rollback thế nào?
+- requirement/NFR là gì;
+- boundary nằm ở đâu;
+- data/AI/tool nào được phép truy cập gì;
+- failure/retry/idempotency ra sao;
+- latency/cost/quality được đo thế nào;
+- khi nào cần agent, khi nào deterministic workflow đơn giản hơn;
+- coding agent được sandbox, test và review như thế nào;
+- kiến trúc sẽ thay đổi thế nào ở 10x/100x scale.
