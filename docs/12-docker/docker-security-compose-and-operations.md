@@ -6,15 +6,7 @@
 
 Docker Compose tốt cho local integration/dev/test và một số single-host deployments. Nó giúp bạn mô tả topology:
 
-```mermaid
-flowchart LR
-    U[Host / Client] --> API[api]
-    API --> SQL[sql]
-    API --> REDIS[redis]
-    WORKER[worker] --> SQL
-    WORKER --> REDIS
-    SQL --> VOL[(sql-data)]
-```
+![Sơ đồ Docker Security Compose And Operations — diagram 1](../assets/diagrams/12-docker-docker-security-compose-and-operations-1.svg)
 
 Nhưng Compose không thay thế application resilience/security.
 

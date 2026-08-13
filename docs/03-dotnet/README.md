@@ -6,29 +6,7 @@ Module này nối C# syntax với behavior observable của .NET runtime. Mục 
 
 ## Module trong một hình
 
-```mermaid
-flowchart LR
-    C["C# type system<br/>types · generics · constraints"]
-    O["Ownership contract<br/>exceptions · IDisposable · async disposal"]
-    A["Async execution<br/>Task · await · cancellation · deadlines"]
-    H["Application host<br/>DI · config · logging · lifetime"]
-    R["Runtime behavior<br/>ThreadPool · scheduling · GC · allocation"]
-    D["Diagnostics evidence<br/>counters · traces · dumps · stacks"]
-    P["Production service<br/>correct · bounded · observable"]
-
-    C --> O --> A --> H --> R --> D --> P
-    A -. "failure/latency feedback" .-> O
-    D -. "hypothesis" .-> R
-
-    classDef foundation fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e;
-    classDef runtime fill:#fef3c7,stroke:#d97706,color:#78350f;
-    classDef evidence fill:#dcfce7,stroke:#16a34a,color:#14532d;
-    classDef target fill:#ede9fe,stroke:#7c3aed,color:#4c1d95,stroke-width:2px;
-    class C,O,A,H foundation;
-    class R runtime;
-    class D evidence;
-    class P target;
-```
+![Sơ đồ Readme — diagram 1](../assets/diagrams/03-dotnet-readme-1.svg)
 
 ## Phạm vi và trạng thái
 
@@ -43,39 +21,7 @@ flowchart LR
 
 ## Dependency map
 
-```mermaid
-flowchart TD
-    CS["Module 01<br/>types · memory · concurrency"]
-    LNX["Module 02<br/>process · signals · resources"]
-    T["Types + generics"]
-    O["Ownership + failure"]
-    AS["Async + cancellation"]
-    H["Host + DI + config + logging"]
-    TP["ThreadPool + diagnostics"]
-    GC["GC + allocations"]
-    B["Module 04<br/>Backend request lifecycle"]
-    P["Project 01<br/>Async File Processor"]
-
-    CS --> T --> O --> AS --> H
-    CS --> TP
-    CS --> GC
-    LNX --> TP
-    LNX --> H
-    AS --> TP
-    H --> P
-    AS --> P
-    TP --> P
-    GC --> P
-    H --> B
-    TP --> B
-
-    classDef prereq fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e;
-    classDef current fill:#ecfccb,stroke:#65a30d,color:#365314;
-    classDef next fill:#fef3c7,stroke:#d97706,color:#78350f;
-    class CS,LNX prereq;
-    class T,O,AS,H,TP,GC current;
-    class B,P next;
-```
+![Sơ đồ Readme — diagram 2](../assets/diagrams/03-dotnet-readme-2.svg)
 
 ## Bốn boundary cần giữ rõ
 
@@ -110,21 +56,7 @@ dotnet run -c Release --no-build -- diagnostics
 
 RuntimeLab không dùng external NuGet package, có hard bounds và in runtime context. Nó là executable experiment; diagnostics production cần thêm permission, sampling, privacy và tool/version policy.
 
-```mermaid
-sequenceDiagram
-    participant U as User / test
-    participant L as RuntimeLab
-    participant T as Task + ThreadPool
-    participant G as GC / runtime counters
-    participant O as Output evidence
-
-    U->>L: command + bounded workload
-    L->>T: start async work / cancellation
-    T-->>L: completion, cancellation hoặc failure
-    L->>G: snapshot allocations, GC và ThreadPool
-    G-->>L: runtime evidence
-    L-->>O: correctness + timing + resource context
-```
+![Sơ đồ Readme — diagram 3](../assets/diagrams/03-dotnet-readme-3.svg)
 
 ## Evidence tối thiểu
 

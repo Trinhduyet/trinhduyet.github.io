@@ -21,21 +21,7 @@ Code “happy path” thường ngắn; production quality nằm ở `finally`, 
 
 ## Tổng quan / Overview
 
-```mermaid
-flowchart TD
-    ACQ["Acquire resource"]
-    USE["Use within owner scope"]
-    OK["Success"]
-    ERR["Exception / cancellation"]
-    CLEAN["Deterministic cleanup<br/>Dispose / DisposeAsync / finally"]
-    BOUND["Translate at boundary<br/>typed result / exception / retry policy"]
-    OBS["Log/metric/trace with safe context"]
-
-    ACQ --> USE
-    USE --> OK --> CLEAN
-    USE --> ERR --> CLEAN --> BOUND --> OBS
-    OK --> OBS
-```
+![Sơ đồ Exceptions Disposable And Resource Ownership — diagram 1](../assets/diagrams/03-dotnet-exceptions-disposable-and-resource-ownership-1.svg)
 
 ## Mental Model
 

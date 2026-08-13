@@ -43,20 +43,7 @@ Big-O trả lời hình dạng tăng trưởng khi input lớn. Nó không trả
 
 ### Từ request đến resource cost
 
-```mermaid
-flowchart LR
-    R["Request shape<br/>items · payload · filters"]
-    W["Workload distribution<br/>rate · skew · hit ratio"]
-    A["Algorithm<br/>operations per request"]
-    I["Implementation<br/>allocation · locality · locks · I/O"]
-    X["Resources<br/>CPU · RAM · disk · network"]
-    S["SLO outcome<br/>p50 · p95 · p99 · errors"]
-
-    R --> A
-    W --> A
-    A --> I --> X --> S
-    S -. "feedback" .-> W
-```
+![Sơ đồ Complexity And Workload Reasoning — diagram 1](../assets/diagrams/01-computer-science-complexity-and-workload-reasoning-1.svg)
 
 ### Ba tầng phán đoán
 

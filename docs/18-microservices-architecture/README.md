@@ -13,19 +13,7 @@ monolith
 
 Một microservice đúng nghĩa cần có **business boundary**, **data ownership**, **contract riêng**, **deployment lifecycle riêng** và **operational ownership** đủ độc lập để service có thể thay đổi mà không buộc toàn hệ thống phải release cùng lúc.
 
-```mermaid
-flowchart LR
-    CLIENT[Client] --> G[API Gateway / BFF]
-    G --> O[Order Service]
-    G --> C[Catalog Service]
-    O --> ODB[(Order DB)]
-    C --> CDB[(Catalog DB)]
-    O --> BUS[Message Broker]
-    BUS --> P[Payment Service]
-    BUS --> I[Inventory Service]
-    P --> PDB[(Payment DB)]
-    I --> IDB[(Inventory DB)]
-```
+![Sơ đồ Readme — diagram 1](../assets/diagrams/18-microservices-architecture-readme-1.svg)
 
 Nếu hai service:
 
@@ -147,16 +135,7 @@ Nếu không trả lời được, boundary có thể đang được vẽ theo t
 
 # 5. Anti-pattern — distributed monolith
 
-```mermaid
-flowchart LR
-    A[Order Service] --> B[Payment Service]
-    B --> C[Inventory Service]
-    C --> D[Shipping Service]
-    A --> DB[(Shared DB)]
-    B --> DB
-    C --> DB
-    D --> DB
-```
+![Sơ đồ Readme — diagram 2](../assets/diagrams/18-microservices-architecture-readme-2.svg)
 
 Dấu hiệu:
 
@@ -208,13 +187,7 @@ Shipping Service
 
 Happy path:
 
-```mermaid
-flowchart LR
-    O[Create Order] --> I[Reserve Inventory]
-    I --> P[Charge Payment]
-    P --> S[Create Shipment]
-    S --> DONE[Completed]
-```
+![Sơ đồ Readme — diagram 3](../assets/diagrams/18-microservices-architecture-readme-3.svg)
 
 Nhưng production phải xử lý:
 

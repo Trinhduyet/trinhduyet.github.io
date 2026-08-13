@@ -8,14 +8,7 @@ Index không phải là "tăng tốc database" một cách chung chung.
 
 Index là một **access path** giúp SQL Server tìm dữ liệu theo một shape cụ thể mà không phải đọc quá nhiều pages/rows.
 
-```mermaid
-flowchart LR
-    A[SQL query] --> B[Statistics]
-    B --> C[Cardinality estimate]
-    C --> D[Optimizer chooses plan]
-    D --> E[Seek / Scan / Join / Sort / Lookup]
-    E --> F[CPU + Memory + I/O]
-```
+![Sơ đồ Indexes Execution Plans And Operations — diagram 1](../assets/diagrams/05-sql-indexes-execution-plans-and-operations-1.svg)
 
 Bạn không tối ưu query bằng cảm giác. Bạn cần evidence:
 
@@ -442,16 +435,7 @@ Write/storage/maintenance nào phải trả giá?
 
 Khi nhận ticket "database CPU cao":
 
-```mermaid
-flowchart TD
-    A[CPU high] --> B[Top queries / Query Store]
-    B --> C[Actual plan + runtime]
-    C --> D{Waiting or executing?}
-    D -->|Waiting| E[Blocking / locks / I/O waits]
-    D -->|Executing| F[Rows / reads / CPU / operators]
-    F --> G[Query shape / index / statistics]
-    G --> H[Change + measure]
-```
+![Sơ đồ Indexes Execution Plans And Operations — diagram 2](../assets/diagrams/05-sql-indexes-execution-plans-and-operations-2.svg)
 
 Không optimize random query chỉ vì plan nhìn phức tạp.
 

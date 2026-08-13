@@ -124,22 +124,7 @@ Business/domain validation
 
 ## Mental model
 
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant A as .NET App
-    participant M as Model
-    participant T as Tool
-
-    U->>A: "Đơn 123 đang ở đâu?"
-    A->>M: prompt + tool schema
-    M-->>A: call GetOrderStatus(123)
-    A->>T: authorize + execute
-    T-->>A: Shipped
-    A->>M: tool result
-    M-->>A: final answer
-    A-->>U: "Đơn 123 đã được gửi"
-```
+![Sơ đồ Structured Output And Tool Calling — diagram 1](../assets/diagrams/19-ai-engineering-structured-output-and-tool-calling-1.svg)
 
 Model **đề xuất** tool call.
 Application **quyết định có cho phép và thực thi hay không**.

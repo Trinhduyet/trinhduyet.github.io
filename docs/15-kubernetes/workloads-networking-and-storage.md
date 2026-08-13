@@ -6,16 +6,7 @@
 
 Một web workload production tối thiểu thường nối các primitives:
 
-```mermaid
-flowchart LR
-    D[Deployment] --> P1[Pod]
-    D --> P2[Pod]
-    S[Service] --> P1
-    S --> P2
-    C[ConfigMap] --> P1
-    SEC[Secret] --> P1
-    PVC[PVC] --> P1
-```
+![Sơ đồ Workloads Networking And Storage — diagram 1](../assets/diagrams/15-kubernetes-workloads-networking-and-storage-1.svg)
 
 Mỗi primitive giải một problem khác nhau. Đừng dùng Pod YAML đơn lẻ rồi gọi đó là deployment architecture.
 

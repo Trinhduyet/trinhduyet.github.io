@@ -21,18 +21,7 @@ Collection cũng là runtime decision: layout, equality, allocations, order và 
 
 ## Tổng quan / Overview
 
-```mermaid
-flowchart TD
-    R["Requirement<br/>shape · lifetime · operations"]
-    T["Type contract<br/>nullability · invariant · equality"]
-    G["Generic abstraction<br/>constraints · variance · reuse"]
-    C["Collection choice<br/>array · list · hash · queue · immutable"]
-    B["Boundary<br/>serialization · API · persistence"]
-    E["Evidence<br/>allocations · correctness · latency"]
-
-    R --> T --> G --> C --> B --> E
-    E -. "workload feedback" .-> R
-```
+![Sơ đồ Csharp Types Generics And Collections — diagram 1](../assets/diagrams/03-dotnet-csharp-types-generics-and-collections-1.svg)
 
 ## Mental Model
 

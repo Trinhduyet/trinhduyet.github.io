@@ -27,14 +27,7 @@ Nếu cả hai cùng đọc `Available = 1` rồi cùng update, hệ thống có
 
 Mental model:
 
-```mermaid
-flowchart LR
-    A[Application operation] --> B[Transaction]
-    B --> C[Read / Write]
-    C --> D[Locks or Row Versions]
-    D --> E[Commit / Rollback]
-    E --> F[Visible state]
-```
+![Sơ đồ Transactions Isolation And Concurrency — diagram 1](../assets/diagrams/05-sql-transactions-isolation-and-concurrency-1.svg)
 
 ---
 

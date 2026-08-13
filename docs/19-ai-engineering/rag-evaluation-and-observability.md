@@ -4,18 +4,7 @@
 
 Một AI application production không chỉ có model. Với dữ liệu doanh nghiệp, pipeline thường là:
 
-```mermaid
-flowchart LR
-    D[Documents / DB / APIs] --> I[Ingestion]
-    I --> C[Chunk + Metadata]
-    C --> E[Embedding / Search Index]
-    Q[User Question] --> R[Retrieval]
-    E --> R
-    R --> X[Context Assembly]
-    X --> M[Model]
-    M --> O[Answer + Citation]
-    O --> V[Evaluation + Telemetry]
-```
+![Sơ đồ Rag Evaluation And Observability — diagram 1](../assets/diagrams/19-ai-engineering-rag-evaluation-and-observability-1.svg)
 
 Ba câu hỏi quan trọng:
 

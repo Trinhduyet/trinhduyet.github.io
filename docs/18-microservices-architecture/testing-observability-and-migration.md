@@ -433,12 +433,7 @@ Do not extract only because class count is large.
 
 # 16. Strangler routing
 
-```mermaid
-flowchart LR
-    C[Client] --> G[Gateway / Router]
-    G --> M[Legacy Monolith]
-    G --> N[New Payment Service]
-```
+![Sơ đồ Testing Observability And Migration — diagram 1](../assets/diagrams/18-microservices-architecture-testing-observability-and-migration-1.svg)
 
 Initially:
 

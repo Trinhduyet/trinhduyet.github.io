@@ -8,17 +8,7 @@ Một API production không kết thúc ở `dotnet publish`.
 
 Bạn phải vận hành được lifecycle:
 
-```mermaid
-flowchart LR
-    A[Build] --> B[Artifact]
-    B --> C[Deploy]
-    C --> D[Start]
-    D --> E[Ready]
-    E --> F[Serve traffic]
-    F --> G[Observe]
-    G --> H[Stop / Replace]
-    H --> I[Rollback or next version]
-```
+![Sơ đồ Deployment Observability And Operations — diagram 1](../assets/diagrams/07-aspnet-core-deployment-observability-and-operations-1.svg)
 
 Ba câu hỏi phải trả lời được:
 

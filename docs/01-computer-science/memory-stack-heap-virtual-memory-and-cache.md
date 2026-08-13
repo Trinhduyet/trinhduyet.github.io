@@ -21,21 +21,7 @@ Architect cần hiểu memory như một chuỗi translation và ownership, khô
 
 ## Tổng quan / Overview
 
-```mermaid
-flowchart TD
-    CODE["Application objects + buffers"]
-    CLR["CLR memory<br/>managed heap · stacks · code · native runtime"]
-    VA["Process virtual address space<br/>reserved · committed · mapped"]
-    MMU["MMU translation<br/>page tables · TLB"]
-    RAM["Physical RAM<br/>anonymous pages · file cache"]
-    STORE["Backing storage<br/>files · swap/page file"]
-    LIMIT["Boundary<br/>process · cgroup/container · host"]
-
-    CODE --> CLR --> VA --> MMU --> RAM
-    STORE <--> RAM
-    LIMIT -. "pressure / limit" .-> CLR
-    LIMIT -. "reclaim / OOM" .-> RAM
-```
+![Sơ đồ Memory Stack Heap Virtual Memory And Cache — diagram 1](../assets/diagrams/01-computer-science-memory-stack-heap-virtual-memory-and-cache-1.svg)
 
 Các số liệu trả lời câu hỏi khác nhau:
 

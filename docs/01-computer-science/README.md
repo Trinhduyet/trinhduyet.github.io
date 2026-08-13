@@ -6,36 +6,7 @@ Module này xây nền để giải thích vì sao một hệ thống nhanh, ch�
 
 ## Module trong một hình
 
-```mermaid
-flowchart LR
-    W["Workload thật<br/>N · Q · skew · concurrency · SLO"]
-    C["Complexity model<br/>time · space · worst · expected · amortized"]
-    D["Data structure<br/>array · hash · queue · heap · graph"]
-    M["Memory behavior<br/>allocation · locality · page fault · GC"]
-    S["Execution behavior<br/>process · thread · Task · scheduler"]
-    E["Evidence<br/>latency · throughput · allocation · contention"]
-    A["Architecture decision<br/>budget · boundary · trade-off"]
-
-    W --> C --> D
-    D --> M
-    D --> S
-    M --> E
-    S --> E
-    E --> A
-    A -.->|workload đổi| W
-
-    classDef input fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e;
-    classDef model fill:#ecfccb,stroke:#65a30d,color:#365314;
-    classDef runtime fill:#fef3c7,stroke:#d97706,color:#78350f;
-    classDef evidence fill:#dcfce7,stroke:#16a34a,color:#14532d;
-    classDef decision fill:#ede9fe,stroke:#7c3aed,color:#4c1d95,stroke-width:2px;
-
-    class W input;
-    class C,D model;
-    class M,S runtime;
-    class E evidence;
-    class A decision;
-```
+![Sơ đồ Readme — diagram 1](../assets/diagrams/01-computer-science-readme-1.svg)
 
 Đọc sơ đồ từ trái sang phải: Big-O chỉ hữu ích sau khi định nghĩa đúng input và operation. Data structure quyết định cả complexity lẫn memory layout. Runtime và OS quyết định work được chạy khi nào. Chỉ evidence trên workload đại diện mới đủ để đưa ra quyết định kiến trúc.
 
@@ -53,39 +24,7 @@ Content v1 nghĩa là tài liệu đã có mental model, production constraints,
 
 ## Dependency map
 
-```mermaid
-flowchart TD
-    START["Prerequisite<br/>C# syntax cơ bản"]
-    W["1. Complexity + workload"]
-    D["2. Data structures"]
-    S["3. Scheduling + concurrency"]
-    M["4. Memory + cache"]
-    LAB["WorkloadLab<br/>lookup · race · locality"]
-    LINUX["Module 02<br/>Linux resource diagnosis"]
-    DOTNET["Module 03<br/>.NET runtime deep dive"]
-    PERF["Module 10<br/>Performance engineering"]
-    DIST["Module 17<br/>Distributed systems"]
-
-    START --> W --> D
-    START --> S
-    D --> M
-    S --> M
-    W --> LAB
-    D --> LAB
-    S --> LAB
-    M --> LAB
-    LAB --> LINUX
-    LAB --> DOTNET
-    DOTNET --> PERF
-    PERF --> DIST
-
-    classDef current fill:#ecfccb,stroke:#65a30d,color:#365314;
-    classDef lab fill:#fef3c7,stroke:#d97706,color:#78350f;
-    classDef next fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e;
-    class W,D,S,M current;
-    class LAB lab;
-    class LINUX,DOTNET,PERF,DIST next;
-```
+![Sơ đồ Readme — diagram 2](../assets/diagrams/01-computer-science-readme-2.svg)
 
 Không cần đợi học hết lý thuyết mới chạy lab. Vòng học phù hợp là: dự đoán → chạy → giải thích kết quả → thay workload → kiểm tra lại giả thuyết.
 
@@ -122,21 +61,7 @@ dotnet run -c Release --no-build -- locality
 
 Ba experiment có seed cố định và hard limit để tránh vô tình tạo tải quá lớn. `Stopwatch` phù hợp để quan sát định hướng trong lab, nhưng kết quả một lần chạy không phải benchmark có thể công bố.
 
-```mermaid
-sequenceDiagram
-    participant L as Learner
-    participant A as WorkloadLab
-    participant R as .NET Runtime
-    participant O as OS + Hardware
-
-    L->>A: Chọn command và workload có giới hạn
-    A->>R: Warm-up nhỏ rồi thực thi operation
-    R->>O: Schedule threads, allocate và access memory
-    O-->>R: Timing, cache và contention effects
-    R-->>A: Kết quả + elapsed time
-    A-->>L: Output có runtime context
-    L->>L: Ghi giả thuyết, thay một biến, chạy lại
-```
+![Sơ đồ Readme — diagram 3](../assets/diagrams/01-computer-science-readme-3.svg)
 
 ## Evidence tối thiểu
 

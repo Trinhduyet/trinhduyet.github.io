@@ -6,34 +6,7 @@ Module này nối runtime execution với backend application behavior: một HT
 
 ## Module trong một hình
 
-```mermaid
-flowchart LR
-    C["Client request<br/>method · path · headers · body"]
-    M["Middleware pipeline<br/>error · correlation · auth · rate limit"]
-    R["Routing + endpoint metadata<br/>route values · policies"]
-    B["Binding + validation<br/>DTO · limits · ProblemDetails"]
-    H["Handler/application service<br/>use case · ownership"]
-    D["Downstream boundary<br/>cache · HTTP · queue · file"]
-    S["Response contract<br/>status · headers · body"]
-    O["Evidence<br/>logs · metrics · traces · audit"]
-
-    C --> M --> R --> B --> H --> D --> S
-    M -.-> O
-    R -.-> O
-    B -.-> O
-    H -.-> O
-    D -.-> O
-    S -. "client-visible contract" .-> C
-
-    classDef input fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e;
-    classDef boundary fill:#fef3c7,stroke:#d97706,color:#78350f;
-    classDef app fill:#dcfce7,stroke:#16a34a,color:#14532d;
-    classDef evidence fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
-    class C,S input;
-    class M,R,B boundary;
-    class H,D app;
-    class O evidence;
-```
+![Sơ đồ Readme — diagram 1](../assets/diagrams/04-backend-readme-1.svg)
 
 ## Phạm vi và trạng thái
 
@@ -47,43 +20,7 @@ flowchart LR
 
 ## Dependency map
 
-```mermaid
-flowchart TD
-    DOTNET["Module 03<br/>C# · async · ownership · host"]
-    HTTP["Module 02<br/>HTTP · TCP · process · resources"]
-    LIFECYCLE["Request lifecycle"]
-    CONTRACT["Endpoint contract<br/>binding · validation · errors"]
-    SECURITY["Authn/authz<br/>policy · tenant · audit"]
-    CAPACITY["Capacity boundary<br/>pagination · idempotency · rate limit · cache"]
-    INTEGRATION["Integration boundary<br/>workers · files · HTTP · webhooks"]
-    SQL["Module 05<br/>SQL + relational execution"]
-    API["Module 06<br/>API design + evolution"]
-    ASP["Module 07<br/>ASP.NET Core production hosting"]
-    P["Project 02<br/>Order Management"]
-
-    DOTNET --> LIFECYCLE
-    HTTP --> LIFECYCLE
-    LIFECYCLE --> CONTRACT --> SECURITY
-    CONTRACT --> CAPACITY
-    SECURITY --> CAPACITY
-    DOTNET --> INTEGRATION
-    CAPACITY --> INTEGRATION
-    CAPACITY --> SQL
-    CONTRACT --> API
-    INTEGRATION --> API
-    LIFECYCLE --> ASP
-    SQL --> P
-    API --> P
-    SECURITY --> P
-    INTEGRATION --> P
-
-    classDef prereq fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e;
-    classDef current fill:#ecfccb,stroke:#65a30d,color:#365314;
-    classDef next fill:#fef3c7,stroke:#d97706,color:#78350f;
-    class DOTNET,HTTP prereq;
-    class LIFECYCLE,CONTRACT,SECURITY,CAPACITY,INTEGRATION current;
-    class SQL,API,ASP,P next;
-```
+![Sơ đồ Readme — diagram 2](../assets/diagrams/04-backend-readme-2.svg)
 
 ## Bốn boundary phải giữ rõ
 
@@ -117,23 +54,7 @@ dotnet run -c Release --no-build -- backpressure 10000 64 25
 
 BackendLab là executable experiment, không phải server public. Nó kiểm tra các invariant của boundary bằng workload bounded; production endpoint cần thêm framework hosting, TLS, identity provider, persistence và deployment policy.
 
-```mermaid
-sequenceDiagram
-    participant C as Client
-    participant P as Pipeline
-    participant E as Endpoint
-    participant Q as Downstream
-    participant T as Telemetry
-
-    C->>P: HTTP request
-    P->>P: error/correlation/auth/rate limit
-    P->>E: bound + validated input
-    E->>Q: timeout/cancel/idempotency
-    Q-->>E: result or classified failure
-    E-->>P: response contract
-    P-->>C: status + body + headers
-    P->>T: structured evidence
-```
+![Sơ đồ Readme — diagram 3](../assets/diagrams/04-backend-readme-3.svg)
 
 ## Evidence tối thiểu
 

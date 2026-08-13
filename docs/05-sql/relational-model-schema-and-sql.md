@@ -19,14 +19,7 @@ Data types
 
 Một schema tốt giúp database từ chối state sai **kể cả khi application có bug hoặc nhiều requests chạy đồng thời**.
 
-```mermaid
-flowchart LR
-    A[Business invariant] --> B[Schema]
-    B --> C[PK / FK / UNIQUE / CHECK]
-    C --> D[Queries]
-    D --> E[Indexes / Plans]
-    E --> F[Application behavior]
-```
+![Sơ đồ Relational Model Schema And Sql — diagram 1](../assets/diagrams/05-sql-relational-model-schema-and-sql-1.svg)
 
 ---
 

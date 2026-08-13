@@ -6,16 +6,7 @@
 
 Broker tách producer và consumer theo thời gian/capacity, nhưng tạo delivery semantics mới.
 
-```mermaid
-flowchart LR
-    API[Producer/API] --> DB[(Business DB)]
-    DB --> OUTBOX[(Outbox)]
-    OUTBOX --> PUB[Publisher]
-    PUB --> Q[Broker]
-    Q --> CON[Consumer]
-    CON --> INBOX[(Inbox/Dedup)]
-    CON --> SIDE[Business side effect]
-```
+![Sơ đồ Messaging Outbox Inbox And Dedup — diagram 1](../assets/diagrams/17-distributed-systems-messaging-outbox-inbox-and-dedup-1.svg)
 
 Hai failure quan trọng:
 

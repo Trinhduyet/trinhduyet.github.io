@@ -44,30 +44,7 @@ Evidence
 
 Mỗi structure duy trì một hoặc nhiều **invariant**. Invariant làm một operation rẻ hơn nhưng phải được duy trì khi dữ liệu đổi.
 
-```mermaid
-flowchart TD
-    S["Semantics<br/>order · uniqueness · priority · relation"]
-    O["Operations<br/>read · add · remove · scan · min/max"]
-    W["Workload<br/>size · skew · concurrency · lifetime"]
-    C{"Candidate"}
-    A["Contiguous<br/>Array · List"]
-    H["Hash index<br/>Dictionary · HashSet"]
-    Q["Work ordering<br/>Queue · Stack · PriorityQueue"]
-    T["Ordered/relational<br/>tree · graph"]
-    E["Measure total cost<br/>time · memory · safety · operations"]
-
-    S --> C
-    O --> C
-    W --> C
-    C --> A
-    C --> H
-    C --> Q
-    C --> T
-    A --> E
-    H --> E
-    Q --> E
-    T --> E
-```
+![Sơ đồ Data Structures For Backend Systems — diagram 1](../assets/diagrams/01-computer-science-data-structures-for-backend-systems-1.svg)
 
 Data structure không thay business boundary. Nếu dataset không thể vừa một process hoặc cần durability/cross-node coordination, in-memory collection chỉ là một phần của solution.
 

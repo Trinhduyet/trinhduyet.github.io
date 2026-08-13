@@ -21,22 +21,7 @@ Backend hiện đại thường chờ network, disk, database hoặc broker nhi�
 
 ## Tổng quan / Overview
 
-```mermaid
-flowchart TD
-    CALL["Caller request/job"]
-    START["Start async operation"]
-    WAIT["Await I/O or timer<br/>thread được trả lại"]
-    CONT["Continuation<br/>resume khi complete"]
-    DONE["Task success"]
-    CANCEL["Cancellation/deadline"]
-    FAIL["Fault"]
-    CLEAN["finally cleanup<br/>release ownership"]
-
-    CALL --> START --> WAIT --> CONT
-    CONT --> DONE --> CLEAN
-    CONT --> FAIL --> CLEAN
-    WAIT --> CANCEL --> CLEAN
-```
+![Sơ đồ Async Await Cancellation And Task Lifecycle — diagram 1](../assets/diagrams/03-dotnet-async-await-cancellation-and-task-lifecycle-1.svg)
 
 ## Mental Model
 

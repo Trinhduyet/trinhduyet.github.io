@@ -8,15 +8,7 @@ EF Core không xóa SQL khỏi hệ thống. Nó **sinh SQL thay bạn**.
 
 Do đó review query đúng phải đi hết chuỗi:
 
-```mermaid
-flowchart LR
-    A[LINQ] --> B[EF translation]
-    B --> C[Generated SQL]
-    C --> D[SQL Server optimizer]
-    D --> E[Execution Plan]
-    E --> F[Index + I/O + CPU]
-    F --> G[Materialization]
-```
+![Sơ đồ Ef Core Query Shape And Sql — diagram 1](../assets/diagrams/05-sql-ef-core-query-shape-and-sql-1.svg)
 
 Nếu bạn chỉ nhìn LINQ đẹp hay xấu mà không nhìn SQL/plan, bạn chưa review performance đầy đủ.
 
