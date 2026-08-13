@@ -16,10 +16,7 @@ Dependency, SBOM, provenance, artifact signing, CI permissions và policy enforc
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Secure Supply Chain và DevSecOps Gates"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+![Sơ đồ Secure Supply Chain And Devsecops — diagram 1](../assets/diagrams/09-security-devsecops-secure-supply-chain-and-devsecops-1.svg)
 
 ## Mental Model
 

@@ -19,18 +19,7 @@ Runtime diagnostics có giá trị khi bắt đầu bằng symptom và hypothesi
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    S["Symptom<br/>latency · CPU · memory · hang"]
-    H["Hypothesis<br/>starvation · lock · GC · dependency"]
-    C["Counters<br/>rate · queue · resources"]
-    T["Trace/stack<br/>timeline · waits · hot path"]
-    D["Dump<br/>state · heap · locks"]
-    F["Fix + verify<br/>workload · rollback · runbook"]
-    S --> H --> C --> T --> D --> F
-    C -. "narrow/stop" .-> H
-    T -. "capture cost" .-> F
-~~~
+![Sơ đồ Threadpool Concurrency And Diagnostics — diagram 1](../assets/diagrams/03-dotnet-threadpool-concurrency-and-diagnostics-1.svg)
 
 ## Mental Model
 

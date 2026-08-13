@@ -16,10 +16,7 @@ Hypothesis, baseline, CPU, memory, I/O, lock, queue và tracing. Đây là bound
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Measurement, Profiling và Bottlenecks"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+![Sơ đồ Measurement Profiling And Bottlenecks — diagram 1](../assets/diagrams/10-performance-measurement-profiling-and-bottlenecks-1.svg)
 
 ## Mental Model
 

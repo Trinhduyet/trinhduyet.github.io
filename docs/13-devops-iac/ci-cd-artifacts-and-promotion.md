@@ -16,10 +16,7 @@ Build/test/scan, immutable artifact, environment gates, provenance và rollback.
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["CI/CD, Artifacts và Promotion"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+![Sơ đồ Ci Cd Artifacts And Promotion — diagram 1](../assets/diagrams/13-devops-iac-ci-cd-artifacts-and-promotion-1.svg)
 
 ## Mental Model
 

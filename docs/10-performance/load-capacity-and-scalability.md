@@ -16,10 +16,7 @@ Arrival rate, concurrency, saturation, headroom, quotas và capacity model. Đâ
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Load, Capacity và Scalability"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+![Sơ đồ Load Capacity And Scalability — diagram 1](../assets/diagrams/10-performance-load-capacity-and-scalability-1.svg)
 
 ## Mental Model
 

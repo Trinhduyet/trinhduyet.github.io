@@ -16,10 +16,7 @@ Plan/apply, remote state locking, module composition, policy và drift detection
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Terraform State, Modules và Drift"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+![Sơ đồ Terraform State Modules And Drift — diagram 1](../assets/diagrams/13-devops-iac-terraform-state-modules-and-drift-1.svg)
 
 ## Mental Model
 

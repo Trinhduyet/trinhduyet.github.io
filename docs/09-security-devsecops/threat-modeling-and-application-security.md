@@ -16,10 +16,7 @@ Assets, trust boundaries, abuse cases, mitigations và security evidence. Đây 
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Threat Modeling và Application Security"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+![Sơ đồ Threat Modeling And Application Security — diagram 1](../assets/diagrams/09-security-devsecops-threat-modeling-and-application-security-1.svg)
 
 ## Mental Model
 

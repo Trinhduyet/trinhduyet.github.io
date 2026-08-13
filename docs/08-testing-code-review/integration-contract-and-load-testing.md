@@ -16,10 +16,7 @@ Real dependencies, schema/HTTP contract, load model và failure injection. Đây
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Integration, Contract và Load Testing"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+![Sơ đồ Integration Contract And Load Testing — diagram 1](../assets/diagrams/08-testing-code-review-integration-contract-and-load-testing-1.svg)
 
 ## Mental Model
 

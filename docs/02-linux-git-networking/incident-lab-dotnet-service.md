@@ -25,23 +25,7 @@ Lab này dùng một service nhỏ, không có package ngoài shared framework, 
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart TD
-    SYM["Symptom<br/>unreachable · 503 · 502/504 · reset"]
-    BASE["Baseline<br/>revision · process · listener · healthy request"]
-    BOUND["Bound failure<br/>process → socket → DNS/connect → HTTP → dependency"]
-    HYP["Một hypothesis có thể bác bỏ"]
-    EXP["Bounded experiment"]
-    EVID["Evidence + UTC timeline"]
-    DEC{"Hypothesis đúng?"}
-    MIT["Mitigate + verify SLO"]
-    NEXT["Hypothesis kế tiếp"]
-    PREV["Root cause + prevention"]
-
-    SYM --> BASE --> BOUND --> HYP --> EXP --> EVID --> DEC
-    DEC -->|Có| MIT --> PREV
-    DEC -->|Không| NEXT --> HYP
-~~~
+![Sơ đồ Incident Lab Dotnet Service — diagram 1](../assets/diagrams/02-linux-git-networking-incident-lab-dotnet-service-1.svg)
 
 Service source:
 

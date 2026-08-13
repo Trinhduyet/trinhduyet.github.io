@@ -6,11 +6,7 @@ Module này tập trung vào Threat modeling, identity, secrets, supply chain v�
 
 ## Module trong một hình
 
-~~~mermaid
-flowchart LR
-    A["Requirement + workload"] --> B["Threat Modeling và Application Security"] --> C["Identity, Secrets và Data Protection"] --> D["Secure Supply Chain và DevSecOps Gates"] --> E["Production decision"]
-    E -. "evidence feedback" .-> A
-~~~
+![Sơ đồ Readme — diagram 1](../assets/diagrams/09-security-devsecops-readme-1.svg)
 
 ## Phạm vi và trạng thái
 
@@ -22,12 +18,7 @@ flowchart LR
 
 ## Dependency map
 
-~~~mermaid
-flowchart TD
-    PRE["Module 08"] --> CURRENT["Module 09<br/>Security và DevSecOps"]
-    CURRENT --> NEXT["Module 10<br/>Performance"]
-    CURRENT -. "Project spine / production evidence" .-> PROJECT["Architecture artifact"]
-~~~
+![Sơ đồ Readme — diagram 2](../assets/diagrams/09-security-devsecops-readme-2.svg)
 
 ## Cách học
 

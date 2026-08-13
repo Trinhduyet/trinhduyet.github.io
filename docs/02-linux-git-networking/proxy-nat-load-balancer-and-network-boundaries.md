@@ -26,23 +26,7 @@ Nếu topology không được viết rõ, team dễ:
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    C["Client<br/>source address A"]
-    NAT["NAT / gateway<br/>A → B"]
-    L4["L4 load balancer<br/>connection routing"]
-    L7["L7 reverse proxy<br/>TLS + HTTP routing"]
-    APP["Application<br/>namespace + listener"]
-    DEP["Dependency"]
-
-    C -->|DNS + TCP/TLS| NAT
-    NAT -->|translated flow| L4
-    L4 -->|backend connection| L7
-    L7 -->|new or reused upstream connection| APP
-    APP --> DEP
-
-    L7 -.->|Forwarded metadata from known hop only| APP
-~~~
+![Sơ đồ Proxy Nat Load Balancer And Network Boundaries — diagram 1](../assets/diagrams/02-linux-git-networking-proxy-nat-load-balancer-and-network-boundaries-1.svg)
 
 Mỗi mũi tên là một hop có thể có:
 

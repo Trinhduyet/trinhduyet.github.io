@@ -6,11 +6,7 @@ Module này tập trung vào Compute/storage/network/identity primitives, reliab
 
 ## Module trong một hình
 
-~~~mermaid
-flowchart LR
-    A["Requirement + workload"] --> B["Cloud Primitives, Identity và Networking"] --> C["Regions, Availability và Disaster Recovery"] --> D["Cloud Cost Governance và Operations"] --> E["Production decision"]
-    E -. "evidence feedback" .-> A
-~~~
+![Sơ đồ Readme — diagram 1](../assets/diagrams/14-cloud-readme-1.svg)
 
 ## Phạm vi và trạng thái
 
@@ -22,12 +18,7 @@ flowchart LR
 
 ## Dependency map
 
-~~~mermaid
-flowchart TD
-    PRE["Module 13"] --> CURRENT["Module 14<br/>Cloud"]
-    CURRENT --> NEXT["Module 15<br/>Kubernetes"]
-    CURRENT -. "Project spine / production evidence" .-> PROJECT["Architecture artifact"]
-~~~
+![Sơ đồ Readme — diagram 2](../assets/diagrams/14-cloud-readme-2.svg)
 
 ## Cách học
 

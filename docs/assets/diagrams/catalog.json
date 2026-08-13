@@ -1,282 +1,202 @@
 [
   [
-    "00-roadmap/how-to-read.md",
+    "02-linux-git-networking/README.md",
     1,
-    "00-roadmap-how-to-read-1.svg"
+    "02-linux-git-networking-readme-1.svg"
   ],
   [
-    "00-roadmap/how-to-read.md",
+    "02-linux-git-networking/git-mental-model-and-safe-recovery.md",
+    1,
+    "02-linux-git-networking-git-mental-model-and-safe-recovery-1.svg"
+  ],
+  [
+    "02-linux-git-networking/incident-lab-dotnet-service.md",
+    1,
+    "02-linux-git-networking-incident-lab-dotnet-service-1.svg"
+  ],
+  [
+    "02-linux-git-networking/proxy-nat-load-balancer-and-network-boundaries.md",
+    1,
+    "02-linux-git-networking-proxy-nat-load-balancer-and-network-boundaries-1.svg"
+  ],
+  [
+    "03-dotnet/gc-allocations-and-runtime-memory.md",
+    1,
+    "03-dotnet-gc-allocations-and-runtime-memory-1.svg"
+  ],
+  [
+    "03-dotnet/threadpool-concurrency-and-diagnostics.md",
+    1,
+    "03-dotnet-threadpool-concurrency-and-diagnostics-1.svg"
+  ],
+  [
+    "04-backend/authentication-authorization-and-validation.md",
+    1,
+    "04-backend-authentication-authorization-and-validation-1.svg"
+  ],
+  [
+    "04-backend/background-jobs-files-and-webhooks.md",
+    1,
+    "04-backend-background-jobs-files-and-webhooks-1.svg"
+  ],
+  [
+    "04-backend/pagination-idempotency-rate-limiting-and-caching.md",
+    1,
+    "04-backend-pagination-idempotency-rate-limiting-and-caching-1.svg"
+  ],
+  [
+    "04-backend/request-lifecycle-and-endpoint-contract.md",
+    1,
+    "04-backend-request-lifecycle-and-endpoint-contract-1.svg"
+  ],
+  [
+    "08-testing-code-review/README.md",
+    1,
+    "08-testing-code-review-readme-1.svg"
+  ],
+  [
+    "08-testing-code-review/README.md",
     2,
-    "00-roadmap-how-to-read-2.svg"
+    "08-testing-code-review-readme-2.svg"
   ],
   [
-    "00-roadmap/master-roadmap.md",
+    "08-testing-code-review/code-review-quality-and-failure-analysis.md",
     1,
-    "roadmap-core-and-ai.svg"
+    "08-testing-code-review-code-review-quality-and-failure-analysis-1.svg"
   ],
   [
-    "00-roadmap/prerequisites.md",
+    "08-testing-code-review/integration-contract-and-load-testing.md",
     1,
-    "prerequisites-layer-stack.svg"
+    "08-testing-code-review-integration-contract-and-load-testing-1.svg"
   ],
   [
-    "01-computer-science/README.md",
+    "08-testing-code-review/test-strategy-and-boundaries.md",
     1,
-    "01-computer-science-readme-1.svg"
+    "08-testing-code-review-test-strategy-and-boundaries-1.svg"
   ],
   [
-    "01-computer-science/README.md",
+    "09-security-devsecops/README.md",
+    1,
+    "09-security-devsecops-readme-1.svg"
+  ],
+  [
+    "09-security-devsecops/README.md",
     2,
-    "01-computer-science-readme-2.svg"
+    "09-security-devsecops-readme-2.svg"
   ],
   [
-    "01-computer-science/README.md",
-    3,
-    "01-computer-science-readme-3.svg"
-  ],
-  [
-    "01-computer-science/complexity-and-workload-reasoning.md",
+    "09-security-devsecops/identity-secrets-and-data-protection.md",
     1,
-    "01-computer-science-complexity-and-workload-reasoning-1.svg"
+    "09-security-devsecops-identity-secrets-and-data-protection-1.svg"
   ],
   [
-    "01-computer-science/data-structures-for-backend-systems.md",
+    "09-security-devsecops/secure-supply-chain-and-devsecops.md",
     1,
-    "01-computer-science-data-structures-for-backend-systems-1.svg"
+    "09-security-devsecops-secure-supply-chain-and-devsecops-1.svg"
   ],
   [
-    "01-computer-science/memory-stack-heap-virtual-memory-and-cache.md",
+    "09-security-devsecops/threat-modeling-and-application-security.md",
     1,
-    "01-computer-science-memory-stack-heap-virtual-memory-and-cache-1.svg"
+    "09-security-devsecops-threat-modeling-and-application-security-1.svg"
   ],
   [
-    "01-computer-science/process-thread-scheduling-and-concurrency.md",
+    "10-performance/README.md",
     1,
-    "01-computer-science-process-thread-scheduling-and-concurrency-1.svg"
+    "10-performance-readme-1.svg"
   ],
   [
-    "01-computer-science/process-thread-scheduling-and-concurrency.md",
+    "10-performance/README.md",
     2,
-    "01-computer-science-process-thread-scheduling-and-concurrency-2.svg"
+    "10-performance-readme-2.svg"
   ],
   [
-    "03-dotnet/README.md",
+    "10-performance/load-capacity-and-scalability.md",
     1,
-    "03-dotnet-readme-1.svg"
+    "10-performance-load-capacity-and-scalability-1.svg"
   ],
   [
-    "03-dotnet/README.md",
+    "10-performance/measurement-profiling-and-bottlenecks.md",
+    1,
+    "10-performance-measurement-profiling-and-bottlenecks-1.svg"
+  ],
+  [
+    "10-performance/optimization-budgets-and-regression-control.md",
+    1,
+    "10-performance-optimization-budgets-and-regression-control-1.svg"
+  ],
+  [
+    "11-redis-caching/README.md",
+    1,
+    "11-redis-caching-readme-1.svg"
+  ],
+  [
+    "11-redis-caching/README.md",
     2,
-    "03-dotnet-readme-2.svg"
+    "11-redis-caching-readme-2.svg"
   ],
   [
-    "03-dotnet/README.md",
-    3,
-    "03-dotnet-readme-3.svg"
-  ],
-  [
-    "03-dotnet/async-await-cancellation-and-task-lifecycle.md",
+    "11-redis-caching/cache-consistency-invalidation-and-stampede.md",
     1,
-    "03-dotnet-async-await-cancellation-and-task-lifecycle-1.svg"
+    "11-redis-caching-cache-consistency-invalidation-and-stampede-1.svg"
   ],
   [
-    "03-dotnet/csharp-types-generics-and-collections.md",
+    "11-redis-caching/redis-data-structures-and-command-shape.md",
     1,
-    "03-dotnet-csharp-types-generics-and-collections-1.svg"
+    "11-redis-caching-redis-data-structures-and-command-shape-1.svg"
   ],
   [
-    "03-dotnet/exceptions-disposable-and-resource-ownership.md",
+    "11-redis-caching/redis-operations-ha-and-coordination.md",
     1,
-    "03-dotnet-exceptions-disposable-and-resource-ownership-1.svg"
+    "11-redis-caching-redis-operations-ha-and-coordination-1.svg"
   ],
   [
-    "04-backend/README.md",
+    "13-devops-iac/README.md",
     1,
-    "04-backend-readme-1.svg"
+    "13-devops-iac-readme-1.svg"
   ],
   [
-    "04-backend/README.md",
+    "13-devops-iac/README.md",
     2,
-    "04-backend-readme-2.svg"
+    "13-devops-iac-readme-2.svg"
   ],
   [
-    "04-backend/README.md",
-    3,
-    "04-backend-readme-3.svg"
-  ],
-  [
-    "05-sql/README.md",
+    "13-devops-iac/ci-cd-artifacts-and-promotion.md",
     1,
-    "05-sql-readme-1.svg"
+    "13-devops-iac-ci-cd-artifacts-and-promotion-1.svg"
   ],
   [
-    "05-sql/ef-core-query-shape-and-sql.md",
+    "13-devops-iac/safe-delivery-drift-and-recovery.md",
     1,
-    "05-sql-ef-core-query-shape-and-sql-1.svg"
+    "13-devops-iac-safe-delivery-drift-and-recovery-1.svg"
   ],
   [
-    "05-sql/indexes-execution-plans-and-operations.md",
+    "13-devops-iac/terraform-state-modules-and-drift.md",
     1,
-    "05-sql-indexes-execution-plans-and-operations-1.svg"
+    "13-devops-iac-terraform-state-modules-and-drift-1.svg"
   ],
   [
-    "05-sql/indexes-execution-plans-and-operations.md",
+    "14-cloud/README.md",
+    1,
+    "14-cloud-readme-1.svg"
+  ],
+  [
+    "14-cloud/README.md",
     2,
-    "05-sql-indexes-execution-plans-and-operations-2.svg"
+    "14-cloud-readme-2.svg"
   ],
   [
-    "05-sql/relational-model-schema-and-sql.md",
+    "14-cloud/cloud-cost-governance-and-operations.md",
     1,
-    "05-sql-relational-model-schema-and-sql-1.svg"
+    "14-cloud-cloud-cost-governance-and-operations-1.svg"
   ],
   [
-    "05-sql/transactions-isolation-and-concurrency.md",
+    "14-cloud/cloud-primitives-identity-and-networking.md",
     1,
-    "05-sql-transactions-isolation-and-concurrency-1.svg"
+    "14-cloud-cloud-primitives-identity-and-networking-1.svg"
   ],
   [
-    "07-aspnet-core/README.md",
+    "14-cloud/regions-availability-and-disaster-recovery.md",
     1,
-    "07-aspnet-core-readme-1.svg"
-  ],
-  [
-    "07-aspnet-core/deployment-observability-and-operations.md",
-    1,
-    "07-aspnet-core-deployment-observability-and-operations-1.svg"
-  ],
-  [
-    "07-aspnet-core/pipeline-hosting-and-configuration.md",
-    1,
-    "07-aspnet-core-pipeline-hosting-and-configuration-1.svg"
-  ],
-  [
-    "12-docker/README.md",
-    1,
-    "12-docker-readme-1.svg"
-  ],
-  [
-    "12-docker/docker-security-compose-and-operations.md",
-    1,
-    "12-docker-docker-security-compose-and-operations-1.svg"
-  ],
-  [
-    "12-docker/images-builds-and-reproducibility.md",
-    1,
-    "12-docker-images-builds-and-reproducibility-1.svg"
-  ],
-  [
-    "12-docker/runtime-networking-storage-and-resources.md",
-    1,
-    "12-docker-runtime-networking-storage-and-resources-1.svg"
-  ],
-  [
-    "15-kubernetes/README.md",
-    1,
-    "15-kubernetes-readme-1.svg"
-  ],
-  [
-    "15-kubernetes/cluster-architecture-and-reconciliation.md",
-    1,
-    "15-kubernetes-cluster-architecture-and-reconciliation-1.svg"
-  ],
-  [
-    "15-kubernetes/kubernetes-security-observability-and-operations.md",
-    1,
-    "15-kubernetes-kubernetes-security-observability-and-operations-1.svg"
-  ],
-  [
-    "15-kubernetes/workloads-networking-and-storage.md",
-    1,
-    "15-kubernetes-workloads-networking-and-storage-1.svg"
-  ],
-  [
-    "17-distributed-systems/README.md",
-    1,
-    "17-distributed-systems-readme-1.svg"
-  ],
-  [
-    "17-distributed-systems/consistency-ordering-saga-and-backpressure.md",
-    1,
-    "17-distributed-systems-consistency-ordering-saga-and-backpressure-1.svg"
-  ],
-  [
-    "17-distributed-systems/consistency-ordering-saga-and-backpressure.md",
-    2,
-    "17-distributed-systems-consistency-ordering-saga-and-backpressure-2.svg"
-  ],
-  [
-    "17-distributed-systems/messaging-outbox-inbox-and-dedup.md",
-    1,
-    "17-distributed-systems-messaging-outbox-inbox-and-dedup-1.svg"
-  ],
-  [
-    "18-microservices-architecture/README.md",
-    1,
-    "18-microservices-architecture-readme-1.svg"
-  ],
-  [
-    "18-microservices-architecture/README.md",
-    2,
-    "18-microservices-architecture-readme-2.svg"
-  ],
-  [
-    "18-microservices-architecture/README.md",
-    3,
-    "18-microservices-architecture-readme-3.svg"
-  ],
-  [
-    "18-microservices-architecture/checkout-saga-unknown-outcome-and-reconciliation.md",
-    1,
-    "18-microservices-architecture-checkout-saga-unknown-outcome-and-reconciliation-1.svg"
-  ],
-  [
-    "18-microservices-architecture/checkout-saga-unknown-outcome-and-reconciliation.md",
-    2,
-    "18-microservices-architecture-checkout-saga-unknown-outcome-and-reconciliation-2.svg"
-  ],
-  [
-    "18-microservices-architecture/communication-gateway-discovery-and-deployment.md",
-    1,
-    "18-microservices-architecture-communication-gateway-discovery-and-deployment-1.svg"
-  ],
-  [
-    "18-microservices-architecture/testing-observability-and-migration.md",
-    1,
-    "18-microservices-architecture-testing-observability-and-migration-1.svg"
-  ],
-  [
-    "19-ai-engineering/README.md",
-    1,
-    "19-ai-engineering-readme-1.svg"
-  ],
-  [
-    "19-ai-engineering/rag-evaluation-and-observability.md",
-    1,
-    "19-ai-engineering-rag-evaluation-and-observability-1.svg"
-  ],
-  [
-    "19-ai-engineering/structured-output-and-tool-calling.md",
-    1,
-    "19-ai-engineering-structured-output-and-tool-calling-1.svg"
-  ],
-  [
-    "21-ai-coding-agents/README.md",
-    1,
-    "21-ai-coding-agents-readme-1.svg"
-  ],
-  [
-    "21-ai-coding-agents/README.md",
-    2,
-    "21-ai-coding-agents-readme-2.svg"
-  ],
-  [
-    "21-ai-coding-agents/repository-context-mcp-and-instructions.md",
-    1,
-    "21-ai-coding-agents-repository-context-mcp-and-instructions-1.svg"
-  ],
-  [
-    "index.md",
-    1,
-    "roadmap-core-and-ai.svg"
+    "14-cloud-regions-availability-and-disaster-recovery-1.svg"
   ]
 ]

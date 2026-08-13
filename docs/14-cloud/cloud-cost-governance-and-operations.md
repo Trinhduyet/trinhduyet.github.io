@@ -16,10 +16,7 @@ Budgets, tagging, autoscale, observability, policy, vendor lock-in và unit econ
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Cloud Cost Governance và Operations"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+![Sơ đồ Cloud Cost Governance And Operations — diagram 1](../assets/diagrams/14-cloud-cloud-cost-governance-and-operations-1.svg)
 
 ## Mental Model
 

@@ -23,21 +23,7 @@ Module này đứng đầu vì nó mở khóa:
 
 ## Mental model
 
-~~~mermaid
-flowchart TD
-    INTENT["User intent"] --> GIT["Git revision + configuration"]
-    GIT --> PROCESS["Linux process + identity + resources"]
-    CLIENT["Client URL"] --> DNS["DNS → address"]
-    DNS --> ROUTE["Namespace + route + NAT"]
-    ROUTE --> TRANSPORT["TCP / UDP / QUIC"]
-    TRANSPORT --> TLS["TLS identity + protected channel"]
-    TLS --> HTTP["HTTP semantics"]
-    HTTP --> PROXY["Proxy / load balancer"]
-    PROXY --> SOCKET["Application listening socket"]
-    PROCESS --> SOCKET
-    SOCKET --> DEP["Application dependency"]
-    DEP --> EVIDENCE["Logs · metrics · traces · incident evidence"]
-~~~
+![Sơ đồ Readme — diagram 1](../assets/diagrams/02-linux-git-networking-readme-1.svg)
 
 Mỗi lớp có evidence riêng. HTTP 503 không chứng minh DNS lỗi; timeout không chứng minh server “down”; process tồn tại không chứng minh port đang listen.
 

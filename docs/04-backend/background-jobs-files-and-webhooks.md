@@ -19,18 +19,7 @@ Backend production phải nói rõ request kết thúc khi nào, work được l
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    C["HTTP request"] --> D{"Work duration / durability"}
-    D -->|"short + bounded"| S["Process synchronously"]
-    D -->|"long / retryable"| Q["Bounded queue or broker"]
-    Q --> W["Worker / hosted service"]
-    W --> X["File · HTTP · webhook · DB"]
-    X --> I["Idempotency + audit"]
-    X --> F["Retry / DLQ / replay"]
-    S --> R["Response contract"]
-    Q --> A["202 + status resource"]
-~~~
+![Sơ đồ Background Jobs Files And Webhooks — diagram 1](../assets/diagrams/04-backend-background-jobs-files-and-webhooks-1.svg)
 
 ## Mental Model
 

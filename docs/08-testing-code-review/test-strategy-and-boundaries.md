@@ -16,10 +16,7 @@ Unit, integration, contract, component và end-to-end test theo risk. Đây là 
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Test Strategy và Boundaries"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+![Sơ đồ Test Strategy And Boundaries — diagram 1](../assets/diagrams/08-testing-code-review-test-strategy-and-boundaries-1.svg)
 
 ## Mental Model
 
