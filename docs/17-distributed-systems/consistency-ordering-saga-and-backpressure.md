@@ -229,12 +229,7 @@ more ordering constraint
 
 Checkout:
 
-```mermaid
-flowchart LR
-    O[Create Order] --> I[Reserve Inventory]
-    I --> P[Charge Payment]
-    P --> S[Create Shipment]
-```
+![Sơ đồ Consistency Ordering Saga And Backpressure — diagram 1](../assets/diagrams/17-distributed-systems-consistency-ordering-saga-and-backpressure-1.svg)
 
 Each step commits locally.
 
@@ -246,12 +241,7 @@ Cannot SQL ROLLBACK payment in another service.
 
 Compensation:
 
-```mermaid
-flowchart RL
-    SFAIL[Shipment failed] --> RP[Refund Payment]
-    RP --> RI[Release Inventory]
-    RI --> MO[Mark Order Failed]
-```
+![Sơ đồ Consistency Ordering Saga And Backpressure — diagram 2](../assets/diagrams/17-distributed-systems-consistency-ordering-saga-and-backpressure-2.svg)
 
 Compensation is another distributed workflow and can fail independently.
 

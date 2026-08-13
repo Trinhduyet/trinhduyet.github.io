@@ -80,23 +80,7 @@ Task
 
 ## Roadmap trong một hình
 
-```mermaid
-flowchart TD
-    A[Foundations\nCS · Linux · Git · Networking] --> B[.NET Backend\nC# · SQL · API · ASP.NET Core]
-    B --> C[Production\nTesting · Security · Performance]
-    C --> D[Platform\nDocker · DevOps · Cloud · Kubernetes]
-    D --> E[Distributed Systems\nFailure · Messaging · Consistency]
-    E --> M[Microservices\nBoundaries · Data · Contracts · Deployment]
-    B --> F[AI Engineering\nLLM · Structured Output · Tools · RAG · Evals]
-    E --> F
-    F --> CA[AI Coding Agents\nContext · MCP · Tests · PR]
-    F --> AG[Business AI Agents\nTools · Workflow · HITL · Security]
-    E --> S[System Design]
-    M --> S
-    CA --> S
-    AG --> S
-    S --> H[Software / AI Architecture]
-```
+![Roadmap từ foundations đến Software / AI Architecture](assets/diagrams/roadmap-core-and-ai.svg)
 
 ---
 

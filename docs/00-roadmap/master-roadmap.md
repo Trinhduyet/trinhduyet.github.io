@@ -26,23 +26,7 @@ Architecture decision
 
 # 1. Roadmap trong một hình
 
-```mermaid
-flowchart TD
-    F[Foundations\nCS · Linux · Git · Networking] --> B[.NET Backend\nC# · SQL · API · ASP.NET Core]
-    B --> P[Production Engineering\nTesting · Security · Performance]
-    P --> PL[Platform\nDocker · DevOps · Cloud · Kubernetes]
-    PL --> D[Distributed Systems\nFailure · Messaging · Consistency]
-    D --> M[Microservices Architecture\nBoundaries · Data · Contracts · Deployment]
-    B --> AI[AI Engineering\nLLM · Tools · RAG · Evals]
-    D --> AI
-    M --> SD[System Design]
-    D --> SD
-    AI --> CA[AI Coding Agents\nContext · MCP · Tests · PR]
-    AI --> BA[Business AI Agents\nTools · Workflows · HITL]
-    CA --> SD
-    BA --> SD
-    SD --> A[Software / AI Architecture]
-```
+![Roadmap từ foundations đến Software / AI Architecture](../assets/diagrams/roadmap-core-and-ai.svg)
 
 ---
 

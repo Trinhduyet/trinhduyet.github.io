@@ -8,14 +8,7 @@ Module này học SQL theo cách của Backend Engineer và Software Architect: 
 
 Khi application gọi database, thứ bạn viết thường chỉ là điểm bắt đầu:
 
-```mermaid
-flowchart LR
-    A[LINQ / SQL] --> B[Parser + Optimizer]
-    B --> C[Execution Plan]
-    C --> D[Index / Table access]
-    D --> E[Pages + Buffer + I/O]
-    E --> F[Rows returned]
-```
+![Sơ đồ Readme — diagram 1](../assets/diagrams/05-sql-readme-1.svg)
 
 Một query chậm không được xử lý bằng câu trả lời mặc định `thêm index`.
 

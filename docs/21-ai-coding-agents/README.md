@@ -55,19 +55,7 @@ Tên sản phẩm thay đổi nhanh. Roadmap tập trung vào **agent loop + con
 
 ## Mental model
 
-```mermaid
-flowchart TD
-    T[Task / Issue] --> C[Collect Context]
-    C --> P[Plan]
-    P --> E[Edit]
-    E --> X[Execute Build/Test/Lint]
-    X -->|Fail| D[Diagnose]
-    D --> E
-    X -->|Pass| R[Review Diff]
-    R --> S[Security / Quality Checks]
-    S --> PR[Pull Request]
-    PR --> H[Human Review]
-```
+![Vòng lặp AI Coding Agent: context, edit, executable evidence và human review](../assets/diagrams/21-ai-coding-agents-readme-1.svg)
 
 Agent tốt không chỉ "generate code". Nó có **feedback loop với executable evidence**.
 
@@ -344,18 +332,7 @@ Checklist review:
 
 # 7. Production workflow đề xuất
 
-```mermaid
-flowchart LR
-    I[Issue] --> A[Coding Agent]
-    A --> B[Feature Branch / Worktree]
-    B --> T[Build + Tests]
-    T --> S[Security Checks]
-    S --> P[Draft PR]
-    P --> H[Human Review]
-    H -->|changes| A
-    H -->|approve| M[Merge]
-    M --> C[Normal CI/CD]
-```
+![Governed AI Coding Agent workflow: branch, tests, security, PR và CI/CD](../assets/diagrams/21-ai-coding-agents-readme-2.svg)
 
 Agent không bypass delivery pipeline hiện có.
 

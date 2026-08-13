@@ -8,14 +8,7 @@ Distributed Systems bắt đầu khi một business operation đi qua **process/
 
 Một request đơn giản có thể thành:
 
-```mermaid
-flowchart LR
-    A[API] --> B[SQL]
-    A --> C[Message Broker]
-    C --> D[Worker]
-    D --> E[Email Provider]
-    D --> F[Redis]
-```
+![Sơ đồ Readme — diagram 1](../assets/diagrams/17-distributed-systems-readme-1.svg)
 
 Bây giờ có những trạng thái như:
 

@@ -10,18 +10,7 @@ Mục tiêu module không phải nhớ YAML. Mục tiêu là hiểu **desired st
 
 Bạn gửi desired state vào API server:
 
-```mermaid
-flowchart TD
-    U[kubectl / CI] --> API[API Server]
-    API --> ETCD[(etcd)]
-    API --> CTRL[Controllers]
-    API --> SCH[Scheduler]
-    CTRL --> API
-    SCH --> API
-    API --> K[Kubelet on Node]
-    K --> P[Pods / Containers]
-    P --> API
-```
+![Sơ đồ Readme — diagram 1](../assets/diagrams/15-kubernetes-readme-1.svg)
 
 Kubernetes liên tục cố đưa:
 

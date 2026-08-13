@@ -49,16 +49,7 @@ RAG, Agents và AI Coding Agents học sau foundation này.
 
 ## Learning map
 
-```mermaid
-flowchart TD
-    A[LLM application fundamentals] --> B[Provider abstraction]
-    B --> C[Structured Output]
-    C --> D[Tool Calling]
-    D --> E[RAG / Context Engineering]
-    E --> F[Evaluation]
-    F --> G[Observability + Cost]
-    G --> H[Agents / Coding Agents]
-```
+![Sơ đồ Readme — diagram 1](../assets/diagrams/19-ai-engineering-readme-1.svg)
 
 ## Code đầu tiên — dùng `IChatClient`
 

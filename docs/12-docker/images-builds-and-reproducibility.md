@@ -6,14 +6,7 @@
 
 Docker image là deployment artifact. Dockerfile là build recipe.
 
-```mermaid
-flowchart LR
-    A[Source] --> B[Dockerfile]
-    B --> C[Build layers/cache]
-    C --> D[Image]
-    D --> E[Registry]
-    E --> F[Runtime container]
-```
+![Sơ đồ Images Builds And Reproducibility — diagram 1](../assets/diagrams/12-docker-images-builds-and-reproducibility-1.svg)
 
 Một build production tốt cần:
 

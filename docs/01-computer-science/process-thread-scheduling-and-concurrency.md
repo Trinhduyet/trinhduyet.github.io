@@ -25,22 +25,7 @@ Architect cần reasoning ở ba scheduler/boundary khác nhau:
 
 ## Tổng quan / Overview
 
-```mermaid
-flowchart TD
-    REQ["Requests / jobs"]
-    APP["Application policy<br/>deadline · queue · concurrency limit"]
-    TASK["Task / async operation"]
-    TP[".NET ThreadPool + TaskScheduler<br/>queue · work stealing · thread injection"]
-    TH["OS threads<br/>runnable · sleeping · blocked"]
-    OS["OS scheduler<br/>fairness · priority · CPU time"]
-    CPU["Logical CPUs"]
-    DEP["I/O dependency"]
-
-    REQ --> APP --> TASK
-    TASK -->|"CPU continuation/work"| TP --> TH --> OS --> CPU
-    TASK -->|"await I/O"| DEP
-    DEP -->|"completion makes continuation runnable"| TP
-```
+![Sơ đồ Process Thread Scheduling And Concurrency — diagram 1](../assets/diagrams/01-computer-science-process-thread-scheduling-and-concurrency-1.svg)
 
 Nếu work đang chờ network, giữ thêm thread không làm dependency trả lời nhanh hơn. Nếu work CPU-bound, concurrency vượt CPU/resource budget thường chỉ tăng queueing, context switches và contention.
 
@@ -182,19 +167,7 @@ Symptom:
 
 Mechanism:
 
-```mermaid
-sequenceDiagram
-    participant R as Requests
-    participant T as ThreadPool workers
-    participant B as Blocking call
-    participant Q as Continuation queue
-
-    R->>T: Chiếm workers
-    T->>B: Block chờ completion
-    B-->>Q: Completion cần worker chạy continuation
-    Q-->>T: Không đủ worker sẵn sàng
-    R->>Q: Request mới tiếp tục xếp hàng
-```
+![Sơ đồ Process Thread Scheduling And Concurrency — diagram 2](../assets/diagrams/01-computer-science-process-thread-scheduling-and-concurrency-2.svg)
 
 Investigation:
 

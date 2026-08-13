@@ -6,19 +6,7 @@
 
 Kubernetes không "chạy YAML". Kubernetes lưu desired state rồi nhiều control loops liên tục reconcile observed state về desired state.
 
-```mermaid
-flowchart TD
-    USER[kubectl / CI / API client] --> API[API Server]
-    API --> ETCD[(etcd)]
-    API --> CTRL[Controller Manager]
-    API --> SCH[Scheduler]
-    CTRL --> API
-    SCH --> API
-    API --> KUBELET[Kubelet]
-    KUBELET --> RUNTIME[Container Runtime]
-    RUNTIME --> POD[Pod]
-    KUBELET --> API
-```
+![Sơ đồ Cluster Architecture And Reconciliation — diagram 1](../assets/diagrams/15-kubernetes-cluster-architecture-and-reconciliation-1.svg)
 
 Ví dụ desired state:
 

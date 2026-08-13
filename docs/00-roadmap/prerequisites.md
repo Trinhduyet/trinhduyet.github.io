@@ -4,45 +4,7 @@
 
 Một topic “đứng trước” topic khác khi thiếu nó sẽ làm người học chỉ nhớ syntax mà không giải thích được behavior, failure hoặc trade-off.
 
-```mermaid
-flowchart TD
-    CS[CS essentials] --> NET[Linux + Networking]
-    CS --> DOTNET[C# / .NET]
-    NET --> HTTP[HTTP / Backend]
-    NET --> DOCKER[Docker]
-    DOTNET --> ASP[ASP.NET Core]
-    HTTP --> API[API Design]
-    HTTP --> ASP
-    SQL[Relational model + SQL] --> EF[EF Core]
-    DOTNET --> EF
-    SQL --> TX[Transactions + Isolation]
-    ASP --> PROD[Testing + Security + Performance]
-    EF --> PROD
-    TX --> OUTBOX[Outbox / Inbox]
-    DOCKER --> K8S[Kubernetes]
-    NET --> K8S
-    PROD --> OBS[Observability]
-    MSG[Messaging] --> DIST[Distributed Systems]
-    NET --> DIST
-    TX --> DIST
-    OUTBOX --> DIST
-    OBS --> DIST
-    BOUND[Modular boundaries + DDD basics] --> MICRO[Microservices Architecture]
-    DIST --> MICRO
-    OBS --> MICRO
-    K8S --> MICRO
-    AI[AI Engineering + Evaluation] --> RAG[Production RAG]
-    RAG --> AGENT[Agents + MCP]
-    DIST --> AGENT
-    SEC[Security + Threat Modeling] --> AGENT
-    NFR[Requirements + NFR] --> DESIGN[System Design]
-    DIST --> DESIGN
-    MICRO --> DESIGN
-    RAG --> DESIGN
-    AGENT --> DESIGN
-    DESIGN --> ARCH[Software Architecture]
-    DOCS[ADR + C4 + Runbook] --> ARCH
-```
+![Dependency layers từ foundations đến architecture](../assets/diagrams/prerequisites-layer-stack.svg)
 
 ---
 

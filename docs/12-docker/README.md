@@ -16,15 +16,7 @@ Bạn phải hiểu container như **isolated process + filesystem/network/resou
 
 ## Hiểu trong 5 phút
 
-```mermaid
-flowchart LR
-    A[Dockerfile] -->|docker build| B[Image]
-    B -->|docker run| C[Container]
-    C --> D[Network]
-    C --> E[Volume]
-    C --> F[CPU / Memory limits]
-    B --> G[Registry]
-```
+![Sơ đồ Readme — diagram 1](../assets/diagrams/12-docker-readme-1.svg)
 
 Các khái niệm không được trộn:
 

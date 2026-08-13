@@ -22,21 +22,7 @@ HTTP timeout
 
 Payment có thể đã charge nhưng response bị mất. Trong trường hợp đó trạng thái đúng không phải `FAILED` mà là **UNKNOWN / PENDING_RECONCILIATION**.
 
-```mermaid
-stateDiagram-v2
-    [*] --> Created
-    Created --> InventoryReserved
-    InventoryReserved --> PendingPayment
-    PendingPayment --> Paid: confirmed success
-    PendingPayment --> PaymentFailed: confirmed decline
-    PendingPayment --> PaymentUnknown: timeout / lost response
-    PaymentUnknown --> Paid: reconciliation confirms charged
-    PaymentUnknown --> PaymentFailed: reconciliation confirms no charge
-    Paid --> ShippingPending
-    ShippingPending --> Completed
-    ShippingPending --> Compensating: shipment failed
-    Compensating --> Failed
-```
+![State machine checkout: unknown payment, reconciliation và compensation](../assets/diagrams/18-microservices-architecture-checkout-saga-unknown-outcome-and-reconciliation-1.svg)
 
 Điểm quan trọng:
 
@@ -501,12 +487,7 @@ Không có một đáp án universal; chọn dựa vào workflow complexity và 
 
 Shipment fail sau payment success:
 
-```mermaid
-flowchart RL
-    SF[Shipment Failed] --> RF[Refund Payment]
-    RF --> RI[Release Inventory]
-    RI --> OF[Mark Order Failed]
-```
+![Sơ đồ Checkout Saga Unknown Outcome And Reconciliation — diagram 2](../assets/diagrams/18-microservices-architecture-checkout-saga-unknown-outcome-and-reconciliation-2.svg)
 
 Nhưng compensation không phải rollback hoàn hảo.
 

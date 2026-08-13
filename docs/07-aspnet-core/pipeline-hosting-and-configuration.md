@@ -6,15 +6,7 @@
 
 Một request không nhảy thẳng vào controller/endpoint.
 
-```mermaid
-flowchart LR
-    A[Socket / HTTP] --> B[Kestrel]
-    B --> C[Middleware 1]
-    C --> D[Middleware 2]
-    D --> E[Routing]
-    E --> F[Endpoint]
-    F --> G[Application]
-```
+![Sơ đồ Pipeline Hosting And Configuration — diagram 1](../assets/diagrams/07-aspnet-core-pipeline-hosting-and-configuration-1.svg)
 
 Điều quan trọng:
 

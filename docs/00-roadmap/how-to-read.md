@@ -32,27 +32,11 @@ Sau đó tự thay prompt, timeout, model hoặc dữ liệu để xem behavior 
 
 Ví dụ AI application:
 
-```mermaid
-flowchart LR
-    U[User] --> API[ASP.NET Core API]
-    API --> P[Prompt + Context]
-    P --> M[Model]
-    M --> O[Structured Output]
-    O --> API
-    API --> U
-```
+![Sơ đồ How To Read — diagram 1](../assets/diagrams/00-roadmap-how-to-read-1.svg)
 
 Nếu có tool calling:
 
-```mermaid
-flowchart LR
-    U[User] --> A[AI Application]
-    A --> M[Model]
-    M -->|tool request| T[Tool]
-    T -->|tool result| M
-    M --> A
-    A --> U
-```
+![Sơ đồ How To Read — diagram 2](../assets/diagrams/00-roadmap-how-to-read-2.svg)
 
 ### Bước 4 — Cố tình làm hỏng
 

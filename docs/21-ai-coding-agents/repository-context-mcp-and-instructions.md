@@ -194,13 +194,7 @@ internal knowledge base
 
 Mental model:
 
-```mermaid
-flowchart LR
-    A[Coding Agent] --> C[MCP Client]
-    C --> S1[MCP: Documentation]
-    C --> S2[MCP: GitHub]
-    C --> S3[MCP: Internal tools]
-```
+![Sơ đồ Repository Context Mcp And Instructions — diagram 1](../assets/diagrams/21-ai-coding-agents-repository-context-mcp-and-instructions-1.svg)
 
 MCP **không làm tool an toàn tự động**. Mỗi server là một trust boundary.
 

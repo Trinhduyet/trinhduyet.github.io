@@ -8,15 +8,7 @@ Kubernetes security không phải một checkbox `runAsNonRoot: true`.
 
 Bạn phải bảo vệ nhiều boundaries:
 
-```mermaid
-flowchart LR
-    U[Human / CI] --> API[API Server + RBAC]
-    API --> SA[ServiceAccount]
-    SA --> POD[Pod SecurityContext]
-    POD --> NET[NetworkPolicy]
-    POD --> SEC[Secrets / Identity]
-    POD --> TEL[Logs / Metrics / Traces]
-```
+![Sơ đồ Kubernetes Security Observability And Operations — diagram 1](../assets/diagrams/15-kubernetes-kubernetes-security-observability-and-operations-1.svg)
 
 Operations cũng không phải chỉ `kubectl restart`.
 

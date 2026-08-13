@@ -148,14 +148,7 @@ Không dùng event naming để che command semantics.
 
 Client không nhất thiết biết topology nội bộ.
 
-```mermaid
-flowchart LR
-    WEB[Web] --> GW[API Gateway]
-    MOBILE[Mobile] --> GW
-    GW --> O[Order]
-    GW --> C[Catalog]
-    GW --> A[Account]
-```
+![Sơ đồ Communication Gateway Discovery And Deployment — diagram 1](../assets/diagrams/18-microservices-architecture-communication-gateway-discovery-and-deployment-1.svg)
 
 Gateway có thể handle:
 

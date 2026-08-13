@@ -6,14 +6,7 @@
 
 Container là một process được chạy với isolation/resource boundaries do OS/runtime cung cấp.
 
-```mermaid
-flowchart TD
-    A[Container process] --> B[PID / process namespace]
-    A --> C[Network namespace]
-    A --> D[Filesystem layers + mounts]
-    A --> E[cgroup CPU / memory]
-    A --> F[signals / lifecycle]
-```
+![Sơ đồ Runtime Networking Storage And Resources — diagram 1](../assets/diagrams/12-docker-runtime-networking-storage-and-resources-1.svg)
 
 Nếu bạn debug Docker mà nghĩ "container là mini VM", rất dễ hiểu sai `localhost`, filesystem persistence, process ownership và resource limits.
 

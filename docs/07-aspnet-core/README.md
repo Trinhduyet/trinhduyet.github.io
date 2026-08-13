@@ -6,17 +6,7 @@ Mục tiêu của module này không phải nhớ `Program.cs`. Bạn phải hi�
 
 ## Hiểu trong 5 phút
 
-```mermaid
-flowchart LR
-    A[Client] --> B[Kestrel]
-    B --> C[Middleware pipeline]
-    C --> D[Routing]
-    D --> E[AuthN/AuthZ]
-    E --> F[Endpoint]
-    F --> G[Application service]
-    G --> H[DB / HTTP / Queue]
-    H --> I[Response]
-```
+![Sơ đồ Readme — diagram 1](../assets/diagrams/07-aspnet-core-readme-1.svg)
 
 Middleware order là behavior, không chỉ style.
 
