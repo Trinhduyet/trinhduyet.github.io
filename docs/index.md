@@ -25,7 +25,7 @@ không phải:
 → quên sau một ngày
 ```
 
-### 2. Tôi muốn học bằng code
+### 2. Tôi muốn học bằng code xuyên suốt
 
 → **[Example-First Checkout Learning Path](00-roadmap/example-first-learning-path.md)**
 
@@ -62,7 +62,30 @@ C# / async
 → AI Coding Agents
 ```
 
-### 3. Tôi quên một khái niệm
+### 3. Tôi chỉ muốn làm một bài nhỏ 10–30 phút
+
+→ **[Practical Mini-Labs](00-roadmap/practical-mini-labs.md)**
+
+Có thí nghiệm cho:
+
+```text
+SQL race + execution plan
+AuthN/AuthZ
+rate limiting
+integration test
+cache stale data
+P99 latency
+Docker localhost trap
+Kubernetes readiness
+Outbox duplicate
+queue backlog
+tracing
+CI
+Terraform workflow
+AI tool authorization
+```
+
+### 4. Tôi quên một khái niệm
 
 → **[Concept Cards — 35 khái niệm trong 30 giây](00-roadmap/concept-cards.md)**
 
@@ -79,7 +102,7 @@ Reconciliation
 = hỏi source of truth khi local state là UNKNOWN
 ```
 
-### 4. Tôi đang debug/review architecture
+### 5. Tôi đang debug/review architecture
 
 → **[Master Roadmap](00-roadmap/master-roadmap.md)**
 
