@@ -219,10 +219,15 @@ Các stage:
 07 Distributed Systems
 08 Microservices
 09 System Design
-10 AI Engineering / Coding Agents
+10 AI Engineering
+11 AI Coding Agents
 ```
 
-Bắt đầu tại [Example-First Learning Path](example-first-learning-path.md).
+Bắt đầu tại **[Example-First Learning Path](example-first-learning-path.md)**.
+
+Nếu muốn các thí nghiệm nhỏ độc lập thay vì đi cả path, dùng **[Practical Mini-Labs](practical-mini-labs.md)**. Có lab cho SQL race, execution plan, AuthZ, rate limiting, integration test, cache stale data, Docker networking, K8s readiness, Outbox duplicate, queue backlog, tracing, CI và IaC.
+
+Nếu chỉ quên thuật ngữ, mở **[Concept Cards](concept-cards.md)**.
 
 ---
 
