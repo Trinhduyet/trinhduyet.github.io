@@ -1,260 +1,234 @@
 # AI-Enabled Software Architect Roadmap
 
-> **Tiếng Việt để hiểu nhanh · thuật ngữ English giữ nguyên · học bằng code + failure experiment + architecture reasoning.**
+> **Đừng đọc toàn bộ site từ đầu đến cuối.** Deep docs dài để tra cứu. Muốn học và nhớ, hãy bắt đầu bằng một hệ thống thật.
 
-Nếu tài liệu dài, bắt đầu bằng [Cách đọc tài liệu này](00-roadmap/how-to-read.md). Bạn không cần đọc từ đầu tới cuối.
+## Bắt đầu ở đây
 
-## Chọn điểm bắt đầu
+### 1. Tôi muốn hiểu nhanh
 
-### .NET Backend
+→ **[Human Learning Mode](00-roadmap/human-learning-mode.md)**
+
+Bạn sẽ học theo:
 
 ```text
-C#/.NET → Backend → SQL → API Design → ASP.NET Core
+scenario
+→ code
+→ failure
+→ 3 điều cần nhớ
 ```
 
-Bắt đầu: [C#/.NET Runtime](03-dotnet/README.md).
-
-### Production / Platform / Distributed / Microservices
+không phải:
 
 ```text
-Docker
-→ Kubernetes
+50 định nghĩa
+→ 20 patterns
+→ quên sau một ngày
+```
+
+### 2. Tôi muốn học bằng code xuyên suốt
+
+→ **[Example-First Checkout Learning Path](00-roadmap/example-first-learning-path.md)**
+
+Một hệ thống duy nhất đi xuyên roadmap:
+
+```text
+Customer
+   ↓
+Checkout API
+   ↓
+Order
+ ├─ Inventory
+ ├─ Payment
+ └─ Notification
+
+AI Assistant
+   ↓
+read-only business tools
+```
+
+Bạn sẽ thấy cùng một bài toán được nâng cấp qua:
+
+```text
+C# / async
+→ SQL
+→ API Design
+→ ASP.NET Core
+→ Cache
+→ Docker / Kubernetes
 → Distributed Systems
-→ Microservices Architecture
+→ Microservices
+→ System Design
+→ AI Engineering
+→ AI Coding Agents
 ```
 
-Bắt đầu:
+### 3. Tôi chỉ muốn làm một bài nhỏ 10–30 phút
 
+→ **[Practical Mini-Labs](00-roadmap/practical-mini-labs.md)**
+
+Có thí nghiệm cho:
+
+```text
+SQL race + execution plan
+AuthN/AuthZ
+rate limiting
+integration test
+cache stale data
+P99 latency
+Docker localhost trap
+Kubernetes readiness
+Outbox duplicate
+queue backlog
+tracing
+CI
+Terraform workflow
+AI tool authorization
+```
+
+### 4. Tôi quên một khái niệm
+
+→ **[Concept Cards — 35 khái niệm trong 30 giây](00-roadmap/concept-cards.md)**
+
+Ví dụ:
+
+```text
+Idempotency
+= request lặp lại không tạo side effect ngoài ý muốn
+
+Outbox
+= business state + message cùng local transaction
+
+Reconciliation
+= hỏi source of truth khi local state là UNKNOWN
+```
+
+### 5. Tôi đang debug/review architecture
+
+→ **[Master Roadmap](00-roadmap/master-roadmap.md)**
+
+Lúc này mới dùng deep modules như reference manual.
+
+---
+
+# Một mental model cho toàn site
+
+Nếu chỉ nhớ một flow, nhớ flow này:
+
+```text
+Request
+   ↓
+API Contract
+   ↓
+Application State
+   ↓
+Database Invariant
+   ↓
+External Side Effect
+   ↓
+Failure / Retry / Duplicate
+   ↓
+Observability
+   ↓
+Recovery
+   ↓
+Capacity / Cost
+   ↓
+Architecture Decision
+```
+
+Các module chỉ giúp bạn trả lời sâu hơn từng đoạn của flow này.
+
+---
+
+# Core practical path
+
+| Stage | Học gì | Ví dụ xuyên suốt |
+|---:|---|---|
+| 1 | C# / async | gọi Payment API + timeout |
+| 2 | SQL | order + UNIQUE idempotency invariant |
+| 3 | API Design | `POST /checkouts` + `Idempotency-Key` |
+| 4 | ASP.NET Core | endpoint + explicit order state |
+| 5 | Cache | product cache + stale-data failure |
+| 6 | Docker / Kubernetes | deploy API + readiness/liveness |
+| 7 | Distributed Systems | Outbox + Inbox/Dedup |
+| 8 | Microservices | `FAILED != UNKNOWN` + reconciliation |
+| 9 | System Design | capacity math + scale/failure/cost |
+| 10 | AI Engineering | read-only business tools + AuthZ |
+| 11 | AI Coding Agents | task → edit → build/test → PR |
+
+**[Đi theo path này →](00-roadmap/example-first-learning-path.md)**
+
+---
+
+# Deep modules
+
+Khi một stage tạo câu hỏi cụ thể, mở module tương ứng:
+
+- [.NET / C# Runtime](03-dotnet/README.md)
+- [Backend Engineering](04-backend/README.md)
+- [SQL / SQL Server](05-sql/README.md)
+- [API Design](06-api-design/README.md)
+- [ASP.NET Core](07-aspnet-core/README.md)
+- [Redis & Caching](11-redis-caching/README.md)
 - [Docker](12-docker/README.md)
 - [Kubernetes](15-kubernetes/README.md)
 - [Distributed Systems](17-distributed-systems/README.md)
-- **[Microservices Architecture](18-microservices-architecture/README.md)**
+- [Microservices Architecture](18-microservices-architecture/README.md)
+- [AI Engineering](19-ai-engineering/README.md)
+- [AI Coding Agents](21-ai-coding-agents/README.md)
+- [System Design](24-system-design/README.md)
 
-Microservices module có case study checkout thực tế:
-
-```text
-Duplicate checkout
-→ Idempotency
-→ Inventory reservation
-→ Payment attempt
-→ timeout = UNKNOWN
-→ PENDING_PAYMENT
-→ reconciliation
-→ Saga compensation
-→ Outbox / Inbox / Dedup
-```
-
-### System Design
-
-Bắt đầu: **[System Design](24-system-design/README.md)**.
-
-Đây là module tổng hợp các kiến thức phía trên thành decision process:
-
-```text
-Requirements / NFR
-→ Capacity Estimates
-→ Traffic / Cache / CDN / Load Balancer
-→ Data / Replication / Partitioning / Consistency
-→ Queue / Backpressure / Reliability
-→ SLO / Multi-region / DR / Security / Cost
-→ Case Study
-→ Architecture Trade-off
-```
-
-Có case study cho:
-
-- URL Shortener;
-- Notification System;
-- Distributed Checkout;
-- Enterprise AI Assistant;
-- News Feed;
-- Large File / Media Processing.
-
-### AI Engineering
-
-Bắt đầu: **[AI Engineering cho .NET](19-ai-engineering/README.md)**.
-
-Có code cho:
-
-- `IChatClient` và provider abstraction;
-- structured output;
-- tool calling;
-- authorization/idempotency cho AI tools;
-- RAG retrieval boundary;
-- evaluation/regression gate;
-- AI observability.
-
-### AI Coding Agents
-
-Bắt đầu: **[AI Coding Agents](21-ai-coding-agents/README.md)**.
-
-Workflow:
-
-```text
-Task
-→ inspect repo
-→ plan
-→ scoped edit
-→ build/test
-→ inspect diff
-→ security checks
-→ PR
-→ human review
-```
+Không cần đọc hết một module. Chỉ đọc phần giải thích failure/problem bạn vừa gặp.
 
 ---
 
-## Roadmap trong một hình
+# Cách học 60 phút
 
-![Roadmap từ foundations đến Software / AI Architecture](assets/diagrams/roadmap-core-and-ai.svg)
+```text
+20 phút — chạy example
+20 phút — cố tình làm hỏng
+20 phút — đọc lý thuyết giải thích behavior vừa thấy
+```
+
+Ví dụ:
+
+```text
+payment timeout
+→ local order không biết provider đã charge hay chưa
+→ state = UNKNOWN
+→ đọc idempotency + reconciliation
+```
+
+Cách này giữ kiến thức tốt hơn việc đọc Saga/CAP/Eventual Consistency trước khi có tình huống cần chúng.
 
 ---
 
-## Cách học mỗi chapter
+# Khi nào coi là “đã học”?
+
+Không phải khi đọc xong.
+
+Evidence tốt:
 
 ```text
-1. Hiểu trong 5 phút
-2. Chạy code/config/calculation
-3. Vẽ mental model
-4. Cố tình làm hỏng
-5. Quan sát test/log/trace/plan
-6. Đọc internals
-7. Trả lời trade-offs
+reproduce duplicate checkout
+viết UNIQUE constraint
+xem execution plan
+simulate timeout
+reconcile unknown payment
+kill Pod và quan sát readiness
+build queue backlog
+viết regression test
+vẽ lại flow từ memory
 ```
 
-System Design thêm:
+Mục tiêu cuối cùng không phải “biết nhiều thuật ngữ”, mà là:
 
 ```text
-8. Ghi assumptions
-9. Estimate capacity
-10. Ghi failure modes
-11. Estimate cost
-12. Nêu migration trigger
+Problem
+→ Mechanism
+→ Failure
+→ Evidence
+→ Trade-off
 ```
 
----
-
-## Code-heavy pages nên đọc
-
-### SQL
-
-1. [SQL Overview](05-sql/README.md)
-2. [Transactions / Isolation / Concurrency](05-sql/transactions-isolation-and-concurrency.md)
-3. [Indexes / Execution Plans](05-sql/indexes-execution-plans-and-operations.md)
-4. [EF Core → SQL → Execution Plan](05-sql/ef-core-query-shape-and-sql.md)
-
-### API Design / ASP.NET Core
-
-5. [API Design — 25-topic matrix](06-api-design/README.md)
-6. [ASP.NET Core Overview](07-aspnet-core/README.md)
-7. [Pipeline / Hosting / Configuration](07-aspnet-core/pipeline-hosting-and-configuration.md)
-8. [Resilience / Security / Middleware](07-aspnet-core/resilience-security-and-middleware.md)
-9. [Deployment / OTel / Operations](07-aspnet-core/deployment-observability-and-operations.md)
-
-### Docker / Kubernetes
-
-10. [Docker Overview](12-docker/README.md)
-11. [Docker Runtime / Network / Storage](12-docker/runtime-networking-storage-and-resources.md)
-12. [Kubernetes Overview](15-kubernetes/README.md)
-13. [Kubernetes Architecture / Reconciliation](15-kubernetes/cluster-architecture-and-reconciliation.md)
-14. [Kubernetes Workloads / Network / Storage](15-kubernetes/workloads-networking-and-storage.md)
-15. [Kubernetes Security / Operations](15-kubernetes/kubernetes-security-observability-and-operations.md)
-
-### Distributed Systems / Microservices
-
-16. [Distributed Systems Overview](17-distributed-systems/README.md)
-17. [Partial Failure / Retry / Idempotency](17-distributed-systems/partial-failure-timeouts-retries-and-idempotency.md)
-18. [Messaging / Outbox / Inbox / Dedup](17-distributed-systems/messaging-outbox-inbox-and-dedup.md)
-19. [Consistency / Ordering / Saga / Backpressure](17-distributed-systems/consistency-ordering-saga-and-backpressure.md)
-20. [Microservices Overview](18-microservices-architecture/README.md)
-21. [Checkout Saga / Unknown Outcome / Reconciliation](18-microservices-architecture/checkout-saga-unknown-outcome-and-reconciliation.md)
-
-### System Design
-
-22. [System Design Overview](24-system-design/README.md)
-23. [Requirements / NFR / Capacity](24-system-design/requirements-nfr-and-capacity-estimation.md)
-24. [Traffic / Load Balancing / CDN / Cache](24-system-design/traffic-load-balancing-cdn-and-cache.md)
-25. [Data / Replication / Partitioning / Consistency](24-system-design/data-partitioning-replication-and-consistency.md)
-26. [Async / Queue / Backpressure / Reliability](24-system-design/async-queues-backpressure-and-reliability.md)
-27. [Availability / Multi-region / DR / Security / Cost](24-system-design/availability-multiregion-dr-security-and-cost.md)
-28. [Case Studies & Design Review](24-system-design/case-studies-and-design-review.md)
-
-### AI
-
-29. [AI Engineering cho .NET](19-ai-engineering/README.md)
-30. [Structured Output / Tool Calling](19-ai-engineering/structured-output-and-tool-calling.md)
-31. [RAG / Evaluation / Observability](19-ai-engineering/rag-evaluation-and-observability.md)
-32. [AI Coding Agents](21-ai-coding-agents/README.md)
-33. [Repository Context / MCP / Instructions](21-ai-coding-agents/repository-context-mcp-and-instructions.md)
-34. [Safe Agentic Coding Workflow](21-ai-coding-agents/safe-agentic-coding-workflow.md)
-
----
-
-## System Design: điều cần nhớ
-
-```text
-System Design ≠ collection of infrastructure logos
-```
-
-Một design phải có:
-
-```text
-requirements
-+ measurable NFR
-+ workload assumptions
-+ capacity estimates
-+ data ownership / consistency
-+ failure model
-+ security
-+ operations / observability
-+ cost
-+ trade-offs
-+ evolution path
-```
-
-Nếu không biết vì sao một box tồn tại thì box đó chưa được justify.
-
----
-
-## Quality model
-
-| Level | Bạn phải làm được |
-|---|---|
-| L0 | nói được công nghệ giải quyết vấn đề gì |
-| L1 | vẽ được mental model |
-| L2 | viết/chạy được code cơ bản |
-| L3 | debug failure, security, performance |
-| L4 | giải thích behavior bằng internals |
-| L5 | chọn/loại giải pháp bằng requirements + trade-offs |
-
-Một chapter P0/P1 implementation-heavy không được gọi là deep content nếu chỉ có prose. Tối thiểu cần **code/config/calculation + production example + failure experiment + verification** khi chủ đề cho phép.
-
-## Trạng thái hiện tại
-
-- Module 01–04: quality reference.
-- **Module 05 SQL: code-first deep rewrite v1.**
-- **Module 06 API Design: code-first deep rewrite v1, 25-topic coverage.**
-- **Module 07 ASP.NET Core: code-first deep rewrite v1.**
-- **Module 12 Docker: code-first deep rewrite v1.**
-- **Module 15 Kubernetes: code-first deep rewrite v1.**
-- **Module 17 Distributed Systems: code-first v1.**
-- **Module 18 Microservices Architecture: code-first v1.**
-- **Module 19 AI Engineering: code-first v1.**
-- **AI Coding Agents: code-first v1.**
-- **Module 24 System Design: code-first v1 với capacity/failure/cost/case studies.**
-- Các module còn lại tiếp tục được rewrite/triển khai theo cùng quality gate.
-
-## Đích đến
-
-**AI-enabled Software Architect** không cần thuộc mọi tool. Bạn cần trả lời bằng evidence:
-
-- requirement/NFR là gì;
-- peak workload và data growth bao nhiêu;
-- boundary và data ownership nằm ở đâu;
-- transaction/consistency/retry/idempotency ra sao;
-- queue/backpressure/order/failure recovery thế nào;
-- SLO/RTO/RPO và DR ra sao;
-- data/AI/tool được phép truy cập gì;
-- latency/cost/quality được đo ra sao;
-- khi nào dùng cache/sharding/multi-region/microservices và khi nào không;
-- kiến trúc đổi ra sao ở 10x/100x scale.
+Đó là cách một Senior Engineer / Architect thực sự sử dụng kiến thức.

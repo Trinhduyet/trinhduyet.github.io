@@ -78,9 +78,14 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - Học bằng ví dụ:
+      - Bắt đầu — Human Learning Mode: 00-roadmap/human-learning-mode.md
+      - Checkout Example-First Path: 00-roadmap/example-first-learning-path.md
+      - Practical Mini-Labs: 00-roadmap/practical-mini-labs.md
+      - Concept Cards — Tra nhanh: 00-roadmap/concept-cards.md
+      - Cách đọc tài liệu: 00-roadmap/how-to-read.md
   - Roadmap:
       - 00-roadmap/README.md
-      - Cách đọc tài liệu: 00-roadmap/how-to-read.md
       - Master Roadmap: 00-roadmap/master-roadmap.md
       - Learning Path: 00-roadmap/learning-path.md
       - Skills Matrix: 00-roadmap/skills-matrix.md
