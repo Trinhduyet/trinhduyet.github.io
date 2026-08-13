@@ -14,13 +14,14 @@ C#/.NET → Backend → SQL → API Design → ASP.NET Core
 
 Điểm vào: [Module 03 — .NET](../03-dotnet/README.md).
 
-### Production / Distributed Systems
+### Production / Distributed / Microservices
 
 ```text
 ASP.NET Core
 → Docker
 → Kubernetes
 → Distributed Systems
+→ Microservices Architecture
 ```
 
 Các module code-first hiện có:
@@ -30,6 +31,20 @@ Các module code-first hiện có:
 - [Docker](../12-docker/README.md)
 - [Kubernetes](../15-kubernetes/README.md)
 - [Distributed Systems](../17-distributed-systems/README.md)
+- **[Microservices Architecture](../18-microservices-architecture/README.md)**
+
+Microservices module tập trung vào:
+
+```text
+Business capability / Bounded Context
+→ Service Boundary
+→ Data Ownership
+→ API/Event Contract
+→ Sync/Async Communication
+→ Saga + Reconciliation
+→ Independent Deployment
+→ Testing/Observability/Migration
+```
 
 ### AI Engineering
 
@@ -73,63 +88,21 @@ Task
 | **Module 12 Docker** | **Code-first deep rewrite v1: 3 guides** |
 | Module 13–14 | Structure v1; deep rewrite pending |
 | **Module 15 Kubernetes** | **Code-first deep rewrite v1: 3 guides** |
-| Module 16 Observability | foundation đã tích hợp vào ASP.NET/K8s; dedicated module planned |
+| Module 16 Observability | foundation tích hợp vào ASP.NET/K8s; dedicated module planned |
 | **Module 17 Distributed Systems** | **Code-first v1: 4 guides + references** |
-| Module 18 Data Engineering | Planned |
+| **Module 18 Microservices Architecture** | **Code-first v1: 4 guides + references** |
 | **Module 19 AI Engineering** | **Code-first v1** |
 | Module 20 RAG | foundation trong Module 19; dedicated deep module planned |
 | Module 21 Business AI Agents/MCP | Planned — advanced-first |
 | **AI Coding Agents** | **Code-first v1** |
 | Module 22–26 | Planned |
+| Module 27 Data Engineering | Planned / selective |
 
 Chi tiết: [Master Roadmap](master-roadmap.md).
 
 ---
 
-## Cách học một chapter
-
-```text
-Hiểu trong 5 phút
-  ↓
-Chạy code/config
-  ↓
-Vẽ mental model
-  ↓
-Cố tình làm hỏng
-  ↓
-Quan sát test/log/trace/plan
-  ↓
-Đọc internals
-  ↓
-Trả lời trade-offs
-```
-
----
-
 ## Code-heavy pages nên đọc
-
-### SQL
-
-1. [SQL Overview](../05-sql/README.md)
-2. [Transactions, Isolation và Concurrency](../05-sql/transactions-isolation-and-concurrency.md)
-3. [Indexes & Execution Plans](../05-sql/indexes-execution-plans-and-operations.md)
-4. [EF Core → SQL → Execution Plan](../05-sql/ef-core-query-shape-and-sql.md)
-
-### ASP.NET Core
-
-1. [ASP.NET Core Overview](../07-aspnet-core/README.md)
-2. [Pipeline / Hosting / Configuration](../07-aspnet-core/pipeline-hosting-and-configuration.md)
-3. [Resilience / Security / Middleware](../07-aspnet-core/resilience-security-and-middleware.md)
-4. [Deployment / OTel / Operations](../07-aspnet-core/deployment-observability-and-operations.md)
-
-### Docker / Kubernetes
-
-- [Docker Overview](../12-docker/README.md)
-- [Docker Runtime / Network / Storage](../12-docker/runtime-networking-storage-and-resources.md)
-- [Kubernetes Overview](../15-kubernetes/README.md)
-- [Kubernetes Architecture / Reconciliation](../15-kubernetes/cluster-architecture-and-reconciliation.md)
-- [Kubernetes Workloads / Network / Storage](../15-kubernetes/workloads-networking-and-storage.md)
-- [Kubernetes Security / Operations](../15-kubernetes/kubernetes-security-observability-and-operations.md)
 
 ### Distributed Systems
 
@@ -137,6 +110,14 @@ Trả lời trade-offs
 2. [Partial Failure / Retry / Idempotency](../17-distributed-systems/partial-failure-timeouts-retries-and-idempotency.md)
 3. [Messaging / Outbox / Inbox / Dedup](../17-distributed-systems/messaging-outbox-inbox-and-dedup.md)
 4. [Consistency / Ordering / Saga / Backpressure](../17-distributed-systems/consistency-ordering-saga-and-backpressure.md)
+
+### Microservices Architecture
+
+1. [Microservices Overview](../18-microservices-architecture/README.md)
+2. [Service Boundaries / Data Ownership / Contracts](../18-microservices-architecture/service-boundaries-data-ownership-and-contracts.md)
+3. [Checkout Saga / Unknown Outcome / Reconciliation](../18-microservices-architecture/checkout-saga-unknown-outcome-and-reconciliation.md)
+4. [Communication / Gateway / Discovery / Deployment](../18-microservices-architecture/communication-gateway-discovery-and-deployment.md)
+5. [Testing / Observability / Migration](../18-microservices-architecture/testing-observability-and-migration.md)
 
 ### AI
 
@@ -205,5 +186,5 @@ Xem [Source Policy](source-policy.md) và [Technology Baseline](technology-basel
 
 ## Verification metadata
 
-- Verified: 2026-08-12
-- Active code-first tracks: SQL, ASP.NET Core, Docker, Kubernetes, Distributed Systems, AI Engineering, AI Coding Agents
+- Verified: 2026-08-13
+- Active code-first tracks: SQL, ASP.NET Core, Docker, Kubernetes, Distributed Systems, Microservices Architecture, AI Engineering, AI Coding Agents

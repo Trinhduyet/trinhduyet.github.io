@@ -1,5 +1,5 @@
 site_name: AI-Enabled Software Architect Knowledge Roadmap
-site_description: Lộ trình thực chiến từ C#/.NET Backend đến Distributed Systems, AI Engineering, System Design và Software Architecture.
+site_description: Lộ trình thực chiến từ C#/.NET Backend đến Distributed Systems, Microservices, AI Engineering, System Design và Software Architecture.
 site_url: https://trinhduyet.github.io/
 repo_url: https://github.com/Trinhduyet/trinhduyet.github.io
 repo_name: Trinhduyet/trinhduyet.github.io
@@ -186,6 +186,12 @@ nav:
       - Partial Failure, Retry & Idempotency: 17-distributed-systems/partial-failure-timeouts-retries-and-idempotency.md
       - Messaging, Outbox, Inbox & Dedup: 17-distributed-systems/messaging-outbox-inbox-and-dedup.md
       - Consistency, Ordering, Saga & Backpressure: 17-distributed-systems/consistency-ordering-saga-and-backpressure.md
+  - Microservices Architecture:
+      - Overview: 18-microservices-architecture/README.md
+      - Boundaries, Data & Contracts: 18-microservices-architecture/service-boundaries-data-ownership-and-contracts.md
+      - Checkout Saga & Reconciliation: 18-microservices-architecture/checkout-saga-unknown-outcome-and-reconciliation.md
+      - Communication, Gateway & Deployment: 18-microservices-architecture/communication-gateway-discovery-and-deployment.md
+      - Testing, Observability & Migration: 18-microservices-architecture/testing-observability-and-migration.md
   - AI Engineering:
       - AI Engineering Overview: 19-ai-engineering/README.md
       - Structured Output & Tool Calling: 19-ai-engineering/structured-output-and-tool-calling.md
