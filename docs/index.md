@@ -14,17 +14,13 @@ C#/.NET → Backend → SQL → API Design → ASP.NET Core
 
 Bắt đầu: [C#/.NET Runtime](03-dotnet/README.md).
 
-Các phần code-heavy đã rewrite:
-
-- [SQL / SQL Server](05-sql/README.md)
-- [ASP.NET Core](07-aspnet-core/README.md)
-
-### Production / Platform / Distributed
+### Production / Platform / Distributed / Microservices
 
 ```text
 Docker
 → Kubernetes
 → Distributed Systems
+→ Microservices Architecture
 ```
 
 Bắt đầu:
@@ -32,6 +28,21 @@ Bắt đầu:
 - [Docker](12-docker/README.md)
 - [Kubernetes](15-kubernetes/README.md)
 - [Distributed Systems](17-distributed-systems/README.md)
+- **[Microservices Architecture](18-microservices-architecture/README.md)**
+
+Microservices module có case study checkout thực tế:
+
+```text
+Duplicate checkout
+→ Idempotency
+→ Inventory reservation
+→ Payment attempt
+→ timeout = UNKNOWN
+→ PENDING_PAYMENT
+→ reconciliation
+→ Saga compensation
+→ Outbox / Inbox / Dedup
+```
 
 ### AI Engineering
 
@@ -65,8 +76,6 @@ Task
 → human review
 ```
 
-Có ví dụ `AGENTS.md`, shell discovery, MCP/context boundary, CI YAML, regression tests và coding-agent evaluation.
-
 ---
 
 ## Roadmap trong một hình
@@ -77,11 +86,13 @@ flowchart TD
     B --> C[Production\nTesting · Security · Performance]
     C --> D[Platform\nDocker · DevOps · Cloud · Kubernetes]
     D --> E[Distributed Systems\nFailure · Messaging · Consistency]
+    E --> M[Microservices\nBoundaries · Data · Contracts · Deployment]
     B --> F[AI Engineering\nLLM · Structured Output · Tools · RAG · Evals]
     E --> F
     F --> CA[AI Coding Agents\nContext · MCP · Tests · PR]
     F --> AG[Business AI Agents\nTools · Workflow · HITL · Security]
     E --> S[System Design]
+    M --> S
     CA --> S
     AG --> S
     S --> H[Software / AI Architecture]
@@ -103,7 +114,7 @@ flowchart TD
 
 ---
 
-## Code-heavy pages mới
+## Code-heavy pages nên đọc
 
 ### SQL
 
@@ -122,28 +133,55 @@ flowchart TD
 ### Docker / Kubernetes
 
 9. [Docker Overview](12-docker/README.md)
-10. [Docker Build / Images](12-docker/images-builds-and-reproducibility.md)
-11. [Docker Runtime / Network / Storage](12-docker/runtime-networking-storage-and-resources.md)
-12. [Kubernetes Overview](15-kubernetes/README.md)
-13. [Kubernetes Architecture / Reconciliation](15-kubernetes/cluster-architecture-and-reconciliation.md)
-14. [Kubernetes Workloads / Network / Storage](15-kubernetes/workloads-networking-and-storage.md)
-15. [Kubernetes Security / Operations](15-kubernetes/kubernetes-security-observability-and-operations.md)
+10. [Docker Runtime / Network / Storage](12-docker/runtime-networking-storage-and-resources.md)
+11. [Kubernetes Overview](15-kubernetes/README.md)
+12. [Kubernetes Architecture / Reconciliation](15-kubernetes/cluster-architecture-and-reconciliation.md)
+13. [Kubernetes Workloads / Network / Storage](15-kubernetes/workloads-networking-and-storage.md)
+14. [Kubernetes Security / Operations](15-kubernetes/kubernetes-security-observability-and-operations.md)
 
 ### Distributed Systems
 
-16. [Distributed Systems Overview](17-distributed-systems/README.md)
-17. [Partial Failure / Retry / Idempotency](17-distributed-systems/partial-failure-timeouts-retries-and-idempotency.md)
-18. [Messaging / Outbox / Inbox / Dedup](17-distributed-systems/messaging-outbox-inbox-and-dedup.md)
-19. [Consistency / Ordering / Saga / Backpressure](17-distributed-systems/consistency-ordering-saga-and-backpressure.md)
+15. [Distributed Systems Overview](17-distributed-systems/README.md)
+16. [Partial Failure / Retry / Idempotency](17-distributed-systems/partial-failure-timeouts-retries-and-idempotency.md)
+17. [Messaging / Outbox / Inbox / Dedup](17-distributed-systems/messaging-outbox-inbox-and-dedup.md)
+18. [Consistency / Ordering / Saga / Backpressure](17-distributed-systems/consistency-ordering-saga-and-backpressure.md)
+
+### Microservices Architecture
+
+19. [Microservices Overview](18-microservices-architecture/README.md)
+20. [Service Boundaries / Data Ownership / Contracts](18-microservices-architecture/service-boundaries-data-ownership-and-contracts.md)
+21. [Checkout Saga / Unknown Outcome / Reconciliation](18-microservices-architecture/checkout-saga-unknown-outcome-and-reconciliation.md)
+22. [Communication / API Gateway / Discovery / Deployment](18-microservices-architecture/communication-gateway-discovery-and-deployment.md)
+23. [Testing / Observability / Migration](18-microservices-architecture/testing-observability-and-migration.md)
 
 ### AI
 
-20. [AI Engineering cho .NET](19-ai-engineering/README.md)
-21. [Structured Output / Tool Calling](19-ai-engineering/structured-output-and-tool-calling.md)
-22. [RAG / Evaluation / Observability](19-ai-engineering/rag-evaluation-and-observability.md)
-23. [AI Coding Agents](21-ai-coding-agents/README.md)
-24. [Repository Context / MCP / Instructions](21-ai-coding-agents/repository-context-mcp-and-instructions.md)
-25. [Safe Agentic Coding Workflow](21-ai-coding-agents/safe-agentic-coding-workflow.md)
+24. [AI Engineering cho .NET](19-ai-engineering/README.md)
+25. [Structured Output / Tool Calling](19-ai-engineering/structured-output-and-tool-calling.md)
+26. [RAG / Evaluation / Observability](19-ai-engineering/rag-evaluation-and-observability.md)
+27. [AI Coding Agents](21-ai-coding-agents/README.md)
+28. [Repository Context / MCP / Instructions](21-ai-coding-agents/repository-context-mcp-and-instructions.md)
+29. [Safe Agentic Coding Workflow](21-ai-coding-agents/safe-agentic-coding-workflow.md)
+
+---
+
+## Microservices: điều cần nhớ
+
+```text
+Microservices ≠ nhiều project/container
+```
+
+Một service phải có:
+
+```text
+business boundary
++ owned data
++ explicit API/event contract
++ independent lifecycle
++ observability/SLO/runbook
+```
+
+Nếu service share DB/domain model và phải deploy đồng thời, bạn có thể đang xây **distributed monolith**.
 
 ---
 
@@ -168,6 +206,7 @@ Một chapter P0/P1 implementation-heavy không được gọi là deep content 
 - **Module 12 Docker: code-first deep rewrite v1.**
 - **Module 15 Kubernetes: code-first deep rewrite v1.**
 - **Module 17 Distributed Systems: code-first v1.**
+- **Module 18 Microservices Architecture: code-first v1.**
 - **Module 19 AI Engineering: code-first v1.**
 - **AI Coding Agents: code-first v1.**
 - Các module còn lại tiếp tục được rewrite/triển khai theo cùng quality gate.
@@ -177,11 +216,12 @@ Một chapter P0/P1 implementation-heavy không được gọi là deep content 
 **AI-enabled Software Architect** không cần thuộc mọi tool. Bạn cần trả lời bằng evidence:
 
 - requirement/NFR là gì;
-- boundary nằm ở đâu;
+- boundary và data ownership nằm ở đâu;
 - transaction/consistency/retry/idempotency ra sao;
+- Saga/compensation/reconciliation hoạt động thế nào;
+- service contract có evolve/deploy độc lập được không;
 - queue/backpressure/order/failure recovery thế nào;
 - data/AI/tool được phép truy cập gì;
 - latency/cost/quality được đo ra sao;
-- khi nào dùng agent và khi nào deterministic workflow đơn giản hơn;
-- coding agent được sandbox/test/review thế nào;
+- khi nào dùng microservices, khi nào Modular Monolith tốt hơn;
 - kiến trúc đổi ra sao ở 10x/100x scale.
