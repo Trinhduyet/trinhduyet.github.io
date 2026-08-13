@@ -36,6 +36,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      - name: Audit diagram sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          matches="$(grep -RIn --include='*.md' '```mermaid' docs || true)"
+          if [[ -n "$matches" ]]; then
+            echo "$matches"
+            echo "::error::Mermaid sources remain. Convert them to Diagram Design standalone HTML/SVG assets."
+            exit 1
+          fi
+
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
