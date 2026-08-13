@@ -200,3 +200,12 @@ nav:
       - AI Coding Agents Overview: 21-ai-coding-agents/README.md
       - Context, Instructions & MCP: 21-ai-coding-agents/repository-context-mcp-and-instructions.md
       - Safe Agentic Coding Workflow: 21-ai-coding-agents/safe-agentic-coding-workflow.md
+  - System Design:
+      - Overview: 24-system-design/README.md
+      - Requirements, NFR & Capacity: 24-system-design/requirements-nfr-and-capacity-estimation.md
+      - Traffic, Load Balancing, CDN & Cache: 24-system-design/traffic-load-balancing-cdn-and-cache.md
+      - Data, Replication, Partitioning & Consistency: 24-system-design/data-partitioning-replication-and-consistency.md
+      - Async, Queue, Backpressure & Reliability: 24-system-design/async-queues-backpressure-and-reliability.md
+      - Availability, Multi-region, DR, Security & Cost: 24-system-design/availability-multiregion-dr-security-and-cost.md
+      - Case Studies & Design Review: 24-system-design/case-studies-and-design-review.md
+      - References: 24-system-design/references.md

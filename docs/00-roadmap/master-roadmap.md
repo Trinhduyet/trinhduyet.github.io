@@ -17,6 +17,8 @@ Failure / Security / Performance
   ↓
 Operations + Evidence
   ↓
+System Design
+  ↓
 Architecture decision
 ```
 
@@ -33,7 +35,7 @@ Architecture decision
 # 2. Priority
 
 | Priority | Nghĩa |
-| --- | --- |
+|---|---|
 | **P0 — Core** | phải implement, debug, operate và design/review được |
 | **P1 — Important** | phải dùng hoặc review tự tin |
 | **P2 — Selective** | học đủ để ra quyết định; deep dive khi project cần |
@@ -44,14 +46,14 @@ Architecture decision
 # 3. Module map
 
 | Module | Trọng tâm | Priority | Status |
-| --- | --- | --- | --- |
+|---|---|---|---|
 | 00 Roadmap | dependency, baseline, source policy | P0 | v1 |
 | 01 Computer Science | complexity, OS, memory, concurrency | P0/P2 | Content v1 |
 | 02 Linux/Git/Networking | process, DNS/TCP/TLS/HTTP, troubleshooting | P0 | Content v1 |
 | 03 .NET | C#, async, GC, ThreadPool, hosting, diagnostics | P0 | Content v1 |
 | 04 Backend | request lifecycle, auth, pagination, jobs/webhooks | P0 | Content v1 |
 | **05 SQL** | transactions, indexes, plans, EF→SQL | **P0** | **Code-first deep rewrite v1: 4 guides** |
-| **06 API Design** | HTTP contracts, security/OAuth, evolution/OpenAPI, traffic/resilience, REST/GraphQL/gRPC, gateway/realtime | **P0** | **Code-first deep rewrite v1: 6 guides + references; 25-topic coverage** |
+| **06 API Design** | contracts, OAuth/CORS, OpenAPI, caching/resilience, REST/GraphQL/gRPC | **P0** | **Code-first deep rewrite v1: 6 guides + references; 25-topic coverage** |
 | **07 ASP.NET Core** | pipeline, resilience, deployment/OTel | **P0** | **Code-first deep rewrite v1: 3 guides** |
 | 08 Testing/Review | test boundaries, integration/load, review | P0 | Structure v1; deep rewrite pending |
 | 09 Security/DevSecOps | identity, API/app security, supply chain | P0/P1 | Structure v1; deep rewrite pending |
@@ -63,19 +65,19 @@ Architecture decision
 | **15 Kubernetes** | reconciliation, workloads/network/storage/security | **P1** | **Code-first deep rewrite v1: 3 guides** |
 | 16 Observability | logs, metrics, traces, OTel, SLI/SLO | P0/P1 | Foundation integrated; dedicated module planned |
 | **17 Distributed Systems** | partial failure, messaging, consistency | **P0** | **Code-first v1: 4 guides + references** |
-| **18 Microservices Architecture** | boundaries, data ownership, contracts, Saga, deployment/migration | **P0/P1** | **Code-first v1: 4 guides + references** |
+| **18 Microservices Architecture** | boundaries, data ownership, Saga, deployment/migration | **P0/P1** | **Code-first v1: 4 guides + references** |
 | **19 AI Engineering** | provider abstraction, structured output, tools, eval | **P0** | **Code-first v1: 3 guides** |
-| 20 RAG | full ingestion/retrieval lifecycle, ACL, deletion/versioning | P0 | Foundation covered in 19; dedicated module planned |
+| 20 RAG | ingestion/retrieval lifecycle, ACL, deletion/versioning | P0 | Foundation covered in 19; dedicated module planned |
 | 21 Business AI Agents/MCP | tools, workflow, state, HITL, authorization | P0 | Planned — advanced-first |
 | **21A AI Coding Agents** | repo context, MCP, build/test/PR safety | **P0/P1** | **Code-first v1: 3 guides** |
 | 22 AI Security | injection, exfiltration, tool abuse, red teaming | P0/P1 | Planned |
 | 23 GenAIOps/MLOps | prompt/model/index lifecycle, eval gates, rollout | P0/P1/P2 | Planned |
-| 24 System Design | requirements, capacity, distributed + AI design | P0 | Planned |
+| **24 System Design** | requirements, capacity, traffic, data, reliability, multi-region, AI/system cases | **P0** | **Code-first v1: 6 guides + references + case studies** |
 | 25 Software Architecture | boundaries, styles, evolution, migration | P0 | Planned |
 | 26 Architecture Docs | C4, ADR, RFC, threat/failure/runbook | P1 | Planned |
 | 27 Data Engineering | ingestion, CDC, batch/stream, lineage | P2 | Planned / selective |
 
-`Code-first v1` nghĩa tài liệu đã có code/config, production reasoning và failure experiment. Learner evidence vẫn phải tự chạy.
+`Code-first v1` nghĩa tài liệu đã có code/config/calculation, production reasoning và failure experiment. Learner evidence vẫn phải tự chạy.
 
 ---
 
@@ -103,54 +105,50 @@ AI Engineering
 → Agents / MCP
 → AI Security
 → GenAIOps
+          ↓
+     System Design
 ```
+
+System Design là nơi backend, data, distributed systems, platform và AI **hội tụ thành architecture decision**.
 
 ---
 
-# 5. Microservices Architecture — module mới
+# 5. System Design — module active
 
 Bắt đầu:
 
-1. [Microservices Architecture Overview](../18-microservices-architecture/README.md)
-2. [Service Boundaries, Data Ownership & Contracts](../18-microservices-architecture/service-boundaries-data-ownership-and-contracts.md)
-3. [Checkout Saga: Unknown Outcome & Reconciliation](../18-microservices-architecture/checkout-saga-unknown-outcome-and-reconciliation.md)
-4. [Communication, Gateway, Discovery & Deployment](../18-microservices-architecture/communication-gateway-discovery-and-deployment.md)
-5. [Testing, Observability & Migration](../18-microservices-architecture/testing-observability-and-migration.md)
+1. [System Design Overview](../24-system-design/README.md)
+2. [Requirements, NFR & Capacity Estimation](../24-system-design/requirements-nfr-and-capacity-estimation.md)
+3. [Traffic, Load Balancing, CDN & Cache](../24-system-design/traffic-load-balancing-cdn-and-cache.md)
+4. [Data, Replication, Partitioning & Consistency](../24-system-design/data-partitioning-replication-and-consistency.md)
+5. [Async, Queue, Backpressure & Reliability](../24-system-design/async-queues-backpressure-and-reliability.md)
+6. [Availability, Multi-region, DR, Security & Cost](../24-system-design/availability-multiregion-dr-security-and-cost.md)
+7. [Case Studies & Design Review](../24-system-design/case-studies-and-design-review.md)
 
 Mental model:
 
 ```text
-Business capability
-→ bounded context
-→ service boundary
-→ owned data
-→ versioned contract
-→ independent deployment
-→ SLO/runbook/team ownership
+Requirements
++ NFR / SLO
++ Capacity
++ Data / Consistency
++ Failure Model
++ Security / Cost
+        ↓
+Architecture Options
+        ↓
+Trade-offs
+        ↓
+Evidence
 ```
 
-Checkout case study đi xuyên suốt:
-
-```text
-Idempotency
-→ Inventory Reservation
-→ Payment Attempt
-→ timeout = UNKNOWN
-→ PENDING_PAYMENT
-→ reconciliation
-→ Saga compensation
-→ Outbox / Inbox / Dedup
-→ contract/versioning
-→ tracing / failure drills
-```
+Module không dạy “thấy scale là dùng Redis/Kafka/Kubernetes”. Mỗi component phải có requirement hoặc measured pressure justify nó.
 
 ---
 
-# 6. Distributed Systems vs Microservices
+# 6. Distributed Systems vs Microservices vs System Design
 
-Không đồng nhất hai khái niệm.
-
-**Distributed Systems**:
+**Distributed Systems** dạy mechanics:
 
 ```text
 partial failure
@@ -162,26 +160,39 @@ outbox/inbox
 backpressure
 ```
 
-**Microservices Architecture** thêm:
+**Microservices Architecture** thêm organizational/system boundaries:
 
 ```text
 service boundaries
 data sovereignty
 team ownership
-API/event contracts
-API gateway/BFF
-service discovery
-independent deployment
-migration from modular monolith
+contracts
+deployment lifecycle
+migration
 ```
 
-Microservices sử dụng kiến thức Distributed Systems; vì vậy Module 17 là prerequisite của Module 18.
+**System Design** tổng hợp:
+
+```text
+requirements
+capacity
+traffic
+storage
+cache/CDN
+partitioning
+availability
+security
+cost
+failure recovery
+```
+
+và quyết định khi nào các mechanics/pattern ở trên thực sự cần thiết.
 
 ---
 
 # 7. Architecture progression
 
-Không nhảy từ CRUD thẳng sang microservices.
+Không nhảy từ CRUD thẳng sang distributed architecture.
 
 ```text
 Monolith
@@ -190,9 +201,11 @@ Monolith
 → Event-driven integration
 → Distributed Systems competence
 → Microservices when justified
+→ System Design at workload scale
+→ Software Architecture evolution/governance
 ```
 
-Microservices không phải default “production architecture”. Nếu team/domain/scale chưa tạo pressure, Modular Monolith thường đơn giản hơn và rẻ hơn để vận hành.
+Microservices không phải default production architecture. Multi-region, sharding và streaming cũng vậy.
 
 ---
 
@@ -203,7 +216,7 @@ Một chapter P0/P1 implementation-heavy phải có, khi phù hợp:
 ```text
 Hiểu trong 5 phút
 + mental model
-+ runnable code/config
++ runnable code/config/calculation
 + production example
 + failure experiment
 + command/test để verify
@@ -213,31 +226,32 @@ Hiểu trong 5 phút
 
 Generic prose có thể copy sang công nghệ khác = **outline**, không phải deep content.
 
-Default reading order:
+System Design thêm quality gate:
 
 ```text
-Problem
-→ Code
-→ Mental Model
-→ Failure
-→ Internals
-→ Operations
-→ Architecture
+requirements
++ explicit assumptions
++ capacity estimates
++ failure analysis
++ cost
++ migration trigger
 ```
+
+Diagram không thay thế reasoning.
 
 ---
 
 # 9. Project spine
 
 | Project | Trọng tâm | Evidence |
-| --- | --- | --- |
+|---|---|---|
 | 01 Async File Processor | I/O, Channels, cancellation, concurrency | failure tests + resource measurement |
 | 02 Order Management | ASP.NET Core, SQL, EF, API/security | contract + data model + tests |
 | 03 Production Backend | Redis, Docker, workers, observability, CI | SLO + load report + runbook |
 | **04 Distributed Checkout / Notifications** | broker, outbox, dedup, Saga, microservice boundaries | ADR + outage/replay/reconciliation drills |
 | 05 Enterprise RAG | ingestion, ACL, retrieval, deletion, eval | lineage + eval + threat model |
 | 06 Production Agent Platform | tools, MCP, workflow, approval, audit | trust boundary + red-team gates |
-| 07 High-scale AI System Design | multi-region/provider | C4 + capacity + cost + DR + migration |
+| **07 High-scale AI System Design** | multi-region/provider/RAG/agents | **capacity + C4 + cost + DR + migration + failure drills** |
 
 ---
 
@@ -251,17 +265,18 @@ unit/integration/contract test
 execution plan
 trace
 load/eval report
+capacity sheet
 failure experiment
 PR review
 ADR/runbook
+DR/restore result
 ```
 
 “Đã đọc xong” không phải evidence.
 
 ## Verification metadata
 
-- Verified: 2026-08-13
-- API Design deep rewrite covers the 25-item contract/security/reliability/protocol checklist in Module 06.
-- Microservices sources: Microsoft Learn / Azure Architecture Center
-- Technology baseline: [technology-baseline.md](technology-baseline.md)
-- Source policy: [source-policy.md](source-policy.md)
+- Verified: 2026-08-13.
+- System Design scope: roadmap.sh + official Azure Architecture Center / Well-Architected reliability guidance.
+- Technology baseline: [technology-baseline.md](technology-baseline.md).
+- Source policy: [source-policy.md](source-policy.md).
