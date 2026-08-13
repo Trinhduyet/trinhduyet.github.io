@@ -1,104 +1,305 @@
 # Cách đọc tài liệu này mà không bị ngợp
 
-Tài liệu này **không nên đọc như một cuốn sách từ đầu đến cuối**. Mỗi chủ đề nên đi theo vòng lặp ngắn: hiểu vấn đề → chạy ví dụ → quan sát kết quả → rồi mới đọc internals và architecture.
+> **Không đọc repository này như một cuốn sách.** Phần deep documentation dài vì nó còn phục vụ debug, review và architecture. Để học, bắt đầu bằng ví dụ.
 
-## Cách đọc một chapter trong 30–60 phút
+## Chọn 1 trong 3 mode
 
-### Bước 1 — Hiểu trong 5 phút
+| Mode | Dùng khi | Bắt đầu |
+|---|---|---|
+| **Human Mode** | muốn hiểu/nhớ nhanh | [Human Learning Mode](human-learning-mode.md) |
+| **Example-First** | muốn học bằng code và một hệ thống xuyên suốt | [Checkout Learning Path](example-first-learning-path.md) |
+| **Deep Mode** | đang debug/review/ra quyết định | các module chi tiết |
 
-Chỉ trả lời ba câu:
+Nếu bạn đã từng đọc hết nhiều chapter nhưng sau đó khó kể lại, hãy **dừng Deep Mode** và quay về Example-First.
 
-1. Công nghệ/pattern này giải quyết vấn đề gì?
-2. Input → processing → output đi qua những bước nào?
-3. Nếu bỏ nó đi thì hệ thống hỏng hoặc khó ở đâu?
+---
 
-Nếu chưa trả lời được ba câu này, **chưa cần đọc Internals**.
+# Cách học 60 phút
 
-### Bước 2 — Chạy code trước
-
-Ưu tiên code có thể copy/chạy được. Ví dụ với AI:
-
-```csharp
-ChatResponse response = await chatClient.GetResponseAsync(
-    "Giải thích idempotency bằng một ví dụ HTTP API",
-    cancellationToken: cancellationToken);
-
-Console.WriteLine(response.Text);
+```text
+20 phút chạy code
+20 phút cố tình làm hỏng
+20 phút đọc đúng phần lý thuyết giải thích failure vừa thấy
 ```
 
-Sau đó tự thay prompt, timeout, model hoặc dữ liệu để xem behavior đổi thế nào.
-
-### Bước 3 — Vẽ mental model
-
-Ví dụ AI application:
-
-![Sơ đồ How To Read — diagram 1](../assets/diagrams/00-roadmap-how-to-read-1.svg)
-
-Nếu có tool calling:
-
-![Sơ đồ How To Read — diagram 2](../assets/diagrams/00-roadmap-how-to-read-2.svg)
-
-### Bước 4 — Cố tình làm hỏng
-
-Học production bằng failure experiment:
-
-- timeout model;
-- trả JSON sai schema;
-- tool trả 500;
-- prompt chứa instruction độc hại;
-- retrieval trả document sai tenant;
-- agent cố gọi tool write ngoài quyền.
-
-Quan sát logs, metrics, trace và recovery behavior.
-
-### Bước 5 — Mới đọc Architect Perspective
-
-Chỉ sau khi đã chạy code, trả lời:
-
-- giải pháp đơn giản hơn là gì;
-- failure mode lớn nhất là gì;
-- operational burden là gì;
-- 10x traffic thì bottleneck chuyển đi đâu;
-- khi nào phải đổi kiến trúc.
-
-## Cấu trúc dễ đọc mới
-
-Các chapter mới ưu tiên thứ tự:
-
-1. **Hiểu trong 5 phút**
-2. **Code đầu tiên**
-3. **Mental model**
-4. **Giải thích từng dòng quan trọng**
-5. **Production example**
-6. **Failure experiment**
-7. **Common mistakes**
-8. **Performance / Security / Observability**
-9. **Architect Perspective**
-10. **Lab + Exit Criteria**
-
-## Đọc tiếng Việt, giữ thuật ngữ tiếng Anh
+Không đọc Internals trước khi đã thấy behavior.
 
 Ví dụ:
 
-| Tiếng Việt | Canonical English |
-| --- | --- |
-| đầu ra có cấu trúc | Structured Output |
-| gọi công cụ | Tool Calling / Function Calling |
-| truy xuất tăng cường | Retrieval-Augmented Generation (RAG) |
-| đánh giá | Evaluation / Evals |
-| truy vết phân tán | Distributed Tracing |
-| tác nhân lập trình | AI Coding Agent |
+```text
+payment timeout
+      ↓
+order status nên là gì?
+      ↓
+UNKNOWN
+      ↓
+đọc idempotency + reconciliation
+```
 
-Không cố dịch tên API, package, CLI command hoặc protocol.
+Thay vì:
 
-## Nguyên tắc code example
+```text
+đọc Retry
+đọc Saga
+đọc CAP
+đọc Eventual Consistency
+đọc Outbox
+→ chưa biết dùng ở đâu
+```
 
-Một chapter P0/P1 chỉ được xem là đủ sâu khi có ít nhất:
+---
 
-- một minimal code example;
-- một production-oriented example;
-- một failure example;
-- một verification step;
-- giải thích vì sao code được viết như vậy.
+# Một chapter chỉ cần học 4 lớp
 
-Generic prose không có code/behavior cụ thể chỉ được xem là **outline**, không phải `Content v1`.
+## Lớp 1 — Problem
+
+Ví dụ:
+
+> User bấm Checkout hai lần.
+
+## Lớp 2 — Code
+
+```http
+POST /v1/checkouts
+Idempotency-Key: checkout-001
+```
+
+## Lớp 3 — Failure
+
+```text
+2 requests chạy concurrent
+```
+
+## Lớp 4 — Rule cần nhớ
+
+```text
+application check alone is not enough
+→ database UNIQUE invariant
+```
+
+Nếu đã nắm 4 lớp này, bạn có thể dừng. Internals là lớp sau.
+
+---
+
+# 5 câu hỏi khi đọc code
+
+Không cố nhớ syntax. Hỏi:
+
+1. **Input là gì?**
+2. **State nào đổi?**
+3. **Side effect ở đâu?**
+4. **Chạy hai lần thì sao?**
+5. **Crash giữa chừng thì sao?**
+
+Ví dụ:
+
+```csharp
+await payment.ChargeAsync(orderId, amount, cancellationToken);
+```
+
+Một người mới nhìn thấy HTTP call.
+
+Một người production-oriented hỏi thêm:
+
+```text
+idempotency key đâu?
+timeout có phải failure không?
+provider đã commit nhưng response mất thì sao?
+query status bằng identifier nào?
+retry có double charge không?
+```
+
+---
+
+# Dùng Concept Cards khi quên thuật ngữ
+
+Không cần mở chapter 1,000 dòng để nhớ `Outbox` là gì.
+
+Mở [Concept Cards](concept-cards.md).
+
+Mỗi card chỉ có:
+
+```text
+1 câu dễ nhớ
+1 ví dụ
+1 hiểu lầm thường gặp
+```
+
+Ví dụ:
+
+> **Outbox:** ghi business state và message-to-publish trong cùng local DB transaction.
+
+Sau đó nếu đang implement thật mới mở deep chapter.
+
+---
+
+# Reference system dùng xuyên suốt
+
+Repository sẽ cố gắng dùng lại cùng một domain:
+
+```text
+Customer
+   ↓
+Checkout API
+   ↓
+Order
+ ├─ Inventory
+ ├─ Payment
+ └─ Notification
+
+AI Assistant
+   ↓
+read-only business tools
+```
+
+Nhờ vậy:
+
+```text
+Idempotency
+Transaction
+Cache
+Queue
+Outbox
+Saga
+Kubernetes
+System Design
+AI Tool Calling
+```
+
+không còn là 9 ví dụ rời rạc.
+
+---
+
+# Khi nào đọc Deep Mode
+
+Deep dive khi có lý do cụ thể:
+
+```text
+production incident
+performance bottleneck
+security review
+architecture decision
+system-design exercise
+API/framework behavior chưa giải thích được
+```
+
+Lúc đó đọc theo thứ tự:
+
+```text
+Problem
+→ Minimal example
+→ Failure
+→ Internals
+→ Performance/Security
+→ Operations
+→ Architecture trade-off
+```
+
+Không cần đọc toàn bộ mục nếu câu hỏi đã được trả lời.
+
+---
+
+# Dấu hiệu bạn đã hiểu
+
+## SQL
+
+Không phải:
+
+```text
+thuộc clustered/nonclustered index
+```
+
+Mà:
+
+```text
+nhìn query
+→ xem generated SQL
+→ đọc execution plan
+→ giải thích vì sao scan/seek
+→ đo IO trước/sau
+```
+
+## Distributed Systems
+
+Không phải:
+
+```text
+thuộc Saga definition
+```
+
+Mà:
+
+```text
+payment timeout
+→ biết FAILED != UNKNOWN
+→ lưu state durable
+→ reconcile
+→ compensate nếu cần
+```
+
+## Kubernetes
+
+Không phải:
+
+```text
+thuộc YAML
+```
+
+Mà:
+
+```text
+process alive nhưng app chưa sẵn sàng
+→ liveness pass
+→ readiness fail
+→ traffic không route vào Pod
+```
+
+## System Design
+
+Không phải:
+
+```text
+vẽ Redis + Kafka + K8s
+```
+
+Mà:
+
+```text
+requirement + NFR
+→ capacity math
+→ bottleneck
+→ simplest design
+→ failure/cost
+→ evidence
+```
+
+---
+
+# Learning evidence
+
+“Đã đọc” không phải evidence.
+
+Evidence tốt:
+
+```text
+chạy request
+viết SQL
+thấy execution plan
+reproduce duplicate
+simulate timeout
+kill Pod
+build queue backlog
+reconcile unknown payment
+viết regression test
+vẽ lại flow từ memory
+```
+
+Nếu bạn làm được mà không nhìn đáp án, kiến thức đã đi từ **text → mental model → skill**.
+
+---
+
+# Bắt đầu ngay
+
+Nếu chỉ chọn một trang tiếp theo:
+
+**[Example-First Learning Path — Checkout từ C# đến System Design và AI](example-first-learning-path.md)**.
