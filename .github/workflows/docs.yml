@@ -36,6 +36,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      - name: Upload docs migration snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagram-migration-source
+          path: |
+            docs
+            mkdocs.yml
+          retention-days: 1
+
       - name: Audit diagram sources
         shell: bash
         run: |
