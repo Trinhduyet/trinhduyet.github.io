@@ -1,6 +1,6 @@
 # Module 24 — System Design
 
-> [← Module 23 — GenAIOps/MLOps](../23-genaiops-mlops/README.md) · [Roadmap](../00-roadmap/README.md) · [→ Module 25 — Software Architecture](../25-software-architecture/README.md)
+> [← Master Roadmap](../00-roadmap/master-roadmap.md) · [Roadmap Overview](../00-roadmap/README.md)
 
 System Design là bước chuyển từ **“biết component”** sang **“biết ghép component thành hệ thống có thể chứng minh được”**.
 
