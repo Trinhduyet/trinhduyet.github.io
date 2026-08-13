@@ -7,6 +7,7 @@ on:
       - 'mkdocs.yml'
       - 'requirements-docs.txt'
       - '.github/workflows/docs.yml'
+      - 'scripts/migrate_diagram_design.py'
       - 'Dev.sln'
       - 'labs/**'
   push:
@@ -22,7 +23,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: pages-${{ github.ref }}
@@ -35,15 +36,27 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-
-      - name: Upload docs migration snapshot
-        uses: actions/upload-artifact@v4
         with:
-          name: diagram-migration-source
-          path: |
-            docs
-            mkdocs.yml
-          retention-days: 1
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
+
+      - name: Apply one-time Diagram Design migration
+        if: github.event_name == 'pull_request' && github.head_ref == 'docs/diagram-design-system'
+        run: python scripts/migrate_diagram_design.py
+
+      - name: Commit generated Diagram Design assets
+        if: github.event_name == 'pull_request' && github.head_ref == 'docs/diagram-design-system'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- docs mkdocs.yml; then
+            echo "Diagram migration already applied."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- docs mkdocs.yml
+          git commit -m "docs: migrate Mermaid to Diagram Design SVG assets"
+          git push origin "HEAD:${{ github.head_ref }}"
 
       - name: Audit diagram sources
         shell: bash
