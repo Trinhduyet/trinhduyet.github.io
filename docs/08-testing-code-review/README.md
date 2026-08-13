@@ -6,11 +6,7 @@ Module này tập trung vào Test boundaries, contract evidence, quality gates v
 
 ## Module trong một hình
 
-~~~mermaid
-flowchart LR
-    A["Requirement + workload"] --> B["Test Strategy và Boundaries"] --> C["Integration, Contract và Load Testing"] --> D["Code Review, Quality Gates và Failure Analysis"] --> E["Production decision"]
-    E -. "evidence feedback" .-> A
-~~~
+![Sơ đồ Readme — diagram 1](../assets/diagrams/08-testing-code-review-readme-1.svg)
 
 ## Phạm vi và trạng thái
 
@@ -22,12 +18,7 @@ flowchart LR
 
 ## Dependency map
 
-~~~mermaid
-flowchart TD
-    PRE["Module 07"] --> CURRENT["Module 08<br/>Testing và Code Review"]
-    CURRENT --> NEXT["Module 09<br/>Security và DevSecOps"]
-    CURRENT -. "Project spine / production evidence" .-> PROJECT["Architecture artifact"]
-~~~
+![Sơ đồ Readme — diagram 2](../assets/diagrams/08-testing-code-review-readme-2.svg)
 
 ## Cách học
 

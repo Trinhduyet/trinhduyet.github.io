@@ -16,10 +16,7 @@ Blue-green/canary, migrations, feature flags, incident rollback và ownership. �
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Safe Delivery, Drift và Recovery"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+![Sơ đồ Safe Delivery Drift And Recovery — diagram 1](../assets/diagrams/13-devops-iac-safe-delivery-drift-and-recovery-1.svg)
 
 ## Mental Model
 

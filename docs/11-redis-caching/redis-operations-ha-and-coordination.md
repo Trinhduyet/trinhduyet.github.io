@@ -16,10 +16,7 @@ Persistence, replication, failover, memory policy, distributed locks và observa
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Redis Operations, HA và Coordination"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+![Sơ đồ Redis Operations Ha And Coordination — diagram 1](../assets/diagrams/11-redis-caching-redis-operations-ha-and-coordination-1.svg)
 
 ## Mental Model
 

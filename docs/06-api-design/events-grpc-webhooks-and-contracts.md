@@ -1,199 +1,753 @@
 # Events, gRPC, Webhooks và Contract Interoperability
 
-> [← Module 06 overview](README.md) · [API Design references](references.md)
+> [← Module 06](README.md) · [API Styles & Realtime](api-styles-gateway-and-realtime.md) · [References](references.md)
 
-## Mục tiêu / Learning Objectives
+## Hiểu trong 5 phút
 
-- giải thích events, grpc, webhooks và contract interoperability bằng mental model và boundary;
-- implement một minimal path có bound, invariant và observable output;
-- phân tích failure, security, performance, reliability và operational ownership;
-- đối chiếu behavior với nguồn chính thức thay vì dựa vào folklore;
-- viết decision note và biết trigger để chuyển sang alternative.
+Ba interaction styles khác nhau:
 
-## Tại sao cần học? / Why It Matters
+```text
+Synchronous API / gRPC
+caller waits for response
 
-Synchronous RPC, async events, delivery semantics, schema registry và replay. Đây là boundary nơi một quyết định nhỏ có thể đổi correctness, latency, security và operational ownership.
+Webhook
+producer calls consumer HTTP endpoint when event happens
 
-## Tổng quan / Overview
+Message/Event Bus
+producer publishes; broker mediates delivery
+```
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Events, gRPC, Webhooks và Contract Interoperability"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+Không chọn bằng trend. Chọn theo:
 
-## Mental Model
+```text
+latency
+coupling
+delivery durability
+consumer ownership
+network reachability
+retry/replay needs
+ordering
+schema evolution
+```
 
-| Boundary | Câu hỏi | Evidence |
-| --- | --- | --- |
-| Input | Dữ liệu/traffic đến từ đâu và bound nào? | Contract, validation, limit |
-| Core | Invariant/state transition nào phải đúng? | Test, query/plan, policy |
-| Resource | CPU, memory, network, storage, quota nào tiêu thụ? | Metrics, profile, capacity |
-| Recovery | Khi dependency/change fail thì ai xử lý? | Retry, rollback, runbook |
+---
 
-Synchronous RPC, async events, delivery semantics, schema registry và replay. Học stable concept trước version/tool syntax; mọi claim production phải có measurement hoặc source.
+# 1. Webhook là gì?
 
-## Thuật ngữ / Terminology
+Webhook là **server-to-server HTTP callback**.
 
-| Thuật ngữ | Ý nghĩa |
-| --- | --- |
-| State | Dữ liệu/phase đang được quản lý |
-| Controller | Logic đưa observed về desired |
-| Quota | Giới hạn platform/dependency |
-| SLO | Mục tiêu user-visible |
-| Blast radius | Phạm vi khi failure |
-| Runbook | Hướng dẫn operator |
+Example:
 
-## Prerequisites
+```text
+Payment Provider
+      ↓ HTTP POST
+Merchant Webhook Endpoint
+```
 
-- [Module 05 prerequisite](../05-sql/README.md).
-- [Roadmap dependency graph](../00-roadmap/prerequisites.md).
-- Có thể ghi failure hypothesis và output reproducible.
+Payload:
 
-## How It Works
+```http
+POST /webhooks/payments HTTP/1.1
+Content-Type: application/json
+Webhook-Id: whd_123
+Webhook-Timestamp: 1786586400
+Webhook-Signature: v1=...
+```
 
-Bắt đầu từ requirement, chọn primitive, đặt safety bound, quan sát behavior và xác định owner. Synchronous RPC, async events, delivery semantics, schema registry và replay. Không coi framework/platform abstraction là proof của correctness.
+```json
+{
+  "type": "payment.succeeded",
+  "data": {
+    "paymentId": "pay-123",
+    "orderId": "ord-7"
+  }
+}
+```
 
-## Minimal Example
+---
 
-~~~text
-eventId + schemaVersion + correlationId + idempotencyKey
-~~~
+# 2. Webhook delivery is usually at-least-once-ish in practice
 
-Minimal example chỉ chứng minh shape; production cần validation, cancellation/timeout, migration, security và test tùy boundary.
+Producer có thể retry khi:
 
-## Production Example
+```text
+connection failed
+consumer timeout
+non-2xx response
+producer uncertain whether response was received
+```
 
-Synchronous RPC, async events, delivery semantics, schema registry và replay. Production path bổ sung contract test, structured telemetry, failure classification, rollout/rollback và data/privacy policy.
+Consumer phải assume duplicate:
 
-~~~text
-decision = requirement + workload + failure + security + cost
-evidence = implementation + test + measurement + runbook
-~~~
+```text
+whd_123
+whd_123
+whd_123
+```
 
-## .NET Integration
+Do đó:
 
-- DI/configuration/host composition giữ lifetime và ownership rõ.
-- Cancellation, timeout và disposal phải đi xuyên boundary; không fire-and-forget vô chủ.
-- HTTP/API layer map lỗi thành contract ổn định, không leak exception nội bộ.
-- Persistence/cache/queue adapter không che transaction, consistency hoặc retry semantics.
-- Metrics/traces/logs dùng low-cardinality labels và retention/privacy policy.
+```text
+delivery ID
++
+dedup/inbox
++
+idempotent business handling
+```
 
-## Internals
+---
 
-Đọc access path/state machine/controller/plan theo đúng module để giải thích observed behavior. Provider, runtime, platform và version có thể thay đổi implementation detail; giữ normative claim ở official docs.
+# 3. Webhook consumer pattern
 
-## Common Mistakes
+Bad:
 
-- rollout không có canary hoặc rollback.
-- drift/manual change không audit.
-- alert theo resource mà thiếu SLO.
-- abstraction/tooling tăng blast radius.
-- không rehearsal restore/failover/upgrade.
+```text
+receive webhook
+↓
+run 20-second business workflow
+↓
+call 3 external services
+↓
+return 200
+```
 
-## Performance Considerations
+Producer may timeout and retry while first work is still running.
 
-Đo workload representative với warm-up, concurrency, payload mix và tail latency. Bound state/queue/cache trước khi micro-optimize; so sánh before/after cùng environment và tính cả cost của measurement.
+Better:
 
-## Security Considerations
+```text
+receive
+↓
+verify signature/timestamp
+↓
+atomically dedup + persist/enqueue intent
+↓
+return 2xx quickly
+↓
+background worker handles business process
+```
 
-Threat model asset, identity, trust boundary, input abuse, secret handling và artifact access. Least privilege, data minimization, encryption, audit và expiry phải có negative test.
+This decouples delivery acknowledgement from slow business work.
 
-## Reliability / Failure Modes
+---
 
-| Failure | Signal | Response |
-| --- | --- | --- |
-| Invalid input/state | 4xx, constraint/test failure | Reject rõ, không partial side effect |
-| Dependency slow/unavailable | Timeout, queue/latency tăng | Deadline, bounded retry, fallback hoặc shed |
-| Capacity exhausted | CPU/memory/quota/429 | Backpressure, scale, degrade hoặc stop |
-| Change incompatible | Error/contract drift | Canary, migration, rollback/forward fix |
-| Operator mistake | Audit/event anomaly | Least privilege, approval, runbook |
+# 4. Webhook signature
 
-## Observability
+Webhook endpoint is public ingress. Do not trust payload just because URL is obscure.
 
-Ghi success/error rate, latency percentile, resource usage, state transitions và version/deployment. Trace nối request → core operation → dependency; log structured theo operation ID. Alert theo SLO/error budget.
+Common design:
 
-## Operational Considerations
+```text
+shared secret
++
+timestamp
++
+raw request body
+        ↓
+HMAC
+```
 
-- Pin tool/provider/image/schema version phù hợp.
-- Readiness không báo healthy trước invariant cần thiết.
-- Runbook có preflight, read-only command, rollback và artifact retention.
-- Rehearse backup/restore, key rotation, failover, drift hoặc upgrade tùy module.
-- Manual exception có owner, expiry và post-incident review.
+Pseudo sender:
 
-## Architect Perspective
+```text
+signedPayload = timestamp + "." + rawBody
+signature = HMAC-SHA256(secret, signedPayload)
+```
 
-Events, gRPC, Webhooks và Contract Interoperability trở thành architectural boundary khi ảnh hưởng ownership, consistency, deployment, capacity hoặc team topology. Chọn phương án đơn giản nhất thỏa NFR; document điều gì đổi ở 10x/100x và trigger migrate.
+Consumer recomputes and constant-time compares.
 
-## Trade-offs
+C# sketch:
 
-| Lựa chọn | Lợi ích | Chi phí/rủi ro |
-| --- | --- | --- |
-| Simple/local | Dễ hiểu, ít toil | Giới hạn scale/durability |
-| Specialized/distributed | Capacity/feature tốt | Coupling, failure và vận hành |
-| Managed/platform | Giảm control-plane toil | Quota, lock-in và cost |
+```csharp
+static bool VerifyWebhook(
+    string secret,
+    string timestamp,
+    ReadOnlySpan<byte> rawBody,
+    string providedHex)
+{
+    byte[] prefix = Encoding.UTF8.GetBytes(timestamp + ".");
+    byte[] message = new byte[prefix.Length + rawBody.Length];
 
-## When NOT to Use It
+    prefix.CopyTo(message, 0);
+    rawBody.CopyTo(message.AsSpan(prefix.Length));
 
-- Không dùng pattern này nếu requirement chưa chứng minh need hoặc không có owner vận hành.
-- Không dùng abstraction để che failure/latency/consistency semantics.
-- Không chọn managed/distributed option chỉ vì production-ready mà thiếu cost/capacity evidence.
-- Không mở rộng privilege, retention hoặc data exposure để làm lab nhanh hơn.
-- Không tối ưu một metric nếu làm hỏng SLO, security hoặc rollback.
+    byte[] expected = HMACSHA256.HashData(
+        Encoding.UTF8.GetBytes(secret),
+        message);
 
-## Alternatives
+    byte[] provided = Convert.FromHexString(providedHex);
 
-- Giữ local/simple implementation khi scale và durability chưa yêu cầu.
-- Dùng managed service khi team không muốn sở hữu control plane và cost hợp lý.
-- Dùng queue/batch/stream hoặc synchronous path tùy latency/durability.
-- Dùng immutable artifact/configuration và migration thay manual mutation.
-- Dùng standard protocol/contract trước custom framework.
+    return expected.Length == provided.Length &&
+           CryptographicOperations.FixedTimeEquals(expected, provided);
+}
+```
 
-## Review Questions
+Real provider signature formats differ; follow provider official spec exactly.
 
-1. Invariant nào phải đúng dù request/retry/deploy lặp lại?
-2. Boundary nào sở hữu state, timeout, cleanup hoặc rollback?
-3. Evidence nào chứng minh bottleneck/security/reliability claim?
-4. Điều gì sẽ hỏng khi dependency chậm hoặc state stale?
-5. Cost và operational toil tăng theo scale nào?
-6. Khi nào phương án đơn giản hơn là lựa chọn tốt hơn?
+---
 
-## Hands-on Lab
+# 5. Replay protection
 
-Tạo một experiment bounded cho events, grpc, webhooks và contract interoperability: ghi workload, expected output, failure scenario và safety bound; chạy baseline rồi so sánh; lưu decision note. Không đưa credential, production data hoặc diagnostic artifact nhạy cảm vào repository.
+Valid signature alone may be replayed by attacker who captured request.
 
-## Exit Criteria
+Check:
 
-- Giải thích được synchronous rpc, async events, delivery semantics, schema registry và replay..
-- Implement minimal example có validation/bound phù hợp.
-- Mô tả failure, security, performance và operational response.
-- Có evidence reproducible và decision note.
-- Biết dependency tiếp theo và trigger cần nghiên cứu thêm.
+```text
+timestamp within acceptable window
++
+delivery ID not processed before
+```
 
-## Related Topics
+Example:
 
-- [Module 05 prerequisite](../05-sql/README.md).
-- [HTTP Resource Contracts và Semantics](http-resource-contracts-and-semantics.md).
-- [API Evolution, Errors và Pagination](api-evolution-errors-and-pagination.md).
-- [Events, gRPC, Webhooks và Contract Interoperability](events-grpc-webhooks-and-contracts.md).
-- Module 07 — ASP.NET Core khi content được mở.
+```csharp
+DateTimeOffset sentAt = DateTimeOffset.FromUnixTimeSeconds(timestampSeconds);
 
-## Official English Sources
+if (DateTimeOffset.UtcNow - sentAt > TimeSpan.FromMinutes(5))
+    return Results.Unauthorized();
+```
 
-- [REST API design best practices](https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design).
-- [ASP.NET Core OpenAPI](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/openapi/overview?view=aspnetcore-10.0).
-- [HTTP semantics](https://www.rfc-editor.org/rfc/rfc9110).
-- [gRPC overview](https://learn.microsoft.com/en-us/aspnet/core/grpc/why-grpc?view=aspnetcore-10.0).
-- [API implementation guidance](https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-implementation).
+Clock skew policy must be explicit.
 
-## Vietnamese Resources
+---
 
-- Dùng [glossary](../00-roadmap/glossary.md) để giữ canonical English term.
-- Viết reflection bằng tiếng Việt nhưng giữ tên API/protocol/metric chính xác.
-- Tuân thủ [source policy](../00-roadmap/source-policy.md) cho claim version-sensitive.
+# 6. Inbox / dedup
 
-## Verification Metadata
+SQL shape:
 
-- Verified: 2026-08-11.
-- Technology version: API Design content v1; refresh version-sensitive behavior before production.
-- Context7 queries used: none; callable tool unavailable in this run.
-- Notes: content v1 không thay thế learner evidence; cần lab/review/production artifact để nâng level.
+```sql
+CREATE TABLE WebhookInbox (
+    Provider         nvarchar(50)  NOT NULL,
+    DeliveryId       nvarchar(200) NOT NULL,
+    EventType        nvarchar(100) NOT NULL,
+    ReceivedAt       datetimeoffset NOT NULL,
+    ProcessedAt      datetimeoffset NULL,
+    PayloadHash      varbinary(32) NULL,
+    CONSTRAINT PK_WebhookInbox PRIMARY KEY (Provider, DeliveryId)
+);
+```
+
+Atomic insert decides ownership.
+
+Bad:
+
+```text
+SELECT exists
+then INSERT
+```
+
+Race can double-process.
+
+Unique key is stronger evidence.
+
+---
+
+# 7. Webhook endpoint example
+
+```csharp
+app.MapPost("/webhooks/payment-provider", async (
+    HttpRequest request,
+    WebhookInbox inbox,
+    CancellationToken cancellationToken) =>
+{
+    string? deliveryId = request.Headers["Webhook-Id"].FirstOrDefault();
+    string? signature = request.Headers["Webhook-Signature"].FirstOrDefault();
+    string? timestamp = request.Headers["Webhook-Timestamp"].FirstOrDefault();
+
+    if (deliveryId is null || signature is null || timestamp is null)
+        return Results.Unauthorized();
+
+    using MemoryStream buffer = new();
+    await request.Body.CopyToAsync(buffer, cancellationToken);
+    byte[] raw = buffer.ToArray();
+
+    if (!VerifyProviderSignature(timestamp, raw, signature))
+        return Results.Unauthorized();
+
+    bool accepted = await inbox.TryAcceptAsync(
+        deliveryId,
+        raw,
+        cancellationToken);
+
+    // duplicate delivery is already acknowledged
+    return accepted
+        ? Results.Accepted()
+        : Results.Ok();
+});
+```
+
+Business worker processes accepted inbox rows asynchronously.
+
+---
+
+# 8. Webhook retries
+
+Producer retry policy usually needs:
+
+```text
+bounded attempts
+exponential backoff
+jitter
+retryable status classification
+max retention window
+DLQ/manual replay path
+```
+
+Consumer should not rely on exact retry schedule unless provider contract guarantees it.
+
+Store provider event ID and event creation timestamp separately from delivery ID if provider exposes both.
+
+---
+
+# 9. Webhook ordering
+
+Two events:
+
+```text
+order.updated version 11
+order.updated version 12
+```
+
+Network may deliver:
+
+```text
+12
+then 11
+```
+
+Consumer must define ordering strategy:
+
+```text
+sequence/version check
+current-state fetch
+commutative operation
+per-aggregate ordering
+ignore stale event
+```
+
+Do not assume HTTP arrival order equals business order.
+
+---
+
+# 10. Event contract envelope
+
+Useful envelope:
+
+```json
+{
+  "eventId": "evt-123",
+  "eventType": "order.confirmed",
+  "schemaVersion": 2,
+  "occurredAt": "2026-08-13T03:00:00Z",
+  "correlationId": "corr-7",
+  "aggregateId": "ord-9",
+  "aggregateVersion": 12,
+  "data": {}
+}
+```
+
+Why:
+
+```text
+eventId → dedup
+schemaVersion → evolution
+occurredAt → event time
+correlationId → tracing
+aggregateVersion → ordering/staleness
+```
+
+---
+
+# 11. Event is not DB row dump
+
+Bad:
+
+```json
+{
+  "OrderTable": {
+    "InternalRowVersion": "...",
+    "DeletedFlag": 0,
+    "DbShardId": 4
+  }
+}
+```
+
+Public event should express business fact:
+
+```json
+{
+  "eventType": "order.confirmed",
+  "orderId": "ord-9",
+  "confirmedAt": "2026-08-13T03:00:00Z"
+}
+```
+
+Contract ownership survives persistence refactor.
+
+---
+
+# 12. gRPC recap
+
+`.proto`:
+
+```proto
+syntax = "proto3";
+
+package payments.v1;
+
+service Payments {
+  rpc GetPayment(GetPaymentRequest) returns (PaymentReply);
+  rpc WatchPayment(WatchPaymentRequest) returns (stream PaymentUpdate);
+}
+
+message GetPaymentRequest {
+  string payment_id = 1;
+}
+
+message PaymentReply {
+  string payment_id = 1;
+  PaymentStatus status = 2;
+}
+
+enum PaymentStatus {
+  PAYMENT_STATUS_UNSPECIFIED = 0;
+  PAYMENT_STATUS_PENDING = 1;
+  PAYMENT_STATUS_SUCCEEDED = 2;
+  PAYMENT_STATUS_FAILED = 3;
+}
+```
+
+gRPC supports unary and streaming patterns through strongly defined service methods/messages.
+
+---
+
+# 13. Protobuf evolution rules — critical
+
+Field numbers are wire identity.
+
+Original:
+
+```proto
+message PaymentReply {
+  string payment_id = 1;
+  string status = 2;
+}
+```
+
+Do not later reuse `2` for unrelated meaning after removal.
+
+Safer:
+
+```proto
+message PaymentReply {
+  string payment_id = 1;
+  reserved 2;
+  PaymentStatus status_code = 3;
+}
+```
+
+Also reserve old field names where appropriate to prevent accidental reuse.
+
+Generated-code compatibility depends on schema evolution discipline.
+
+---
+
+# 14. gRPC deadline and cancellation
+
+Service-to-service RPC without deadlines can hang resources during dependency degradation.
+
+Client should set meaningful deadline/time budget.
+
+Server propagates cancellation when possible.
+
+Mental model:
+
+```text
+user/API request deadline
+       ↓ remaining budget
+service A gRPC
+       ↓ remaining budget
+service B
+```
+
+Do not reset every hop to 30 seconds.
+
+---
+
+# 15. gRPC status vs domain error
+
+gRPC has transport/RPC status model, nhưng domain contract still needs stable business semantics.
+
+Example:
+
+```text
+NOT_FOUND
+PERMISSION_DENIED
+RESOURCE_EXHAUSTED
+UNAVAILABLE
+DEADLINE_EXCEEDED
+```
+
+Do not encode every business outcome as generic INTERNAL.
+
+For rich domain detail, define structured error/details convention compatible with client ecosystem.
+
+---
+
+# 16. REST ↔ gRPC gateway
+
+Possible architecture:
+
+```text
+Public Client
+   ↓ REST/JSON
+API Gateway/BFF
+   ↓ gRPC
+Internal Services
+```
+
+Good when:
+
+```text
+public consumers benefit from HTTP/JSON
+internal services benefit from typed RPC
+```
+
+But transformation layer owns:
+
+```text
+status mapping
+field mapping
+timeout/deadline mapping
+error translation
+version compatibility
+```
+
+That layer is real code with contract tests.
+
+---
+
+# 17. Webhook vs event bus
+
+Webhook:
+
+```text
+producer knows consumer URL
+cross-organization / internet friendly
+HTTP delivery
+consumer owns ingress endpoint
+```
+
+Event bus:
+
+```text
+producer publishes to broker/topic
+consumer subscription decoupled from producer endpoint knowledge
+replay/retention may be stronger
+internal platform ownership
+```
+
+For external SaaS integration, webhook often simpler. For internal many-consumer event distribution, broker may fit better.
+
+---
+
+# 18. Webhook vs polling
+
+Polling:
+
+```text
+GET /events?since=cursor every 30s
+```
+
+Pros:
+
+```text
+consumer controls schedule
+firewall/simple outbound only
+recovery cursor can be explicit
+```
+
+Costs:
+
+```text
+latency
+empty requests
+provider load
+```
+
+Webhook:
+
+```text
+lower event latency
+producer pushes immediately
+```
+
+Costs:
+
+```text
+public callback endpoint
+signature/security
+retry/dedup
+```
+
+Hybrid is common:
+
+```text
+webhook for notification
+GET API for reconciliation/source of truth
+```
+
+This is especially strong when webhook payload may be missed/out-of-order.
+
+---
+
+# 19. Reconciliation pattern
+
+Webhook tells you:
+
+```text
+"payment changed"
+```
+
+Consumer can fetch authoritative state:
+
+```text
+Webhook evt pay-123
+      ↓
+GET /payments/pay-123
+      ↓
+authoritative current status
+```
+
+Benefits:
+
+```text
+handles out-of-order events
+reduces payload trust
+supports recovery after missed delivery
+```
+
+Cost: extra API calls and provider dependency.
+
+---
+
+# 20. Contract interoperability
+
+Each boundary should have an explicit artifact:
+
+```text
+REST     → OpenAPI
+GraphQL  → GraphQL schema
+ gRPC    → .proto
+Event    → JSON Schema/Avro/Protobuf/custom schema registry contract
+Webhook  → payload schema + signature/retry contract
+```
+
+Contract artifact should be version-controlled and testable.
+
+---
+
+# 21. Schema compatibility gate
+
+CI pipeline:
+
+```text
+old schema
+   ↓ compare
+new schema
+   ↓
+compatible?
+  ├─ yes → tests/build
+  └─ no  → explicit migration/version approval
+```
+
+For event schema, producer and consumers may deploy at different times. Compatibility matrix matters more than same-repo build.
+
+---
+
+# 22. Observability
+
+Webhook metrics:
+
+```text
+received_total
+signature_failure_total
+duplicate_total
+processing_lag
+processing_failure_total
+oldest_pending_age
+```
+
+Producer metrics:
+
+```text
+delivery_attempts
+2xx/4xx/5xx
+timeout
+retry queue depth
+DLQ count
+```
+
+gRPC metrics:
+
+```text
+method latency
+status code counts
+deadline exceeded
+message size
+active streams
+```
+
+Correlation ID/trace context should connect cross-protocol boundaries where supported.
+
+---
+
+# 23. Failure experiments
+
+## A — duplicate webhook
+
+Send same delivery ID 10 times concurrently. Verify one business side effect.
+
+## B — signature tampering
+
+Change one byte in raw body after signing. Verify 401/400 according to contract and zero side effect.
+
+## C — replay old signed request
+
+Valid signature but timestamp outside acceptance window. Verify rejected.
+
+## D — out-of-order version
+
+Deliver aggregate version 12 then 11. Verify stale handling.
+
+## E — crash after inbox commit before processing
+
+Restart worker; verify pending row resumes.
+
+## F — gRPC deadline
+
+Make server exceed deadline. Verify cancellation/deadline behavior and no unbounded work leak.
+
+## G — schema compatibility
+
+Attempt incompatible proto/event change; verify automated gate catches it.
+
+---
+
+# 24. Exit criteria
+
+- [ ] design webhook signature + timestamp + replay policy;
+- [ ] use delivery ID + atomic dedup;
+- [ ] ACK webhook quickly and process async;
+- [ ] handle duplicate/out-of-order event;
+- [ ] define event envelope and schema version;
+- [ ] explain webhook vs polling vs broker;
+- [ ] write/read basic `.proto` contract;
+- [ ] explain gRPC deadline/streaming trade-offs;
+- [ ] preserve Protobuf field-number compatibility;
+- [ ] run contract compatibility + failure tests.
+
+## Verification metadata
+
+- Verified: **2026-08-13**.
+- Provider-specific webhook signatures/retry schedules must follow each provider's official documentation.

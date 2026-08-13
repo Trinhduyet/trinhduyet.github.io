@@ -51,7 +51,7 @@ Architecture decision
 | 03 .NET | C#, async, GC, ThreadPool, hosting, diagnostics | P0 | Content v1 |
 | 04 Backend | request lifecycle, auth, pagination, jobs/webhooks | P0 | Content v1 |
 | **05 SQL** | transactions, indexes, plans, EF→SQL | **P0** | **Code-first deep rewrite v1: 4 guides** |
-| 06 API Design | contracts, evolution, REST/RPC/events | P0 | Structure v1; deep rewrite pending |
+| **06 API Design** | HTTP contracts, security/OAuth, evolution/OpenAPI, traffic/resilience, REST/GraphQL/gRPC, gateway/realtime | **P0** | **Code-first deep rewrite v1: 6 guides + references; 25-topic coverage** |
 | **07 ASP.NET Core** | pipeline, resilience, deployment/OTel | **P0** | **Code-first deep rewrite v1: 3 guides** |
 | 08 Testing/Review | test boundaries, integration/load, review | P0 | Structure v1; deep rewrite pending |
 | 09 Security/DevSecOps | identity, API/app security, supply chain | P0/P1 | Structure v1; deep rewrite pending |
@@ -261,6 +261,7 @@ ADR/runbook
 ## Verification metadata
 
 - Verified: 2026-08-13
+- API Design deep rewrite covers the 25-item contract/security/reliability/protocol checklist in Module 06.
 - Microservices sources: Microsoft Learn / Azure Architecture Center
 - Technology baseline: [technology-baseline.md](technology-baseline.md)
 - Source policy: [source-policy.md](source-policy.md)

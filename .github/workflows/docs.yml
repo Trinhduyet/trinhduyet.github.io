@@ -40,10 +40,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          matches="$(grep -RIn --include='*.md' '```mermaid' docs || true)"
+          matches="$(grep -RInE --include='*.md' '^[[:space:]]*(```|~~~)mermaid([[:space:]]|$)' docs || true)"
           if [[ -n "$matches" ]]; then
             echo "$matches"
-            echo "::error::Mermaid sources remain. Use the Diagram Design editorial SVG system instead."
+            echo "::error::Mermaid sources remain. Use Diagram Design editorial SVG assets or wiretext for simple mental models."
             exit 1
           fi
 

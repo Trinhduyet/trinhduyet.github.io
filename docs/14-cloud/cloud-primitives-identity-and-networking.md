@@ -16,10 +16,7 @@ Compute, managed data, virtual network, private endpoints, IAM và boundaries. �
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Cloud Primitives, Identity và Networking"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+![Sơ đồ Cloud Primitives Identity And Networking — diagram 1](../assets/diagrams/14-cloud-cloud-primitives-identity-and-networking-1.svg)
 
 ## Mental Model
 

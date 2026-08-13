@@ -16,10 +16,7 @@ Cache-aside, write-through, stale data, single-flight, invalidation và privacy.
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Cache Consistency, Invalidation và Stampede"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+![Sơ đồ Cache Consistency Invalidation And Stampede — diagram 1](../assets/diagrams/11-redis-caching-cache-consistency-invalidation-and-stampede-1.svg)
 
 ## Mental Model
 

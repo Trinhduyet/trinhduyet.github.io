@@ -16,10 +16,7 @@ AZ/region failure, replication, RTO/RPO, backup/restore và failover. Đây là 
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Regions, Availability và Disaster Recovery"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+![Sơ đồ Regions Availability And Disaster Recovery — diagram 1](../assets/diagrams/14-cloud-regions-availability-and-disaster-recovery-1.svg)
 
 ## Mental Model
 

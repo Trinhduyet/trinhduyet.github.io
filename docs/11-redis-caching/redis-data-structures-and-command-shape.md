@@ -16,10 +16,7 @@ Strings, hashes, sets, sorted sets, streams, TTL và atomic command design. Đâ
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Redis Data Structures và Command Shape"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+![Sơ đồ Redis Data Structures And Command Shape — diagram 1](../assets/diagrams/11-redis-caching-redis-data-structures-and-command-shape-1.svg)
 
 ## Mental Model
 

@@ -126,10 +126,14 @@ nav:
           - Indexes & Execution Plans: 05-sql/indexes-execution-plans-and-operations.md
           - EF Core → SQL → Execution Plan: 05-sql/ef-core-query-shape-and-sql.md
       - API Design:
-          - 06-api-design/README.md
+          - Overview & 25-topic Matrix: 06-api-design/README.md
           - HTTP Resource Contracts: 06-api-design/http-resource-contracts-and-semantics.md
-          - API Evolution & Errors: 06-api-design/api-evolution-errors-and-pagination.md
+          - Security, OAuth & CORS: 06-api-design/security-auth-oauth-and-cors.md
+          - Evolution, Errors, Pagination & OpenAPI: 06-api-design/api-evolution-errors-and-pagination.md
+          - Traffic, Caching & Resilience: 06-api-design/traffic-caching-rate-limits-and-resilience.md
           - Events, gRPC & Webhooks: 06-api-design/events-grpc-webhooks-and-contracts.md
+          - API Styles, Gateway & Realtime: 06-api-design/api-styles-gateway-and-realtime.md
+          - References: 06-api-design/references.md
       - ASP.NET Core:
           - 07-aspnet-core/README.md
           - Pipeline & Hosting: 07-aspnet-core/pipeline-hosting-and-configuration.md

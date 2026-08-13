@@ -6,11 +6,7 @@ Module này tập trung vào Data structures, cache consistency, eviction, coord
 
 ## Module trong một hình
 
-~~~mermaid
-flowchart LR
-    A["Requirement + workload"] --> B["Redis Data Structures và Command Shape"] --> C["Cache Consistency, Invalidation và Stampede"] --> D["Redis Operations, HA và Coordination"] --> E["Production decision"]
-    E -. "evidence feedback" .-> A
-~~~
+![Sơ đồ Readme — diagram 1](../assets/diagrams/11-redis-caching-readme-1.svg)
 
 ## Phạm vi và trạng thái
 
@@ -22,12 +18,7 @@ flowchart LR
 
 ## Dependency map
 
-~~~mermaid
-flowchart TD
-    PRE["Module 10"] --> CURRENT["Module 11<br/>Redis và Caching"]
-    CURRENT --> NEXT["Module 12<br/>Docker"]
-    CURRENT -. "Project spine / production evidence" .-> PROJECT["Architecture artifact"]
-~~~
+![Sơ đồ Readme — diagram 2](../assets/diagrams/11-redis-caching-readme-2.svg)
 
 ## Cách học
 

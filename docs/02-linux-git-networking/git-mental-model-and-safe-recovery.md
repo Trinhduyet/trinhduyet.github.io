@@ -27,22 +27,7 @@ Mục tiêu không phải thuộc lệnh. Mục tiêu là dự đoán chính xá
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    WT["Working tree<br/>file đang thấy"]
-    IDX["Index<br/>snapshot chuẩn bị commit"]
-    COMMIT["Commit object<br/>tree + parents + metadata"]
-    REF["Branch ref<br/>tên trỏ tới commit"]
-    HEAD["HEAD<br/>branch hoặc commit hiện tại"]
-    REMOTE["Remote-tracking ref<br/>snapshot lần fetch gần nhất"]
-
-    WT -->|git add| IDX
-    IDX -->|git commit| COMMIT
-    REF --> COMMIT
-    HEAD --> REF
-    REMOTE --> COMMIT
-    COMMIT -->|git restore source| WT
-~~~
+![Sơ đồ Git Mental Model And Safe Recovery — diagram 1](../assets/diagrams/02-linux-git-networking-git-mental-model-and-safe-recovery-1.svg)
 
 Ba nguyên tắc:
 

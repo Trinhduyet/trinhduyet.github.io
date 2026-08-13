@@ -16,10 +16,7 @@ Authentication, authorization, key lifecycle, secret rotation, encryption và le
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Identity, Secrets và Data Protection"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+![Sơ đồ Identity Secrets And Data Protection — diagram 1](../assets/diagrams/09-security-devsecops-identity-secrets-and-data-protection-1.svg)
 
 ## Mental Model
 

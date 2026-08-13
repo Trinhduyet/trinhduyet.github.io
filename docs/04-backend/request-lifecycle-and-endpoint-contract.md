@@ -19,21 +19,7 @@ Backend engineer cần biết request đã đi qua boundary nào, ai sở hữu 
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    I["Ingress<br/>socket · TLS · proxy"]
-    E["Exception/correlation<br/>first boundary"]
-    S["Security + capacity<br/>auth · CORS · rate limit"]
-    R["Routing<br/>method · path · metadata"]
-    B["Binding/validation<br/>route · query · body"]
-    A["Application use case<br/>command/query"]
-    X["External effects<br/>DB · HTTP · queue · file"]
-    O["Response<br/>status · headers · body"]
-
-    I --> E --> S --> R --> B --> A --> X --> O
-    X -. "timeout/cancel" .-> A
-    O -. "telemetry" .-> E
-~~~
+![Sơ đồ Request Lifecycle And Endpoint Contract — diagram 1](../assets/diagrams/04-backend-request-lifecycle-and-endpoint-contract-1.svg)
 
 ## Mental Model
 

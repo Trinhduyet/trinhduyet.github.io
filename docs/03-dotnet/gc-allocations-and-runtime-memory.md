@@ -19,18 +19,7 @@ GC là cơ chế thu hồi managed objects, không phải một memory budget ma
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    W["Workload<br/>requests · files · messages"]
-    A["Allocations<br/>objects · arrays · strings"]
-    G["GC generations<br/>Gen0 · Gen1 · Gen2"]
-    L["Large / pinned<br/>LOH · POH"]
-    M["Memory evidence<br/>heap · native · working set"]
-    D["Decision<br/>shape · pool · limit · alert"]
-    W --> A --> G --> M --> D
-    A --> L --> M
-    M -. "hypothesis" .-> A
-~~~
+![Sơ đồ Gc Allocations And Runtime Memory — diagram 1](../assets/diagrams/03-dotnet-gc-allocations-and-runtime-memory-1.svg)
 
 ## Mental Model
 

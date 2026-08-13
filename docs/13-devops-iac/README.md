@@ -6,11 +6,7 @@ Module này tập trung vào CI/CD, artifacts, Terraform state, promotion, drift
 
 ## Module trong một hình
 
-~~~mermaid
-flowchart LR
-    A["Requirement + workload"] --> B["CI/CD, Artifacts và Promotion"] --> C["Terraform State, Modules và Drift"] --> D["Safe Delivery, Drift và Recovery"] --> E["Production decision"]
-    E -. "evidence feedback" .-> A
-~~~
+![Sơ đồ Readme — diagram 1](../assets/diagrams/13-devops-iac-readme-1.svg)
 
 ## Phạm vi và trạng thái
 
@@ -22,12 +18,7 @@ flowchart LR
 
 ## Dependency map
 
-~~~mermaid
-flowchart TD
-    PRE["Module 12"] --> CURRENT["Module 13<br/>DevOps và IaC"]
-    CURRENT --> NEXT["Module 14<br/>Cloud"]
-    CURRENT -. "Project spine / production evidence" .-> PROJECT["Architecture artifact"]
-~~~
+![Sơ đồ Readme — diagram 2](../assets/diagrams/13-devops-iac-readme-2.svg)
 
 ## Cách học
 

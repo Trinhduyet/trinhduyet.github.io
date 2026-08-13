@@ -16,10 +16,7 @@ Performance budgets, allocation/serialization, caching, async, release gates và
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Optimization Budgets và Regression Control"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+![Sơ đồ Optimization Budgets And Regression Control — diagram 1](../assets/diagrams/10-performance-optimization-budgets-and-regression-control-1.svg)
 
 ## Mental Model
 

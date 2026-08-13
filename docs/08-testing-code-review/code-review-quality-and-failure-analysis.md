@@ -16,10 +16,7 @@ Review correctness, security, performance, reliability, operations và maintaina
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    A["Input / workload"] --> B["Code Review, Quality Gates và Failure Analysis"] --> C["State / result"] --> D["Evidence / decision"]
-~~~
+![Sơ đồ Code Review Quality And Failure Analysis — diagram 1](../assets/diagrams/08-testing-code-review-code-review-quality-and-failure-analysis-1.svg)
 
 ## Mental Model
 

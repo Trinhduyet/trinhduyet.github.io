@@ -6,11 +6,7 @@ Module này tập trung vào Measurement, profiling, load/capacity, bottlenecks 
 
 ## Module trong một hình
 
-~~~mermaid
-flowchart LR
-    A["Requirement + workload"] --> B["Measurement, Profiling và Bottlenecks"] --> C["Load, Capacity và Scalability"] --> D["Optimization Budgets và Regression Control"] --> E["Production decision"]
-    E -. "evidence feedback" .-> A
-~~~
+![Sơ đồ Readme — diagram 1](../assets/diagrams/10-performance-readme-1.svg)
 
 ## Phạm vi và trạng thái
 
@@ -22,12 +18,7 @@ flowchart LR
 
 ## Dependency map
 
-~~~mermaid
-flowchart TD
-    PRE["Module 09"] --> CURRENT["Module 10<br/>Performance"]
-    CURRENT --> NEXT["Module 11<br/>Redis và Caching"]
-    CURRENT -. "Project spine / production evidence" .-> PROJECT["Architecture artifact"]
-~~~
+![Sơ đồ Readme — diagram 2](../assets/diagrams/10-performance-readme-2.svg)
 
 ## Cách học
 

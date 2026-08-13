@@ -19,18 +19,7 @@ Security boundary phải được thực thi server-side ở đúng resource và
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart TD
-    R["Request"] --> A["Authentication<br/>scheme → ClaimsPrincipal"]
-    A --> Z["Authorization<br/>policy → requirement/handler"]
-    Z --> B["Binding + transport validation"]
-    B --> V["Application/domain validation"]
-    V --> H["Handler/use case"]
-    Z -. "401 challenge / 403 forbid" .-> E["ProblemDetails"]
-    B -. "400 invalid input" .-> E
-    V -. "409/422 business conflict" .-> E
-    H --> O["Audited side effect"]
-~~~
+![Sơ đồ Authentication Authorization And Validation — diagram 1](../assets/diagrams/04-backend-authentication-authorization-and-validation-1.svg)
 
 ## Mental Model
 

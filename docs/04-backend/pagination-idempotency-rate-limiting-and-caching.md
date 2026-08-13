@@ -19,17 +19,7 @@ Endpoint không có bound sẽ biến một query hoặc burst thành process-wi
 
 ## Tổng quan / Overview
 
-~~~mermaid
-flowchart LR
-    R["Request"] --> P["Pagination<br/>bounded read"]
-    P --> I["Idempotency<br/>side-effect key"]
-    I --> L["Rate limit<br/>admission control"]
-    L --> C["Cache decision<br/>freshness/privacy"]
-    C --> D["Downstream/data"]
-    D --> O["Response"]
-    D -. "mutation" .-> C
-    C -. "invalidation" .-> O
-~~~
+![Sơ đồ Pagination Idempotency Rate Limiting And Caching — diagram 1](../assets/diagrams/04-backend-pagination-idempotency-rate-limiting-and-caching-1.svg)
 
 ## Mental Model
 
