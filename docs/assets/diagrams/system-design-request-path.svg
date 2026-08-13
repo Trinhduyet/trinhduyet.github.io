@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 1040 420" role="img" aria-labelledby="title desc">
+<title id="title">Scalable request path</title><desc id="desc">Client traffic flows through edge, load balancer and stateless API, with cache in front of source-of-truth database.</desc>
+<style>text{font-family:Inter,system-ui,sans-serif;fill:#2d3142}.tag{font-size:10px;font-weight:700;letter-spacing:.12em;fill:#7a8399}.title{font-size:14px;font-weight:700}.sub{font-size:11px;fill:#4f5d75}.note{font-family:Georgia,serif;font-style:italic;font-size:14px;fill:#4f5d75}</style>
+<defs><marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5 0 7Z" fill="#4f5d75"/></marker><marker id="accent" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5 0 7Z" fill="#eb6c36"/></marker></defs><rect width="1040" height="420" fill="#f5f5f5"/>
+<text x="42" y="38" class="tag">REQUEST PATH</text><text x="42" y="64" class="title">Add each layer only when a measured pressure justifies it.</text>
+<g fill="none" stroke="#4f5d75" stroke-width="1.4" marker-end="url(#arr)"><path d="M154 158H214"/><path d="M344 158H404"/><path d="M534 158H594"/><path d="M724 158H784"/></g>
+<path d="M659 196V264H846V228" fill="none" stroke="#eb6c36" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#accent)"/>
+<g><rect x="42" y="120" width="112" height="76" rx="8" fill="#e8edf2" stroke="#7a8399"/><text x="98" y="150" text-anchor="middle" class="title">Client</text><text x="98" y="171" text-anchor="middle" class="sub">browser · app</text>
+<rect x="214" y="120" width="130" height="76" rx="8" fill="#fff" stroke="#2d3142"/><text x="279" y="150" text-anchor="middle" class="title">CDN / Edge</text><text x="279" y="171" text-anchor="middle" class="sub">cache · WAF</text>
+<rect x="404" y="120" width="130" height="76" rx="8" fill="#fff" stroke="#2d3142"/><text x="469" y="150" text-anchor="middle" class="title">Load Balancer</text><text x="469" y="171" text-anchor="middle" class="sub">health · routing</text>
+<rect x="594" y="120" width="130" height="76" rx="8" fill="#fff" stroke="#2d3142"/><text x="659" y="150" text-anchor="middle" class="title">Stateless API</text><text x="659" y="171" text-anchor="middle" class="sub">scale out</text>
+<rect x="784" y="120" width="130" height="76" rx="8" fill="#fff0e9" stroke="#eb6c36" stroke-width="1.5"/><text x="849" y="150" text-anchor="middle" class="title">Cache</text><text x="849" y="171" text-anchor="middle" class="sub">bounded staleness</text>
+<rect x="784" y="264" width="130" height="76" rx="8" fill="#e9eaed" stroke="#4f5d75"/><text x="849" y="294" text-anchor="middle" class="title">Database</text><text x="849" y="315" text-anchor="middle" class="sub">source of truth</text></g>
+<path d="M849 196V264" fill="none" stroke="#4f5d75" stroke-width="1.4" marker-end="url(#arr)"/>
+<text x="849" y="232" text-anchor="middle" class="sub">miss</text><text x="524" y="382" text-anchor="middle" class="note">A cache outage can become a database outage unless fallback is bounded.</text>
+</svg>
