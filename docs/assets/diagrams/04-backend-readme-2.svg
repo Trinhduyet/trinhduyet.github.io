@@ -1,11 +1,79 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 672 564" role="img" aria-labelledby="title desc">
-<title id="title">Readme — diagram 2</title><desc id="desc">Readme — diagram 2</desc>
-<style>@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap');
-text{font-family:'Geist',Inter,system-ui,sans-serif;fill:#2d3142}.mono{font-family:'Geist Mono',ui-monospace,monospace}.node-title{font-size:12px;font-weight:600}.sub{font-size:9px;fill:#4f5d75}.tag{font-size:7px;font-weight:500;letter-spacing:.16em;fill:#7a8399}.edge-label{font-size:8px;fill:#4f5d75}.callout{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:14px;fill:#4f5d75}svg{background:#f5f5f5}path,line,rect,polygon,circle{vector-effect:non-scaling-stroke}</style>
-<defs>
- <marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#4f5d75"/></marker>
- <marker id="arr-accent" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#eb6c36"/></marker>
- <marker id="arr-link" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#2e5aa8"/></marker>
-</defs>
-<rect width="672" height="564" fill="#f5f5f5"/>
-<path d="M 260.0 94 V 132" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 412.0 94 V 105.0 Q 412.0 113.0 404.0 113.0 H 268.0 Q 260.0 113.0 260.0 121.0 V 132" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 260.0 194 V 205.0 Q 260.0 213.0 252.0 213.0 H 116.0 Q 108.0 213.0 108.0 221.0 V 232" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 108.0 294 V 305.0 Q 108.0 313.0 116.0 313.0 H 252.0 Q 260.0 313.0 260.0 321.0 V 332" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 108.0 294 V 305.0 Q 108.0 313.0 116.0 313.0 H 404.0 Q 412.0 313.0 412.0 321.0 V 332" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 260.0 394 V 355.0 Q 260.0 363.0 268.0 363.0 H 404.0 Q 412.0 363.0 412.0 355.0 V 332" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 260.0 94 V 105.0 Q 260.0 113.0 268.0 113.0 H 404.0 Q 412.0 113.0 412.0 121.0 V 132" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 412.0 332 V 194" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 412.0 394 V 405.0 Q 412.0 413.0 404.0 413.0 H 344.0 Q 336.0 413.0 336.0 421.0 V 432" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 108.0 294 V 255.0 Q 108.0 263.0 116.0 263.0 H 252.0 Q 260.0 263.0 260.0 255.0 V 232" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 412.0 194 V 205.0 Q 412.0 213.0 404.0 213.0 H 268.0 Q 260.0 213.0 260.0 221.0 V 232" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 260.0 194 V 205.0 Q 260.0 213.0 268.0 213.0 H 404.0 Q 412.0 213.0 412.0 221.0 V 232" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 336.0 432 V 355.0 Q 336.0 363.0 344.0 363.0 H 556.0 Q 564.0 363.0 564.0 355.0 V 294" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 260.0 294 V 255.0 Q 260.0 263.0 268.0 263.0 H 556.0 Q 564.0 263.0 564.0 255.0 V 232" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 260.0 332 V 305.0 Q 260.0 313.0 268.0 313.0 H 556.0 Q 564.0 313.0 564.0 305.0 V 294" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 412.0 194 V 205.0 Q 412.0 213.0 420.0 213.0 H 556.0 Q 564.0 213.0 564.0 221.0 V 232" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><rect x="200.0" y="32" width="120" height="62" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1.1"/><text x="260.0" y="60.0" text-anchor="middle" class="node-title">Module 03</text><text x="260.0" y="74.0" text-anchor="middle" class="sub">C# · async · ownership · host</text><rect x="352.0" y="32" width="120" height="62" rx="8" fill="#e8edf2" stroke="#7a8399" stroke-width="1.1"/><text x="412.0" y="53.0" text-anchor="middle" class="node-title">Module 02</text><text x="412.0" y="67.0" text-anchor="middle" class="sub">HTTP · TCP · process ·</text><text x="412.0" y="81.0" text-anchor="middle" class="sub">resources</text><rect x="200.0" y="132" width="120" height="62" rx="8" fill="#e8edf2" stroke="#7a8399" stroke-width="1.1"/><text x="260.0" y="167.0" text-anchor="middle" class="node-title">Request lifecycle</text><rect x="48.0" y="232" width="120" height="62" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1.1"/><text x="108.0" y="260.0" text-anchor="middle" class="node-title">Endpoint contract</text><text x="108.0" y="274.0" text-anchor="middle" class="sub">binding · validation · errors</text><rect x="200.0" y="332" width="120" height="62" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1.1"/><text x="260.0" y="360.0" text-anchor="middle" class="node-title">Authn/authz</text><text x="260.0" y="374.0" text-anchor="middle" class="sub">policy · tenant · audit</text><rect x="352.0" y="332" width="120" height="62" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1.1"/><text x="412.0" y="353.0" text-anchor="middle" class="node-title">Capacity boundary</text><text x="412.0" y="367.0" text-anchor="middle" class="sub">pagination · idempotency ·</text><text x="412.0" y="381.0" text-anchor="middle" class="sub">rate limit · cache</text><rect x="352.0" y="132" width="120" height="62" rx="8" fill="#e8edf2" stroke="#7a8399" stroke-width="1.1"/><text x="412.0" y="153.0" text-anchor="middle" class="node-title">Integration boundary</text><text x="412.0" y="167.0" text-anchor="middle" class="sub">workers · files · HTTP ·</text><text x="412.0" y="181.0" text-anchor="middle" class="sub">webhooks</text><rect x="276.0" y="432" width="120" height="62" rx="8" fill="#e9eaed" stroke="#4f5d75" stroke-width="1.1"/><text x="336.0" y="460.0" text-anchor="middle" class="node-title">Module 05</text><text x="336.0" y="474.0" text-anchor="middle" class="sub">SQL + relational execution</text><rect x="200.0" y="232" width="120" height="62" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1.1"/><text x="260.0" y="260.0" text-anchor="middle" class="node-title">Module 06</text><text x="260.0" y="274.0" text-anchor="middle" class="sub">API design + evolution</text><rect x="352.0" y="232" width="120" height="62" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1.1"/><text x="412.0" y="253.0" text-anchor="middle" class="node-title">Module 07</text><text x="412.0" y="267.0" text-anchor="middle" class="sub">ASP.NET Core production</text><text x="412.0" y="281.0" text-anchor="middle" class="sub">hosting</text><rect x="504.0" y="232" width="120" height="62" rx="8" fill="#fff0e9" stroke="#eb6c36" stroke-width="1.1"/><text x="564.0" y="260.0" text-anchor="middle" class="node-title">Project 02</text><text x="564.0" y="274.0" text-anchor="middle" class="sub">Order Management</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 1050 760" role="img" aria-labelledby="title desc">
+  <title id="title">Module 04 dependency map</title>
+  <desc id="desc">Backend request lifecycle dependency map từ .NET runtime và networking tới endpoint, security, capacity, integration, SQL, API design và project.</desc>
+  <style>
+    text{font-family:Inter,Segoe UI,Arial,sans-serif;fill:#2d3142}
+    .title{font-size:18px;font-weight:700}
+    .sub{font-size:13px;fill:#4f5d75}
+    .box{fill:#fff;stroke:#2d3142;stroke-width:1.4}
+    .soft{fill:#e8edf2;stroke:#7a8399;stroke-width:1.4}
+    .accent{fill:#fff0e9;stroke:#eb6c36;stroke-width:1.6}
+    .edge{fill:none;stroke:#64748b;stroke-width:1.5}
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect width="1050" height="760" fill="#f8fafc"/>
+
+  <rect class="box" x="210" y="35" width="270" height="90" rx="14"/>
+  <text class="title" x="345" y="73" text-anchor="middle">Module 03</text>
+  <text class="sub" x="345" y="100" text-anchor="middle">C# · async · ownership · host</text>
+
+  <rect class="soft" x="570" y="35" width="270" height="90" rx="14"/>
+  <text class="title" x="705" y="73" text-anchor="middle">Module 02</text>
+  <text class="sub" x="705" y="100" text-anchor="middle">HTTP · TCP · process · resources</text>
+
+  <path class="edge" d="M345 125 V170 H355 V200" marker-end="url(#arrow)"/>
+  <path class="edge" d="M705 125 V170 H355"/>
+
+  <rect class="soft" x="225" y="200" width="260" height="90" rx="14"/>
+  <text class="title" x="355" y="255" text-anchor="middle">Request lifecycle</text>
+
+  <path class="edge" d="M355 290 V335 H135 V365" marker-end="url(#arrow)"/>
+  <path class="edge" d="M355 290 V335 H390 V365" marker-end="url(#arrow)"/>
+  <path class="edge" d="M355 290 V335 H645 V365" marker-end="url(#arrow)"/>
+  <path class="edge" d="M355 290 V335 H900 V365" marker-end="url(#arrow)"/>
+
+  <rect class="box" x="25" y="365" width="220" height="115" rx="14"/>
+  <text class="title" x="135" y="405" text-anchor="middle">Endpoint contract</text>
+  <text class="sub" x="135" y="435" text-anchor="middle">binding · validation</text>
+  <text class="sub" x="135" y="458" text-anchor="middle">errors · status codes</text>
+
+  <rect class="box" x="280" y="365" width="220" height="115" rx="14"/>
+  <text class="title" x="390" y="405" text-anchor="middle">Authn / Authz</text>
+  <text class="sub" x="390" y="435" text-anchor="middle">policy · tenant</text>
+  <text class="sub" x="390" y="458" text-anchor="middle">resource · audit</text>
+
+  <rect class="box" x="535" y="365" width="220" height="115" rx="14"/>
+  <text class="title" x="645" y="405" text-anchor="middle">Capacity boundary</text>
+  <text class="sub" x="645" y="435" text-anchor="middle">pagination · idempotency</text>
+  <text class="sub" x="645" y="458" text-anchor="middle">rate limit · cache</text>
+
+  <rect class="box" x="790" y="365" width="220" height="115" rx="14"/>
+  <text class="title" x="900" y="405" text-anchor="middle">Integration boundary</text>
+  <text class="sub" x="900" y="435" text-anchor="middle">workers · files · HTTP</text>
+  <text class="sub" x="900" y="458" text-anchor="middle">webhooks · replay</text>
+
+  <path class="edge" d="M135 480 V530 H260 V560" marker-end="url(#arrow)"/>
+  <path class="edge" d="M390 480 V530 H515 V560" marker-end="url(#arrow)"/>
+  <path class="edge" d="M645 480 V530 H770 V560" marker-end="url(#arrow)"/>
+  <path class="edge" d="M900 480 V530 H770"/>
+
+  <rect class="box" x="150" y="560" width="220" height="95" rx="14"/>
+  <text class="title" x="260" y="600" text-anchor="middle">Module 05</text>
+  <text class="sub" x="260" y="630" text-anchor="middle">SQL + relational execution</text>
+
+  <rect class="box" x="405" y="560" width="220" height="95" rx="14"/>
+  <text class="title" x="515" y="600" text-anchor="middle">Module 06</text>
+  <text class="sub" x="515" y="630" text-anchor="middle">API design + evolution</text>
+
+  <rect class="accent" x="660" y="560" width="220" height="95" rx="14"/>
+  <text class="title" x="770" y="600" text-anchor="middle">Project 02</text>
+  <text class="sub" x="770" y="630" text-anchor="middle">Order Management</text>
+
+  <path class="edge" d="M515 655 V700 H650" marker-end="url(#arrow)"/>
+  <rect class="soft" x="650" y="680" width="250" height="65" rx="14"/>
+  <text class="title" x="775" y="720" text-anchor="middle">Module 07 · ASP.NET Core</text>
+</svg>
