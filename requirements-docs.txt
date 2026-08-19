@@ -1,1 +1,2 @@
 mkdocs-material==9.7.7
+# Pages is published by the MkDocs GitHub Actions workflow.
