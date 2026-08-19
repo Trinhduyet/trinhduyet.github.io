@@ -25,14 +25,16 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  validate:
-    name: Validate docs and labs
+  build-docs:
+    name: Build Pages documentation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -48,7 +50,7 @@ jobs:
       - name: Audit portable documentation paths
         run: python scripts/audit-docs.py
 
-      - name: Normalize SVG text bounds
+      - name: Normalize legacy SVG text bounds
         run: python scripts/normalize-diagrams.py
 
       - name: Audit diagram sources
@@ -58,7 +60,7 @@ jobs:
           matches="$(grep -RInE --include='*.md' '^[[:space:]]*(```|~~~)mermaid([[:space:]]|$)' docs || true)"
           if [[ -n "$matches" ]]; then
             echo "$matches"
-            echo "::error::Mermaid sources remain. Use Diagram Design editorial SVG assets or wiretext for simple mental models."
+            echo "::error::Mermaid sources remain. Use committed editorial SVG assets or wiretext for simple mental models."
             exit 1
           fi
 
@@ -68,17 +70,51 @@ jobs:
       - name: Build documentation strictly
         run: mkdocs build --strict --site-dir site
 
+      - name: Verify critical Pages output
+        shell: bash
+        run: |
+          set -euo pipefail
+          critical=(
+            site/index.html
+            site/00-roadmap/master-roadmap/index.html
+            site/03-dotnet/index.html
+            site/04-backend/index.html
+            site/14-cloud/index.html
+            site/17-distributed-systems/index.html
+            site/19-ai-engineering/index.html
+            site/24-system-design/index.html
+            site/25-software-architecture/index.html
+          )
+          for file in "${critical[@]}"; do
+            test -s "$file" || { echo "::error::Missing critical page: $file"; exit 1; }
+          done
+          echo "Critical Pages output verified."
+
       - name: Publish repository lab/source links into Pages artifact
         shell: bash
         run: |
           set -euo pipefail
-          # Legacy learning pages contain links such as ../../labs/... which are
-          # outside MkDocs' docs_dir. Mirror these read-only sources so old links
-          # do not become GitHub Pages 404s while content is migrated gradually.
           mkdir -p site/labs
           cp -R labs/. site/labs/
           cp README.md site/README.md
           cp Dev.sln site/Dev.sln
+
+      - name: Configure GitHub Pages
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+  validate-labs:
+    name: Validate .NET labs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
 
       - name: Set up .NET
         uses: actions/setup-dotnet@v6
@@ -94,16 +130,10 @@ jobs:
       - name: Test labs
         run: dotnet test Dev.sln --configuration Release --no-build --no-restore
 
-      - name: Upload Pages artifact
-        if: github.event_name != 'pull_request'
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: site
-
   deploy:
     name: Deploy GitHub Pages
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    needs: validate
+    needs: build-docs
     runs-on: ubuntu-latest
     permissions:
       pages: write
