@@ -8,15 +8,15 @@ Module này nối runtime execution với backend application behavior: một HT
 
 ![Sơ đồ Readme — diagram 1](../assets/diagrams/04-backend-readme-1.svg)
 
-## Phạm vi và trạng thái
+## Phạm vi
 
-| Learning slice | Priority | Trạng thái nội dung | Evidence người học |
-| --- | --- | --- | --- |
-| [Request lifecycle và endpoint contract](request-lifecycle-and-endpoint-contract.md) | P0 | Content v1 | Pending |
-| [Authentication, authorization và validation](authentication-authorization-and-validation.md) | P0 | Content v1 | Pending |
-| [Pagination, idempotency, rate limiting và caching](pagination-idempotency-rate-limiting-and-caching.md) | P0 | Content v1 | Pending |
-| [Background jobs, files và webhooks](background-jobs-files-and-webhooks.md) | P0 | Content v1 | Pending |
-| [BackendLab .NET 10](../../labs/04-backend/backend-lab/Program.cs) | P0 | Buildable lab | Pending run report |
+| Learning slice | Priority | Evidence |
+| --- | --- | --- |
+| [Request lifecycle và endpoint contract](request-lifecycle-and-endpoint-contract.md) | P0 | request trace |
+| [Authentication, authorization và validation](authentication-authorization-and-validation.md) | P0 | authn/authz matrix |
+| [Pagination, idempotency, rate limiting và caching](pagination-idempotency-rate-limiting-and-caching.md) | P0 | bounded workload |
+| [Background jobs, files và webhooks](background-jobs-files-and-webhooks.md) | P0 | retry/replay/failure note |
+| [BackendLab source](https://github.com/Trinhduyet/trinhduyet.github.io/tree/main/labs/04-backend/backend-lab) | P0 | build + run report |
 
 ## Dependency map
 
@@ -40,17 +40,26 @@ Pagination, idempotency, rate limiting, cache và queue là cách phân bổ cap
 
 HTTP client, file, queue và webhook đều có timeout, retry budget, duplicate, replay và ownership. Không biến request thread thành durable job.
 
-## Cách chạy lab
+## Cách chạy lab — portable path
 
-Yêu cầu: .NET SDK 10 theo [technology baseline](../00-roadmap/technology-baseline.md).
+Clone repo một lần:
 
 ```powershell
-cd E:\Documents\Dev\labs\04-backend\backend-lab
+git clone https://github.com/Trinhduyet/trinhduyet.github.io.git
+cd trinhduyet.github.io
+```
+
+Từ **repository root**:
+
+```powershell
+cd labs/04-backend/backend-lab
 dotnet build -c Release
 dotnet run -c Release --no-build -- pagination 10000 100 3
 dotnet run -c Release --no-build -- idempotency 1000 10
 dotnet run -c Release --no-build -- backpressure 10000 64 25
 ```
+
+Không dùng absolute path theo máy cá nhân. Forward slash chạy được trong PowerShell/Bash và giữ tài liệu portable giữa Windows, Linux, WSL và CI.
 
 BackendLab là executable experiment, không phải server public. Nó kiểm tra các invariant của boundary bằng workload bounded; production endpoint cần thêm framework hosting, TLS, identity provider, persistence và deployment policy.
 
@@ -64,7 +73,7 @@ BackendLab là executable experiment, không phải server public. Nó kiểm tr
 4. Rate limit/backpressure experiment có bounded memory và explicit rejection/cancellation.
 5. Webhook/integration note có timeout, signature, replay, idempotency và audit.
 
-## Exit criteria của module
+## Exit criteria
 
 Người học hoàn thành Module 04 khi có thể:
 
@@ -75,34 +84,6 @@ Người học hoàn thành Module 04 khi có thể:
 - thiết kế worker/file/webhook integration có bounded queue, retry/deadline và replay;
 - review endpoint qua correctness, security, latency, cost và operability.
 
-## Tiếp tục từ đây
+## Tiếp tục
 
-Sau Module 04, mở Module 05 — SQL khi contract/persistence boundary đã rõ; không tối ưu LINQ trước khi đọc generated SQL và execution plan. Project 02 sẽ nối endpoint contract với relational model.
-
-## Verification metadata
-
-- Verified: 2026-08-11.
-- Technology version: ASP.NET Core/.NET 10 target.
-- Official sources: Microsoft Learn pages in [references.md](references.md).
-- Context7 queries used: không có Context7 callable tool trong run này; version-sensitive claims đối chiếu trực tiếp Microsoft Learn.
-- Notes: module không lặp SQL/EF Core internals; các boundary được nối sang Module 05.
-
-<!-- Mermaid.js Script CDN hỗ trợ tự động render sơ đồ Mermaid trên GitHub Pages (Jekyll) -->
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({ startOnLoad: true, theme: 'default' });
-
-  document.addEventListener("DOMContentLoaded", function () {
-    const elements = document.querySelectorAll("pre.language-mermaid, code.language-mermaid, .language-mermaid pre, pre code.language-mermaid");
-    elements.forEach((el) => {
-      const container = el.tagName.toLowerCase() === "code" ? el.parentElement : el;
-      const div = document.createElement("div");
-      div.className = "mermaid";
-      div.textContent = el.textContent;
-      if (container && container.parentNode) {
-        container.parentNode.replaceChild(div, container);
-      }
-    });
-    mermaid.run({ querySelector: '.mermaid' });
-  });
-</script>
+Sau Module 04, mở Module 05 — SQL khi contract/persistence boundary đã rõ; không tối ưu LINQ trước khi đọc generated SQL và execution plan.
