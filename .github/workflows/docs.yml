@@ -55,7 +55,7 @@ jobs:
           build_type="$(printf '%s' "$response" | python -c 'import json,sys; print(json.load(sys.stdin).get("build_type", ""))')"
           echo "GitHub Pages build_type=${build_type}"
           if [[ "$build_type" != "workflow" ]]; then
-            echo "::error::GitHub Pages is still using legacy branch publishing. Settings → Pages → Build and deployment → Source must be GitHub Actions. Legacy pages-build-deployment serves README.md from the repository root and can overwrite the MkDocs deployment."
+            echo "::error::GitHub Pages is still using legacy branch publishing. Settings → Pages → Build and deployment → Source must be GitHub Actions. Legacy pages-build-deployment serves docs/ directly and bypasses the MkDocs artifact."
             exit 1
           fi
 
@@ -177,3 +177,26 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Verify live site serves this workflow artifact
+        shell: bash
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          set -euo pipefail
+          base="${PAGE_URL%/}"
+          marker_url="${base}/deploy-meta.json"
+          echo "Waiting for ${marker_url} to expose commit ${GITHUB_SHA}"
+
+          for attempt in $(seq 1 12); do
+            body="$(curl -fsSL -H 'Cache-Control: no-cache' "${marker_url}?commit=${GITHUB_SHA}&attempt=${attempt}" 2>/dev/null || true)"
+            if printf '%s' "$body" | grep -Fq "\"commit\": \"${GITHUB_SHA}\""; then
+              echo "Live Pages artifact verified on attempt ${attempt}."
+              exit 0
+            fi
+            echo "Attempt ${attempt}: live marker is not this commit yet."
+            sleep 10
+          done
+
+          echo "::error::GitHub Pages did not serve deploy-meta.json for commit ${GITHUB_SHA}. Check Settings → Pages → Source = GitHub Actions and ensure no legacy pages-build-deployment is active."
+          exit 1
