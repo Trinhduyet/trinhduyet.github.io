@@ -1,5 +1,5 @@
-site_name: AI-Enabled Software Architect Knowledge Roadmap
-site_description: Lộ trình thực chiến từ C#/.NET Backend đến Distributed Systems, Microservices, AI Engineering, System Design và Software Architecture.
+site_name: Software Architecture Engineering
+site_description: Học cách build hệ thống thật từ .NET Backend, Database, API, Azure/Cloud, Distributed Systems, System Design, Software Architecture đến Production AI Engineering.
 site_url: https://trinhduyet.github.io/
 repo_url: https://github.com/Trinhduyet/trinhduyet.github.io
 repo_name: Trinhduyet/trinhduyet.github.io
@@ -33,11 +33,13 @@ theme:
     - navigation.sections
     - navigation.indexes
     - navigation.path
+    - navigation.top
     - toc.follow
     - search.suggest
     - search.highlight
     - search.share
     - content.code.copy
+    - content.action.edit
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -49,6 +51,9 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Chuyển sang giao diện sáng
+
+extra_css:
+  - stylesheets/extra.css
 
 plugins:
   - search:
@@ -78,31 +83,26 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Học bằng ví dụ:
-      - Bắt đầu — Human Learning Mode: 00-roadmap/human-learning-mode.md
-      - Checkout Example-First Path: 00-roadmap/example-first-learning-path.md
+
+  - Start Here:
+      - Human Learning Mode: 00-roadmap/human-learning-mode.md
+      - Example-First Checkout Path: 00-roadmap/example-first-learning-path.md
       - Practical Mini-Labs: 00-roadmap/practical-mini-labs.md
-      - Concept Cards — Tra nhanh: 00-roadmap/concept-cards.md
-      - Cách đọc tài liệu: 00-roadmap/how-to-read.md
-  - Roadmap:
-      - 00-roadmap/README.md
+      - Concept Cards: 00-roadmap/concept-cards.md
       - Master Roadmap: 00-roadmap/master-roadmap.md
       - Learning Path: 00-roadmap/learning-path.md
       - Skills Matrix: 00-roadmap/skills-matrix.md
-      - Prerequisites: 00-roadmap/prerequisites.md
-      - Technology Baseline: 00-roadmap/technology-baseline.md
-      - Source Policy: 00-roadmap/source-policy.md
-      - Glossary: 00-roadmap/glossary.md
-      - Progress Template: 00-roadmap/progress-template.md
-  - Foundations:
+      - Cách đọc tài liệu: 00-roadmap/how-to-read.md
+
+  - Backend Core:
       - Computer Science:
-          - 01-computer-science/README.md
+          - Overview: 01-computer-science/README.md
           - Complexity & Workload: 01-computer-science/complexity-and-workload-reasoning.md
           - Data Structures: 01-computer-science/data-structures-for-backend-systems.md
           - Process, Thread & Scheduling: 01-computer-science/process-thread-scheduling-and-concurrency.md
           - Memory & CPU Cache: 01-computer-science/memory-stack-heap-virtual-memory-and-cache.md
       - Linux, Git & Networking:
-          - 02-linux-git-networking/README.md
+          - Overview: 02-linux-git-networking/README.md
           - Production Troubleshooting: 02-linux-git-networking/production-troubleshooting-foundations.md
           - Filesystem & Permissions: 02-linux-git-networking/filesystem-permissions-and-identities.md
           - Processes & Signals: 02-linux-git-networking/process-signals-and-resource-pressure.md
@@ -110,107 +110,138 @@ nav:
           - Git Mental Model: 02-linux-git-networking/git-mental-model-and-safe-recovery.md
           - Proxy, NAT & Load Balancer: 02-linux-git-networking/proxy-nat-load-balancer-and-network-boundaries.md
           - Incident Lab: 02-linux-git-networking/incident-lab-dotnet-service.md
-  - .NET Backend:
       - C# / .NET Runtime:
-          - 03-dotnet/README.md
+          - Overview: 03-dotnet/README.md
           - Types, Generics & Collections: 03-dotnet/csharp-types-generics-and-collections.md
           - Exceptions & Resource Ownership: 03-dotnet/exceptions-disposable-and-resource-ownership.md
           - Async/Await & Cancellation: 03-dotnet/async-await-cancellation-and-task-lifecycle.md
           - ThreadPool & Diagnostics: 03-dotnet/threadpool-concurrency-and-diagnostics.md
           - GC & Runtime Memory: 03-dotnet/gc-allocations-and-runtime-memory.md
       - Backend Engineering:
-          - 04-backend/README.md
+          - Overview: 04-backend/README.md
           - Request Lifecycle: 04-backend/request-lifecycle-and-endpoint-contract.md
           - Authentication & Authorization: 04-backend/authentication-authorization-and-validation.md
           - Pagination & Idempotency: 04-backend/pagination-idempotency-rate-limiting-and-caching.md
           - Background Jobs & Webhooks: 04-backend/background-jobs-files-and-webhooks.md
       - SQL:
-          - 05-sql/README.md
+          - Overview: 05-sql/README.md
           - Relational Model & Schema: 05-sql/relational-model-schema-and-sql.md
           - Transactions & Concurrency: 05-sql/transactions-isolation-and-concurrency.md
           - Indexes & Execution Plans: 05-sql/indexes-execution-plans-and-operations.md
-          - EF Core → SQL → Execution Plan: 05-sql/ef-core-query-shape-and-sql.md
+          - EF Core → SQL → Plan: 05-sql/ef-core-query-shape-and-sql.md
       - API Design:
           - Overview & 25-topic Matrix: 06-api-design/README.md
           - HTTP Resource Contracts: 06-api-design/http-resource-contracts-and-semantics.md
           - Security, OAuth & CORS: 06-api-design/security-auth-oauth-and-cors.md
-          - Evolution, Errors, Pagination & OpenAPI: 06-api-design/api-evolution-errors-and-pagination.md
+          - Evolution, Errors & OpenAPI: 06-api-design/api-evolution-errors-and-pagination.md
           - Traffic, Caching & Resilience: 06-api-design/traffic-caching-rate-limits-and-resilience.md
           - Events, gRPC & Webhooks: 06-api-design/events-grpc-webhooks-and-contracts.md
           - API Styles, Gateway & Realtime: 06-api-design/api-styles-gateway-and-realtime.md
           - References: 06-api-design/references.md
       - ASP.NET Core:
-          - 07-aspnet-core/README.md
+          - Overview: 07-aspnet-core/README.md
           - Pipeline & Hosting: 07-aspnet-core/pipeline-hosting-and-configuration.md
           - Resilience & Middleware: 07-aspnet-core/resilience-security-and-middleware.md
           - Deployment & Operations: 07-aspnet-core/deployment-observability-and-operations.md
-  - Production Engineering:
+
+  - Production:
       - Testing & Code Review:
-          - 08-testing-code-review/README.md
+          - Overview: 08-testing-code-review/README.md
           - Test Strategy: 08-testing-code-review/test-strategy-and-boundaries.md
           - Integration & Load Testing: 08-testing-code-review/integration-contract-and-load-testing.md
           - Code Review & Failure Analysis: 08-testing-code-review/code-review-quality-and-failure-analysis.md
       - Security & DevSecOps:
-          - 09-security-devsecops/README.md
+          - Overview: 09-security-devsecops/README.md
           - Threat Modeling: 09-security-devsecops/threat-modeling-and-application-security.md
           - Identity & Secrets: 09-security-devsecops/identity-secrets-and-data-protection.md
           - Secure Supply Chain: 09-security-devsecops/secure-supply-chain-and-devsecops.md
       - Performance:
-          - 10-performance/README.md
+          - Overview: 10-performance/README.md
           - Measurement & Profiling: 10-performance/measurement-profiling-and-bottlenecks.md
           - Load & Capacity: 10-performance/load-capacity-and-scalability.md
           - Regression Control: 10-performance/optimization-budgets-and-regression-control.md
       - Redis & Caching:
-          - 11-redis-caching/README.md
+          - Overview: 11-redis-caching/README.md
           - Data Structures: 11-redis-caching/redis-data-structures-and-command-shape.md
           - Cache Consistency: 11-redis-caching/cache-consistency-invalidation-and-stampede.md
           - Operations & HA: 11-redis-caching/redis-operations-ha-and-coordination.md
       - Docker:
-          - 12-docker/README.md
+          - Overview: 12-docker/README.md
           - Images & Reproducibility: 12-docker/images-builds-and-reproducibility.md
           - Runtime, Network & Storage: 12-docker/runtime-networking-storage-and-resources.md
           - Security, Compose & Operations: 12-docker/docker-security-compose-and-operations.md
-  - Platform:
       - DevOps & IaC:
-          - 13-devops-iac/README.md
+          - Overview: 13-devops-iac/README.md
           - CI/CD & Artifacts: 13-devops-iac/ci-cd-artifacts-and-promotion.md
           - Terraform State & Modules: 13-devops-iac/terraform-state-modules-and-drift.md
           - Safe Delivery & Recovery: 13-devops-iac/safe-delivery-drift-and-recovery.md
-      - Cloud:
-          - 14-cloud/README.md
-          - Primitives, Identity & Network: 14-cloud/cloud-primitives-identity-and-networking.md
+
+  - Azure & Platform:
+      - Cloud & Azure:
+          - Overview: 14-cloud/README.md
+          - Cloud Primitives, Identity & Network: 14-cloud/cloud-primitives-identity-and-networking.md
+          - Azure Foundations & Landing Zones: 14-cloud/azure-foundations-resource-hierarchy-and-landing-zones.md
+          - Azure Identity, Network & Zero Trust: 14-cloud/azure-identity-networking-and-zero-trust.md
+          - Azure Compute, Data & Messaging: 14-cloud/azure-compute-data-messaging-and-integration.md
+          - Azure Reliability, Observability & Cost: 14-cloud/azure-reliability-observability-governance-and-cost.md
+          - Azure .NET Reference Architecture: 14-cloud/azure-dotnet-reference-architecture.md
           - Regions, Availability & DR: 14-cloud/regions-availability-and-disaster-recovery.md
-          - Cost Governance: 14-cloud/cloud-cost-governance-and-operations.md
+          - Cloud Cost Governance: 14-cloud/cloud-cost-governance-and-operations.md
+          - References: 14-cloud/references.md
       - Kubernetes:
-          - 15-kubernetes/README.md
+          - Overview: 15-kubernetes/README.md
           - Architecture & Reconciliation: 15-kubernetes/cluster-architecture-and-reconciliation.md
           - Workloads, Network & Storage: 15-kubernetes/workloads-networking-and-storage.md
           - Security & Observability: 15-kubernetes/kubernetes-security-observability-and-operations.md
-  - Distributed Systems:
-      - Overview: 17-distributed-systems/README.md
-      - Partial Failure, Retry & Idempotency: 17-distributed-systems/partial-failure-timeouts-retries-and-idempotency.md
-      - Messaging, Outbox, Inbox & Dedup: 17-distributed-systems/messaging-outbox-inbox-and-dedup.md
-      - Consistency, Ordering, Saga & Backpressure: 17-distributed-systems/consistency-ordering-saga-and-backpressure.md
-  - Microservices Architecture:
-      - Overview: 18-microservices-architecture/README.md
-      - Boundaries, Data & Contracts: 18-microservices-architecture/service-boundaries-data-ownership-and-contracts.md
-      - Checkout Saga & Reconciliation: 18-microservices-architecture/checkout-saga-unknown-outcome-and-reconciliation.md
-      - Communication, Gateway & Deployment: 18-microservices-architecture/communication-gateway-discovery-and-deployment.md
-      - Testing, Observability & Migration: 18-microservices-architecture/testing-observability-and-migration.md
-  - AI Engineering:
-      - AI Engineering Overview: 19-ai-engineering/README.md
-      - Structured Output & Tool Calling: 19-ai-engineering/structured-output-and-tool-calling.md
-      - RAG, Evaluation & Observability: 19-ai-engineering/rag-evaluation-and-observability.md
-  - AI Coding Agents:
-      - AI Coding Agents Overview: 21-ai-coding-agents/README.md
-      - Context, Instructions & MCP: 21-ai-coding-agents/repository-context-mcp-and-instructions.md
-      - Safe Agentic Coding Workflow: 21-ai-coding-agents/safe-agentic-coding-workflow.md
+
+  - Distributed:
+      - Distributed Systems:
+          - Overview: 17-distributed-systems/README.md
+          - Partial Failure, Retry & Idempotency: 17-distributed-systems/partial-failure-timeouts-retries-and-idempotency.md
+          - Messaging, Outbox, Inbox & Dedup: 17-distributed-systems/messaging-outbox-inbox-and-dedup.md
+          - Consistency, Ordering, Saga & Backpressure: 17-distributed-systems/consistency-ordering-saga-and-backpressure.md
+      - Microservices Architecture:
+          - Overview: 18-microservices-architecture/README.md
+          - Boundaries, Data & Contracts: 18-microservices-architecture/service-boundaries-data-ownership-and-contracts.md
+          - Checkout Saga & Reconciliation: 18-microservices-architecture/checkout-saga-unknown-outcome-and-reconciliation.md
+          - Communication, Gateway & Deployment: 18-microservices-architecture/communication-gateway-discovery-and-deployment.md
+          - Testing, Observability & Migration: 18-microservices-architecture/testing-observability-and-migration.md
+
   - System Design:
       - Overview: 24-system-design/README.md
+      - 36 Concepts & Trade-offs: 24-system-design/concepts-and-tradeoffs.md
       - Requirements, NFR & Capacity: 24-system-design/requirements-nfr-and-capacity-estimation.md
       - Traffic, Load Balancing, CDN & Cache: 24-system-design/traffic-load-balancing-cdn-and-cache.md
       - Data, Replication, Partitioning & Consistency: 24-system-design/data-partitioning-replication-and-consistency.md
       - Async, Queue, Backpressure & Reliability: 24-system-design/async-queues-backpressure-and-reliability.md
       - Availability, Multi-region, DR, Security & Cost: 24-system-design/availability-multiregion-dr-security-and-cost.md
       - Case Studies & Design Review: 24-system-design/case-studies-and-design-review.md
+      - Production Projects & Evidence: 24-system-design/production-projects-and-evidence.md
       - References: 24-system-design/references.md
+
+  - Architecture:
+      - Software Architecture Overview: 25-software-architecture/README.md
+      - Quality Attributes, Boundaries & Styles: 25-software-architecture/quality-attributes-boundaries-and-styles.md
+      - DDD, Modular Monolith & Microservices: 25-software-architecture/ddd-modular-monolith-and-microservices.md
+      - Clean, Hexagonal & Vertical Slice: 25-software-architecture/clean-hexagonal-and-vertical-slice.md
+      - Event-Driven, CQRS & Integration: 25-software-architecture/event-driven-cqrs-and-integration.md
+      - Decisions, Fitness Functions & Evolution: 25-software-architecture/architecture-decisions-evolution-and-fitness-functions.md
+      - Architecture Review Playbook: 25-software-architecture/architecture-review-playbook.md
+      - References: 25-software-architecture/references.md
+
+  - AI Engineering:
+      - AI Engineering Overview: 19-ai-engineering/README.md
+      - Structured Output & Tool Calling: 19-ai-engineering/structured-output-and-tool-calling.md
+      - RAG, Evaluation & Observability: 19-ai-engineering/rag-evaluation-and-observability.md
+      - AI Coding Agents:
+          - Overview: 21-ai-coding-agents/README.md
+          - Context, Instructions & MCP: 21-ai-coding-agents/repository-context-mcp-and-instructions.md
+          - Safe Agentic Coding Workflow: 21-ai-coding-agents/safe-agentic-coding-workflow.md
+
+  - Resources:
+      - Roadmap Overview: 00-roadmap/README.md
+      - Prerequisites: 00-roadmap/prerequisites.md
+      - Technology Baseline: 00-roadmap/technology-baseline.md
+      - Source Policy: 00-roadmap/source-policy.md
+      - Glossary: 00-roadmap/glossary.md
+      - Progress Template: 00-roadmap/progress-template.md

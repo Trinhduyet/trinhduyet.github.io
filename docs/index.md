@@ -1,35 +1,181 @@
-# AI-Enabled Software Architect Roadmap
+<div class="hero-shell" markdown>
 
-> **Đừng đọc toàn bộ site từ đầu đến cuối.** Deep docs dài để tra cứu. Muốn học và nhớ, hãy bắt đầu bằng một hệ thống thật.
+<span class="hero-kicker">Software Architecture Engineering · System Builder Roadmap</span>
 
-## Bắt đầu ở đây
+# Build Systems: .NET → Azure → System Design → Architecture → AI
 
-### 1. Tôi muốn hiểu nhanh
+Học bằng **hệ thống thật, failure thật và project có evidence**. Roadmap nối Backend, Database, API, Cloud/Infra, Deployment, Distributed Systems, System Design, Software Architecture và AI thành một đường học thống nhất.
 
-→ **[Human Learning Mode](00-roadmap/human-learning-mode.md)**
+<div class="hero-actions" markdown>
 
-Bạn sẽ học theo:
+[Đi theo lộ trình thực hành →](00-roadmap/example-first-learning-path.md){ .hero-button .hero-button-primary }
+[Master Roadmap →](00-roadmap/master-roadmap.md){ .hero-button }
+[System Design →](24-system-design/README.md){ .hero-button }
+[Azure →](14-cloud/README.md){ .hero-button }
+
+</div>
+
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card"><strong>Backend</strong><span>.NET · SQL · API · testing · security</span></div>
+  <div class="stat-card"><strong>Azure</strong><span>identity · network · compute · data · messaging · DR</span></div>
+  <div class="stat-card"><strong>System Design</strong><span>capacity · consistency · failure · trade-offs · projects</span></div>
+  <div class="stat-card"><strong>Architecture + AI</strong><span>DDD · evolution · RAG · tools · eval · production</span></div>
+</div>
+
+## Hãy học cách build hệ thống
+
+<div class="learning-path" markdown>
+<strong>Đường học cốt lõi</strong>
 
 ```text
-scenario
-→ code
-→ failure
-→ 3 điều cần nhớ
+Làm backend
+→ Hiểu database
+→ Biết API
+→ Hiểu cloud / infrastructure
+→ Biết deploy và operate sản phẩm
+→ Hiểu distributed failure
+→ Biết System Design / Software Architecture
+→ Có project thật để chứng minh build được
 ```
+</div>
 
-không phải:
+**AI Engineer trong thực tế không chỉ là người “biết AI”.** Một AI Engineer production phải đủ kỹ năng software/backend engineering để đưa model, RAG và tools vào **một hệ thống có authentication, database, API, cloud, deployment, observability, evaluation và recovery**.
 
 ```text
-50 định nghĩa
-→ 20 patterns
-→ quên sau một ngày
+Software Engineering Foundation
+           ↓
+Production System
+           ↓
+AI becomes a capability
+—not the whole system—
 ```
 
-### 2. Tôi muốn học bằng code xuyên suốt
+→ [AI Engineering cho Software / Backend Engineer](19-ai-engineering/README.md)
 
-→ **[Example-First Checkout Learning Path](00-roadmap/example-first-learning-path.md)**
+## Chọn track theo vấn đề anh đang giải quyết
 
-Một hệ thống duy nhất đi xuyên roadmap:
+<div class="course-grid" markdown>
+
+[**.NET Backend Engineering** — C#, async, SQL, API Design, ASP.NET Core và production behavior.](03-dotnet/README.md){ .course-card }
+
+[**Platform & Azure** — cloud primitives → landing zones → identity/network → compute/data/messaging → DR/cost.](14-cloud/README.md){ .course-card }
+
+[**Distributed Systems** — partial failure, timeout, retry, idempotency, messaging, consistency và reconciliation.](17-distributed-systems/README.md){ .course-card }
+
+[**Microservices Architecture** — boundaries, data ownership, contracts, Saga, migration và operations.](18-microservices-architecture/README.md){ .course-card }
+
+[**System Design** — 36 concepts, capacity math, cache, partitioning, queues, multi-region, security, cost và project evidence.](24-system-design/README.md){ .course-card }
+
+[**Software Architecture** — quality attributes, DDD, Clean/Hexagonal, Modular Monolith, EDA/CQRS, ADR và evolution.](25-software-architecture/README.md){ .course-card }
+
+[**AI Engineering** — engineering foundation + structured output, tools, RAG, evaluation, security, deploy và operate.](19-ai-engineering/README.md){ .course-card }
+
+[**AI Coding Agents** — repository context, MCP, safe edit/build/test/PR workflow.](21-ai-coding-agents/README.md){ .course-card }
+
+</div>
+
+## Một mental model cho toàn site
+
+```text
+Business problem
+      ↓
+Functional requirements + NFR
+      ↓
+Backend/API + data model
+      ↓
+Database invariants / transaction boundary
+      ↓
+External side effects
+      ↓
+Failure: timeout / duplicate / overload
+      ↓
+Cloud / Infrastructure / Deployment
+      ↓
+Observe / Recover / Reconcile
+      ↓
+Capacity / Cost
+      ↓
+System Design
+      ↓
+Architecture boundary / evolution
+      ↓
+AI capability when it creates business value
+```
+
+<div class="key-takeaway" markdown>
+<strong>Điểm cốt lõi</strong>
+
+Không học `Redis`, `Kafka`, `Kubernetes`, `Azure Service Bus`, `microservices` hay `RAG` như đáp án mặc định. Mỗi component chỉ xuất hiện khi một **requirement, bottleneck, failure mode, data constraint hoặc operating constraint** justify nó.
+</div>
+
+## Azure track — từ cloud generic tới kiến trúc Azure thực tế
+
+```text
+Cloud mental model
+      ↓
+Tenant / Management Group / Subscription / Resource Group
+      ↓
+Landing Zone + Policy + RBAC
+      ↓
+Entra ID + Managed Identity + Key Vault
+      ↓
+VNet / Private Endpoint / Front Door / APIM
+      ↓
+App Service / Functions / Container Apps / AKS
+      ↓
+Azure SQL / Cosmos DB / Blob / Managed Redis
+      ↓
+Service Bus / Event Grid / Event Hubs
+      ↓
+Availability Zones / DR / Azure Monitor / Cost
+      ↓
+.NET production reference architecture
+```
+
+**Bắt đầu:** [Module 14 — Cloud & Azure](14-cloud/README.md)
+
+## System Design — học component bằng failure và trade-off
+
+```text
+Clarify
+→ Estimate
+→ Model data
+→ Draw simple path
+→ Find pressure
+→ Add scale mechanisms
+→ Design failure behavior
+→ Prove with evidence
+```
+
+Module mới có **36 Concepts & Trade-offs**, capacity math, data/consistency, queues/backpressure, multi-region/DR, case studies và production projects.
+
+**Bắt đầu:** [Module 24 — System Design](24-system-design/README.md)
+
+## Software Architecture — cấu trúc hệ thống để thay đổi được
+
+```text
+Quality attributes
+      ↓
+Boundaries / ownership
+      ↓
+DDD / domain model
+      ↓
+Architecture style
+      ↓
+Sync vs async integration
+      ↓
+Modular Monolith vs Microservices
+      ↓
+ADR + fitness functions
+      ↓
+Evolution / migration
+```
+
+**Bắt đầu:** [Module 25 — Software Architecture](25-software-architecture/README.md)
+
+## Học bằng một hệ thống xuyên suốt
 
 ```text
 Customer
@@ -43,149 +189,53 @@ Order
 
 AI Assistant
    ↓
-read-only business tools
+read-only authorized business tools
 ```
 
-Bạn sẽ thấy cùng một bài toán được nâng cấp qua:
+Cùng bài toán được nâng cấp qua:
 
 ```text
 C# / async
 → SQL
 → API Design
 → ASP.NET Core
-→ Cache
-→ Docker / Kubernetes
+→ Redis
+→ Docker
+→ Azure / Kubernetes when needed
 → Distributed Systems
-→ Microservices
+→ Microservices when justified
 → System Design
+→ Software Architecture
 → AI Engineering
-→ AI Coding Agents
 ```
 
-### 3. Tôi chỉ muốn làm một bài nhỏ 10–30 phút
+[Đi theo Example-First Checkout Path →](00-roadmap/example-first-learning-path.md)
 
-→ **[Practical Mini-Labs](00-roadmap/practical-mini-labs.md)**
+## Project thật là Definition of Learning
 
-Có thí nghiệm cho:
+Không tính “đã học” chỉ vì đọc xong.
+
+Evidence tốt:
 
 ```text
-SQL race + execution plan
-AuthN/AuthZ
-rate limiting
-integration test
-cache stale data
-P99 latency
-Docker localhost trap
-Kubernetes readiness
-Outbox duplicate
-queue backlog
-tracing
-CI
-Terraform workflow
-AI tool authorization
+runnable code
++ SQL schema / constraints / execution plan
++ OpenAPI / API contract
++ Docker / IaC
++ Azure deployment
++ logs / metrics / traces
++ load test
++ duplicate / timeout / backlog failure drills
++ backup / restore / reconciliation
++ ADR / cost / migration trigger
 ```
 
-### 4. Tôi quên một khái niệm
+→ [Production System Design Projects & Evidence](24-system-design/production-projects-and-evidence.md)
 
-→ **[Concept Cards — 35 khái niệm trong 30 giây](00-roadmap/concept-cards.md)**
-
-Ví dụ:
+## Cách học 60 phút
 
 ```text
-Idempotency
-= request lặp lại không tạo side effect ngoài ý muốn
-
-Outbox
-= business state + message cùng local transaction
-
-Reconciliation
-= hỏi source of truth khi local state là UNKNOWN
-```
-
-### 5. Tôi đang debug/review architecture
-
-→ **[Master Roadmap](00-roadmap/master-roadmap.md)**
-
-Lúc này mới dùng deep modules như reference manual.
-
----
-
-# Một mental model cho toàn site
-
-Nếu chỉ nhớ một flow, nhớ flow này:
-
-```text
-Request
-   ↓
-API Contract
-   ↓
-Application State
-   ↓
-Database Invariant
-   ↓
-External Side Effect
-   ↓
-Failure / Retry / Duplicate
-   ↓
-Observability
-   ↓
-Recovery
-   ↓
-Capacity / Cost
-   ↓
-Architecture Decision
-```
-
-Các module chỉ giúp bạn trả lời sâu hơn từng đoạn của flow này.
-
----
-
-# Core practical path
-
-| Stage | Học gì | Ví dụ xuyên suốt |
-|---:|---|---|
-| 1 | C# / async | gọi Payment API + timeout |
-| 2 | SQL | order + UNIQUE idempotency invariant |
-| 3 | API Design | `POST /checkouts` + `Idempotency-Key` |
-| 4 | ASP.NET Core | endpoint + explicit order state |
-| 5 | Cache | product cache + stale-data failure |
-| 6 | Docker / Kubernetes | deploy API + readiness/liveness |
-| 7 | Distributed Systems | Outbox + Inbox/Dedup |
-| 8 | Microservices | `FAILED != UNKNOWN` + reconciliation |
-| 9 | System Design | capacity math + scale/failure/cost |
-| 10 | AI Engineering | read-only business tools + AuthZ |
-| 11 | AI Coding Agents | task → edit → build/test → PR |
-
-**[Đi theo path này →](00-roadmap/example-first-learning-path.md)**
-
----
-
-# Deep modules
-
-Khi một stage tạo câu hỏi cụ thể, mở module tương ứng:
-
-- [.NET / C# Runtime](03-dotnet/README.md)
-- [Backend Engineering](04-backend/README.md)
-- [SQL / SQL Server](05-sql/README.md)
-- [API Design](06-api-design/README.md)
-- [ASP.NET Core](07-aspnet-core/README.md)
-- [Redis & Caching](11-redis-caching/README.md)
-- [Docker](12-docker/README.md)
-- [Kubernetes](15-kubernetes/README.md)
-- [Distributed Systems](17-distributed-systems/README.md)
-- [Microservices Architecture](18-microservices-architecture/README.md)
-- [AI Engineering](19-ai-engineering/README.md)
-- [AI Coding Agents](21-ai-coding-agents/README.md)
-- [System Design](24-system-design/README.md)
-
-Không cần đọc hết một module. Chỉ đọc phần giải thích failure/problem bạn vừa gặp.
-
----
-
-# Cách học 60 phút
-
-```text
-20 phút — chạy example
+20 phút — chạy/build scenario
 20 phút — cố tình làm hỏng
 20 phút — đọc lý thuyết giải thích behavior vừa thấy
 ```
@@ -193,42 +243,27 @@ Không cần đọc hết một module. Chỉ đọc phần giải thích failur
 Ví dụ:
 
 ```text
-payment timeout
-→ local order không biết provider đã charge hay chưa
+Payment provider timeout
+→ local service không biết provider đã charge hay chưa
+→ FAILED không đủ nghĩa
 → state = UNKNOWN
-→ đọc idempotency + reconciliation
+→ idempotency + reconciliation
+→ sau đó mới bàn queue, Saga hay microservices
 ```
 
-Cách này giữ kiến thức tốt hơn việc đọc Saga/CAP/Eventual Consistency trước khi có tình huống cần chúng.
+## Tra cứu nhanh
 
----
+- [Human Learning Mode](00-roadmap/human-learning-mode.md)
+- [Master Roadmap](00-roadmap/master-roadmap.md)
+- [Concept Cards](00-roadmap/concept-cards.md)
+- [Practical Mini-Labs](00-roadmap/practical-mini-labs.md)
+- [Glossary](00-roadmap/glossary.md)
+- [Azure References](14-cloud/references.md)
+- [System Design References](24-system-design/references.md)
+- [Software Architecture References](25-software-architecture/references.md)
 
-# Khi nào coi là “đã học”?
+<div class="architect-note" markdown>
+<strong>Architect / AI Engineer mindset</strong>
 
-Không phải khi đọc xong.
-
-Evidence tốt:
-
-```text
-reproduce duplicate checkout
-viết UNIQUE constraint
-xem execution plan
-simulate timeout
-reconcile unknown payment
-kill Pod và quan sát readiness
-build queue backlog
-viết regression test
-vẽ lại flow từ memory
-```
-
-Mục tiêu cuối cùng không phải “biết nhiều thuật ngữ”, mà là:
-
-```text
-Problem
-→ Mechanism
-→ Failure
-→ Evidence
-→ Trade-off
-```
-
-Đó là cách một Senior Engineer / Architect thực sự sử dụng kiến thức.
+Một sơ đồ đẹp hoặc một prompt demo chưa chứng minh nhiều. Một engineer mạnh phải giải thích được: **requirement nào tạo ra design, invariant nào phải bảo vệ, failure nào đã test, system deploy/observe/recover ra sao, cost gì phải trả và khi nào architecture cần evolve.**
+</div>

@@ -1,10 +1,16 @@
 # Module 24 — System Design
 
-> [← Master Roadmap](../00-roadmap/master-roadmap.md) · [Roadmap Overview](../00-roadmap/README.md)
+> [← Master Roadmap](../00-roadmap/master-roadmap.md) · [Software Architecture →](../25-software-architecture/README.md)
+
+<div class="lesson-meta">
+  <span><strong>Priority</strong>&nbsp;P0</span>
+  <span><strong>Mode</strong>&nbsp;requirements → evidence → trade-off</span>
+  <span><strong>Use</strong>&nbsp;production design + interview + architecture review</span>
+</div>
 
 System Design là bước chuyển từ **“biết component”** sang **“biết ghép component thành hệ thống có thể chứng minh được”**.
 
-Module này không học theo kiểu thuộc lòng:
+Không học kiểu:
 
 ```text
 Load Balancer + Cache + Queue + Database + CDN = scalable system
@@ -34,44 +40,42 @@ Evidence / Tests / Cost
 
 ![System Design workflow từ requirements đến evidence](../assets/diagrams/system-design-process.svg)
 
----
+<div class="key-takeaway" markdown>
+<strong>Rule quan trọng</strong>
 
-## Hiểu trong 5 phút
+Nếu chưa có workload, latency/SLO, source of truth và failure model thì chưa nên chọn Redis, Kafka, Kubernetes, sharding hay multi-region.
+</div>
 
-Một System Design tốt phải trả lời được 10 câu hỏi:
-
-1. **Who** — ai dùng hệ thống, user flow nào là critical?
-2. **What** — hệ thống phải làm gì và không làm gì?
-3. **How much** — RPS, concurrency, data volume, bandwidth, growth?
-4. **How fast** — latency P50/P95/P99 và user-visible deadline?
-5. **How reliable** — availability/SLO, RTO, RPO, correctness?
-6. **Where is truth** — source of truth nằm ở đâu, consistency cần mạnh đến mức nào?
-7. **How does it scale** — stateless scale-out, partition, cache, async, CDN?
-8. **How does it fail** — timeout, partial failure, overload, stale data, region outage?
-9. **How is it operated** — deploy, observe, recover, replay, rollback?
-10. **Why this design** — vì sao phương án này tốt hơn phương án đơn giản hơn?
-
-Nếu chưa trả lời được workload và NFR thì chưa nên chọn database, queue hay Kubernetes.
-
----
-
-# Learning path
+## Learning path
 
 | Guide | Priority | Bạn phải làm được |
 |---|---:|---|
+| [36 Concepts & Trade-offs](concepts-and-tradeoffs.md) | **P0** | hiểu component bằng problem/failure/trade-off, không học thuộc |
 | [Requirements, NFR & Capacity Estimation](requirements-nfr-and-capacity-estimation.md) | **P0** | chuyển yêu cầu mơ hồ thành numbers, limits và SLO |
 | [Traffic, Load Balancing, CDN & Cache](traffic-load-balancing-cdn-and-cache.md) | **P0** | scale request path và tránh bottleneck/hotspot |
 | [Data, Replication, Partitioning & Consistency](data-partitioning-replication-and-consistency.md) | **P0** | chọn source of truth, shard key, consistency và query shape |
 | [Async, Queue, Backpressure & Reliability](async-queues-backpressure-and-reliability.md) | **P0** | tách arrival rate khỏi processing rate và thiết kế failure semantics |
 | [Availability, Multi-region, DR, Security & Cost](availability-multiregion-dr-security-and-cost.md) | **P0/P1** | thiết kế theo SLO/RTO/RPO thay vì mặc định active-active |
 | [Case Studies & Design Review Workflow](case-studies-and-design-review.md) | **P0** | áp dụng framework vào URL Shortener, Notification, Checkout và AI Assistant |
-| [References](references.md) | source | official/current sources + supplementary scope |
+| [Production Projects & Evidence](production-projects-and-evidence.md) | **P0** | biến design thành project runnable + metrics + failure drills |
+| [References](references.md) | source | official/current sources + user-supplied breadth sources |
 
----
+## Hiểu trong 5 phút — 10 câu hỏi phải trả lời
 
-# System Design framework dùng xuyên module
+1. **Who** — ai dùng hệ thống, flow nào critical?
+2. **What** — phải làm gì, không làm gì?
+3. **How much** — RPS, concurrency, volume, bandwidth, growth?
+4. **How fast** — P50/P95/P99, deadline?
+5. **How reliable** — SLO, RTO, RPO, correctness?
+6. **Where is truth** — source of truth và consistency ở đâu?
+7. **How does it scale** — stateless, cache, partition, queue, replicas?
+8. **How does it fail** — timeout, duplicate, stale, overload, zone/region loss?
+9. **How is it operated** — deploy, observe, recover, replay, rollback?
+10. **Why this design** — tại sao tốt hơn phương án đơn giản hơn?
 
-## Step 1 — Clarify requirements
+## Framework 8 bước
+
+### Step 1 — Clarify requirements
 
 ```text
 Functional
@@ -91,9 +95,7 @@ Non-functional
 - cost
 ```
 
-## Step 2 — Estimate workload
-
-Không cần số tuyệt đối chính xác. Cần **order-of-magnitude hợp lý** và assumptions rõ.
+### Step 2 — Estimate workload
 
 ```text
 DAU
@@ -109,7 +111,9 @@ bandwidth
 concurrency
 ```
 
-## Step 3 — Define data and ownership
+Không cần số tuyệt đối chính xác; cần assumptions rõ và order-of-magnitude hợp lý.
+
+### Step 3 — Define data and ownership
 
 ```text
 entities
@@ -122,7 +126,7 @@ retention
 privacy class
 ```
 
-## Step 4 — Draw the simplest request path
+### Step 4 — Draw simplest request path
 
 ```text
 Client
@@ -134,9 +138,9 @@ Application
 Database
 ```
 
-Chỉ thêm cache/CDN/queue/shard/region khi một requirement cụ thể tạo pressure.
+Chỉ thêm component khi requirement tạo pressure.
 
-## Step 5 — Find bottlenecks
+### Step 5 — Find bottlenecks
 
 ```text
 CPU
@@ -147,11 +151,11 @@ hot key
 network bandwidth
 external API quota
 queue consumers
-lock/coordination
+locks
 single region
 ```
 
-## Step 6 — Add scale/reliability mechanisms
+### Step 6 — Add scale/reliability mechanisms
 
 ```text
 stateless scale-out
@@ -160,11 +164,10 @@ cache/CDN
 partitioning
 queue/backpressure
 replication
-redundancy
 failure isolation
 ```
 
-## Step 7 — Design failure behavior
+### Step 7 — Design failure behavior
 
 ```text
 timeout
@@ -174,13 +177,11 @@ duplicate
 partial commit
 stale cache
 queue backlog
-node loss
-zone loss
-region loss
+node/zone/region loss
 operator mistake
 ```
 
-## Step 8 — Prove the design
+### Step 8 — Prove the design
 
 ```text
 load test
@@ -193,11 +194,7 @@ ADR
 cost estimate
 ```
 
----
-
-# Core component map
-
-System Design roadmap thường xoay quanh các building blocks sau, nhưng **component không phải mục tiêu**:
+## Core component map
 
 ```text
 Clients
@@ -215,11 +212,9 @@ Identity / Security
 Multi-zone / Multi-region
 ```
 
-Roadmap.sh cũng liệt kê CDN, Load Balancer, Cache, Proxy, Queue, Web/App Server, Database, Search, Logging/Monitoring và scaling như các thành phần phổ biến của system design. Module này dùng chúng như **toolbox**, không như checklist bắt buộc.
+Nhưng **component không phải mục tiêu**. Học [36 Concepts & Trade-offs](concepts-and-tradeoffs.md) để hiểu vì sao mỗi component tồn tại và failure nào nó tạo thêm.
 
----
-
-# Một design answer đạt chuẩn
+## Ví dụ — từ requirement tới decision
 
 Không viết:
 
@@ -237,47 +232,103 @@ P95 GET /products < 150 ms at 20k RPS.
 Catalog changes ~20 times/minute.
 Staleness <= 30 seconds is acceptable.
 
-Option A:
+Baseline:
 Read SQL directly.
-+ simple consistency
-- DB reaches connection/IO capacity at peak
+Measured DB saturation appears near target peak.
 
-Option B:
-Cache-aside Redis, TTL 20–30s + invalidation on write.
-+ reduces DB read load
-+ meets staleness budget
-- introduces stale-data and cache-outage paths
+Option:
+Cache-aside, TTL 20–30s + invalidation on write.
+
+Gain:
+reduce DB read load and latency.
+
+New failures:
+stale data, cache outage, stampede.
 
 Decision:
-Use B only after load test proves DB saturation.
-Fallback to DB with bounded concurrency if cache unavailable.
+Use cache only after load evidence justifies it;
+bounded DB fallback and stampede protection required.
 ```
 
-Đó là **requirements → evidence → trade-off → decision**.
+## Production System Design ≠ Interview-only
 
----
-
-# Kiến thức prerequisite
-
-Module này giả định bạn đã hiểu tương đối chắc:
+Interview có thể dừng ở diagram/trade-off. Production phải thêm:
 
 ```text
-HTTP / API Design
-SQL + Index + Transactions
-Caching
-Docker/Kubernetes concepts
-Observability
-Distributed Systems
-Microservices boundaries
+code
+schema + constraints
+IaC
+deployment
+observability
+load test
+failure drill
+restore/recovery
+security boundary
+runbook
+cost
+migration path
 ```
 
-Nếu chưa hiểu `timeout = unknown outcome`, `at-least-once`, idempotency, partition key hoặc SLO thì quay lại Module 17/18 trước.
+Vì vậy module có [Production Projects & Evidence](production-projects-and-evidence.md).
 
----
+## System Design ↔ Azure
 
-# Quality gate
+System Design trả lời:
 
-Một System Design exercise chỉ được tính hoàn thành khi có:
+```text
+we need a durable work queue with DLQ + duplicate handling
+```
+
+Azure track giúp map requirement đó sang candidate như Service Bus và review quota/operations.
+
+Không đảo ngược thành:
+
+```text
+we have Service Bus → let's design around it
+```
+
+→ [Cloud & Azure](../14-cloud/README.md)
+
+## System Design ↔ Software Architecture
+
+System Design tập trung workload/system behavior:
+
+```text
+capacity
+traffic
+data
+consistency
+reliability
+failure
+cost
+```
+
+Software Architecture tập trung cấu trúc/evolution:
+
+```text
+boundaries
+quality attributes
+domain ownership
+architecture styles
+coupling
+evolution/governance
+```
+
+→ [Module 25 — Software Architecture](../25-software-architecture/README.md)
+
+## Scope từ các tài liệu tham khảo user cung cấp
+
+Ba repo được dùng để audit coverage:
+
+- `karanpratapsingh/system-design`: networking → data → messaging/architecture → reliability/security → case studies.
+- `ashishps1/awesome-system-design-resources`: core concepts, API/database/cache, async/distributed patterns, trade-offs, interviews và engineering readings.
+- `mehdihadeli/awesome-software-architecture`: styles/patterns, cloud/distributed/messaging/data architecture.
+
+Course **không sao chép danh sách links**; nó chuyển scope thành các bài `problem → mechanism → failure → evidence → trade-off`.
+
+## Quality gate
+
+Một System Design exercise chỉ hoàn thành khi có:
 
 ```text
 requirements
@@ -293,17 +344,4 @@ requirements
 + migration/evolution path
 ```
 
-“Vẽ được architecture” chưa phải System Design.
-
----
-
-## LinkedIn PDF supplied for this update
-
-User supplied a LinkedIn-hosted PDF as supplementary material. The automated environment could not retrieve the media asset because LinkedIn media delivery rejected the fetch, so **no unverified claim in this module is attributed to that PDF**. The source is retained in [references.md](references.md) for manual follow-up. Current technical claims are grounded in accessible official architecture/reliability sources.
-
-## Verification metadata
-
-- Verified: 2026-08-13.
-- Scope reference: roadmap.sh System Design roadmap.
-- Normative/current guidance: Microsoft Azure Architecture Center / Well-Architected Framework and existing protocol/database modules in this repository.
-- Diagram policy: Diagram Design editorial SVG; no Mermaid source.
+Một production project phải thêm runnable evidence.

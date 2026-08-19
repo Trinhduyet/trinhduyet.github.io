@@ -1,59 +1,209 @@
-# Module 19 — AI Engineering cho .NET Backend Engineer
+# Module 19 — AI Engineering cho Software / Backend Engineer
 
-> Mục tiêu: xây AI application **có thể test, quan sát, bảo vệ và thay đổi provider/model**; không dừng ở việc gọi một model API.
+> Mục tiêu: xây AI application **có thể chạy như một sản phẩm thật** — có backend, data, API, auth, cloud/infra, deployment, observability, evaluation và recovery; không dừng ở việc gọi model API.
 
-## Hiểu trong 5 phút
+<div class="lesson-meta">
+  <span><strong>Priority</strong>&nbsp;P0</span>
+  <span><strong>Foundation</strong>&nbsp;Software Engineering first</span>
+  <span><strong>Target</strong>&nbsp;Production AI Engineer</span>
+</div>
 
-AI Engineering trong roadmap này là:
+<div class="key-takeaway" markdown>
+<strong>Triết lý của track AI Engineering</strong>
+
+Hãy học cách **build hệ thống**:
+
+- làm backend;
+- hiểu database;
+- biết API;
+- hiểu cloud/infra;
+- biết triển khai sản phẩm;
+- có project thật để chứng minh mình build được.
+
+**AI Engineer trong thực tế không chỉ là người “biết AI”.** Đó là người đủ kỹ năng engineering để đưa AI vào một hệ thống hoạt động thật.
+</div>
+
+## 1. AI Engineer production cần stack gì?
+
+```text
+Software Engineering foundation
+│
+├── Programming / .NET / Python as needed
+├── Backend Engineering
+├── Database / SQL / Search
+├── API / Auth / Security
+├── Distributed Systems
+├── Cloud / Infra
+├── CI/CD / Deployment
+└── Observability / Operations
+          ↓
+AI Engineering layer
+│
+├── Models / providers
+├── Prompt / context
+├── Structured output
+├── Tool calling
+├── Embeddings / Retrieval / RAG
+├── Evaluation
+├── Safety / authorization
+└── Model / prompt / index lifecycle
+          ↓
+Production product
+```
+
+Nếu chỉ biết:
+
+```text
+prompt → model → string
+```
+
+thì mới biết một phần rất nhỏ của AI application.
+
+## 2. Một AI feature thực tế trông như thế nào?
+
+Ví dụ: internal architecture assistant đọc dữ liệu dự án và gọi read-only tools.
+
+```text
+Authenticated User
+      ↓
+Web / App
+      ↓
+ASP.NET Core API
+      ↓
+Authentication + Authorization
+      ↓
+AI Application Service
+ ├─ model/provider abstraction
+ ├─ context builder
+ ├─ retrieval
+ ├─ tool calling
+ └─ structured output
+      ↓
+Business APIs / SQL / Search / Vector Index
+      ↓
+Evaluation + Tracing + Cost + Audit
+      ↓
+Cloud deployment + monitoring + rollback
+```
+
+AI chỉ là một capability trong system.
+
+## 3. Engineering dependency map
+
+Trước khi deep dive AI, cần tương đối chắc:
+
+### Backend
+
+```text
+HTTP request lifecycle
+async/cancellation
+dependency injection
+background jobs
+rate limiting
+resilience
+```
+
+→ [Backend Engineering](../04-backend/README.md) · [ASP.NET Core](../07-aspnet-core/README.md)
+
+### Database
+
+```text
+schema
+indexes
+transactions
+concurrency
+query plans
+```
+
+→ [SQL](../05-sql/README.md)
+
+### API / Security
+
+```text
+contracts
+authentication
+authorization
+OAuth/OIDC
+idempotency
+errors
+```
+
+→ [API Design](../06-api-design/README.md)
+
+### Distributed Systems
+
+```text
+timeout
+retry
+duplicate
+queue
+consistency
+reconciliation
+```
+
+→ [Distributed Systems](../17-distributed-systems/README.md)
+
+### Cloud / Infrastructure
+
+```text
+identity
+network
+compute
+data
+messaging
+observability
+DR
+cost
+```
+
+→ [Cloud & Microsoft Azure](../14-cloud/README.md)
+
+### System Design / Architecture
+
+```text
+requirements
+capacity
+failure
+boundaries
+trade-offs
+evolution
+```
+
+→ [System Design](../24-system-design/README.md) · [Software Architecture](../25-software-architecture/README.md)
+
+## 4. AI Engineering mental model
 
 ```text
 Business capability
         ↓
-.NET application
+Application contract
         ↓
-AI abstraction / orchestration
+AI orchestration boundary
         ↓
 Model + Retrieval + Tools
+        ↓
+Deterministic business validation
         ↓
 Evaluation + Security + Observability
         ↓
 Production operation
 ```
 
-Không phải:
+Một AI Engineer production phải kiểm soát ít nhất 9 biến:
 
-```text
-prompt → model → string
-```
+1. **Business outcome** — AI đang cải thiện workflow nào?
+2. **Model** — quality, latency, cost, availability.
+3. **Context** — system instruction, history, business data.
+4. **Output contract** — text hay structured schema.
+5. **Retrieval** — data nào được retrieve, freshness/ACL ra sao.
+6. **Tools** — model được phép đề xuất/gọi action nào.
+7. **Authorization** — application có enforce quyền thật không.
+8. **Evaluation** — release mới tốt hơn hay regress?
+9. **Operations** — timeout, rate limit, tracing, cost, fallback, rollback.
 
-Một AI Engineer production phải kiểm soát ít nhất 6 biến:
+## 5. Code đầu tiên — provider abstraction với `IChatClient`
 
-1. **Model** — chất lượng, latency, cost, availability.
-2. **Context** — system instruction, conversation, business data.
-3. **Output** — text hay structured contract.
-4. **Tools** — model được phép hành động tới đâu.
-5. **Evaluation** — làm sao biết version mới tốt hơn.
-6. **Operations** — logs, traces, rate limit, fallback, rollback.
-
-## Dependency
-
-Nên biết trước:
-
-- C#/.NET async + DI;
-- HTTP/API Design;
-- Security/AuthZ;
-- Observability;
-- Distributed Systems fundamentals.
-
-RAG, Agents và AI Coding Agents học sau foundation này.
-
-## Learning map
-
-![Sơ đồ Readme — diagram 1](../assets/diagrams/19-ai-engineering-readme-1.svg)
-
-## Code đầu tiên — dùng `IChatClient`
-
-`Microsoft.Extensions.AI` cung cấp abstraction `IChatClient` để application code không cần phụ thuộc trực tiếp vào một provider cụ thể.
+`Microsoft.Extensions.AI` cung cấp abstraction để application code không gắn chặt vào một provider.
 
 ```csharp
 using Microsoft.Extensions.AI;
@@ -67,7 +217,7 @@ public sealed class ArchitectureTutor(IChatClient chatClient)
         ChatResponse response = await chatClient.GetResponseAsync(
             [
                 new(ChatRole.System,
-                    "Bạn là software architect. Giải thích ngắn, có ví dụ .NET production."),
+                    "Bạn là software architect. Giải thích ngắn, có ví dụ production."),
                 new(ChatRole.User, topic)
             ],
             cancellationToken: cancellationToken);
@@ -77,59 +227,26 @@ public sealed class ArchitectureTutor(IChatClient chatClient)
 }
 ```
 
-Điểm quan trọng không phải syntax. Boundary là:
+Boundary:
 
 ```text
 ArchitectureTutor
-      ↓ depends on
+      ↓
 IChatClient
-      ↓ implemented by
-OpenAI / Azure OpenAI / Ollama / another provider
+      ↓
+OpenAI / Azure OpenAI / local/other provider adapter
 ```
 
-Application service có thể được test/fake mà không gắn cứng vào SDK provider.
+Business/application code có thể test/fake mà không phụ thuộc trực tiếp SDK provider.
 
-## Wiring với OpenAI .NET + Microsoft.Extensions.AI
-
-Ví dụ dưới đây đọc model và API key từ environment thay vì hard-code secret:
-
-```csharp
-using Microsoft.Extensions.AI;
-using OpenAI.Chat;
-
-string model = Environment.GetEnvironmentVariable("OPENAI_MODEL")
-    ?? throw new InvalidOperationException("OPENAI_MODEL is missing");
-
-string apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY")
-    ?? throw new InvalidOperationException("OPENAI_API_KEY is missing");
-
-ChatClient providerClient = new(model: model, apiKey: apiKey);
-IChatClient chatClient = providerClient.AsIChatClient();
-
-ChatResponse response = await chatClient.GetResponseAsync(
-    "Giải thích khác nhau giữa timeout và cancellation trong distributed system.");
-
-Console.WriteLine(response.Text);
-```
-
-Packages tương ứng cần được kiểm tra theo baseline hiện tại trước khi pin version:
-
-```bash
-dotnet add package OpenAI
-dotnet add package Microsoft.Extensions.AI
-dotnet add package Microsoft.Extensions.AI.OpenAI
-```
-
-## Tại sao abstraction quan trọng?
+## 6. Business capability abstraction tốt hơn model abstraction thuần túy
 
 Bad:
 
 ```csharp
 public sealed class OrderService
 {
-    private readonly ChatClient _openAi;
-
-    // Business service phụ thuộc trực tiếp provider SDK.
+    private readonly ChatClient _provider;
 }
 ```
 
@@ -144,7 +261,7 @@ public interface IOrderRiskClassifier
 }
 ```
 
-Implementation AI nằm sau business capability:
+Implementation AI đứng sau business port:
 
 ```csharp
 public sealed class AiOrderRiskClassifier(IChatClient chatClient)
@@ -167,96 +284,325 @@ public sealed class AiOrderRiskClassifier(IChatClient chatClient)
         return result.Result;
     }
 }
-
-public sealed record OrderRiskInput(
-    string CustomerId,
-    decimal Amount,
-    string Country);
-
-public sealed record RiskDecision(
-    string Level,
-    string Reason,
-    bool RequiresHumanReview);
 ```
 
-Business code dùng `IOrderRiskClassifier`, không biết model/provider nào đứng sau.
+Ứng dụng phụ thuộc `IOrderRiskClassifier`, không phụ thuộc concept “chat” ở mọi nơi.
 
-## Những thứ phải học trong module
+## 7. Structured output
 
-### P0
+Business systems cần contract.
 
-- tokens/context window ở mức application engineering;
-- `IChatClient` và provider abstraction;
-- streaming vs non-streaming;
+Fragile:
+
+```csharp
+string level = response.Text.Split(':')[1];
+```
+
+Better:
+
+```json
+{
+  "level": "HIGH",
+  "reason": "...",
+  "requiresHumanReview": true
+}
+```
+
+Nhưng structured output từ model vẫn phải validate business constraints. Schema-valid không đồng nghĩa business-correct.
+
+## 8. Tool Calling — model không phải authorization boundary
+
+Sai:
+
+```text
+System prompt:
+"Only refund if user is admin."
+```
+
+Đúng hơn:
+
+```text
+User identity
+      ↓
+Application authorization
+      ↓
+RefundTool
+      ↓
+Business validation / idempotency
+      ↓
+Payment system
+```
+
+Model có thể **request** tool; application quyết định tool có được thực thi không.
+
+## 9. RAG — retrieval là data system
+
+RAG không chỉ:
+
+```text
+PDF → embeddings → vector DB → model
+```
+
+Production RAG cần:
+
+```text
+ingestion
+chunking
+metadata
+versioning
+ACL/security trimming
+index lifecycle
+freshness
+deletion
+retrieval evaluation
+citation/provenance
+```
+
+Nếu user không được đọc document X, retrieval layer không được dựa vào prompt để “nhắc model đừng dùng X”.
+
+## 10. Evaluation
+
+Không có eval thì đổi model/prompt/retrieval chỉ là cảm giác.
+
+Eval pipeline:
+
+```text
+golden / representative dataset
+      ↓
+old config vs new config
+      ↓
+quality metrics
++ latency
++ cost
++ safety / authorization regressions
+      ↓
+release gate
+```
+
+Có thể cần human evaluation cho subjective output, deterministic tests cho structured/tool/business rules.
+
+## 11. AI observability
+
+Cần quan sát ít nhất:
+
+```text
+request latency
+model latency
+retrieval latency
+tool latency
+input/output token or usage cost
+model/provider errors
+structured-output failures
+tool-call rate
+eval score
+fallback rate
+```
+
+Không log raw prompt/context nếu có PII/secret/confidential data mà chưa có data policy.
+
+## 12. Timeout / cancellation
+
+AI call thường chậm hơn DB/API thông thường.
+
+HTTP cancellation nên propagate:
+
+```text
+HTTP request aborted
+→ application CancellationToken
+→ retrieval/model/tool calls cancelled where safe
+```
+
+Nhưng external tool có side effect:
+
+```text
+tool timeout
+!=
+action definitely failed
+```
+
+Vẫn áp distributed-systems mental model `UNKNOWN + reconcile` khi phù hợp.
+
+## 13. Provider failure / fallback
+
+Fallback không đơn giản:
+
+```text
+Provider A fails
+→ call Provider B
+```
+
+vì:
+
+- models khác behavior/schema/tool semantics;
+- data residency/compliance khác;
+- latency/cost khác;
+- same request có side-effect tool context.
+
+Fallback strategy phải được evaluated, not assumed.
+
+## 14. Cloud deployment
+
+Một production AI app trên Azure có thể có:
+
+```text
+Front Door / APIM
+→ .NET API (App Service / Container Apps / AKS when justified)
+→ Azure OpenAI / provider
+→ Azure SQL / Search / Storage
+→ Service Bus for async jobs
+→ Managed Identity + Key Vault
+→ Azure Monitor / App Insights
+```
+
+Service names không phải architecture; [Module 14](../14-cloud/README.md) dạy cách chọn theo workload.
+
+## 15. AI Project thật để chứng minh build được
+
+Build một **Enterprise Read-Only Knowledge Assistant**:
+
+### Functional
+
+```text
+login
+ask question
+retrieve authorized docs
+generate cited answer
+call read-only business tool
+show structured result
+```
+
+### Engineering requirements
+
+- ASP.NET Core API;
+- SQL for conversation/audit/config state;
+- API auth/AuthZ;
+- document ingestion + index;
+- ACL-aware retrieval;
+- provider abstraction;
+- tool contracts;
 - structured output;
-- tool calling;
+- evaluation dataset;
+- telemetry/cost;
+- Docker + Azure deployment;
+- IaC/CI/CD;
+- rate limiting;
+- fallback/degradation;
+- PII-safe logging.
+
+### Failure drills
+
+```text
+model timeout
+retrieval service unavailable
+unauthorized document retrieved attempt
+prompt injection asks destructive tool
+provider returns malformed output
+tool API timeout
+index stale after document deletion
+provider outage
+cost spike
+```
+
+### Portfolio evidence
+
+```text
+architecture diagram
+OpenAPI
+schema/index design
+AuthZ tests
+RAG eval report
+latency/cost dashboard
+failure drill report
+ADR: provider/search/hosting choices
+deployment URL/demo
+```
+
+Đây chứng minh anh **build được AI product**, không chỉ demo prompt.
+
+## 16. Learning priorities
+
+### P0 — engineering + AI application core
+
+- backend/API/data/cloud foundation;
+- model/provider abstraction;
+- structured output;
+- tool calling + authorization;
 - cancellation/timeouts;
 - evaluation/regression;
 - AI security basics;
-- telemetry, latency, token/cost.
+- telemetry/latency/cost;
+- deploy/operate.
 
 ### P1
 
-- embeddings;
-- semantic/vector search;
-- RAG pipeline;
+- embeddings/vector/semantic search;
+- RAG lifecycle;
 - model fallback/routing;
 - prompt/model/config versioning;
-- caching và rate limiting.
+- caching/rate limiting;
+- async AI jobs;
+- human-in-the-loop.
 
 ### P2
 
 - fine-tuning lifecycle;
 - custom model hosting;
-- advanced MLOps/training infrastructure.
+- training infrastructure;
+- advanced MLOps when role/project requires.
 
-## Common mistakes
+## 17. Common mistakes
 
-### 1. Trả string rồi parse thủ công
+### “AI-first, engineering-later”
 
-```csharp
-string text = response.Text;
-string level = text.Split(':')[1]; // fragile
-```
+Chat demo chạy local nhưng không có auth, data model, deploy, observability.
 
-Ưu tiên structured output nếu contract có cấu trúc.
+### Authorization in prompt
 
-### 2. Đưa authorization vào prompt
+Security boundary sai.
 
-Sai:
+### No eval
 
-```text
-"Only delete invoices if the user is admin."
-```
+Không biết release tốt hơn hay tệ hơn.
 
-Prompt không phải security boundary. Tool/application service phải kiểm tra identity và policy thật.
+### Raw logs
 
-### 3. Không truyền `CancellationToken`
+Prompt/context chứa PII/secrets bị đẩy vào telemetry.
 
-AI call có thể có latency lớn hơn API/database call thông thường. Cancellation từ HTTP request phải propagate xuống provider/tool call.
+### Provider SDK in domain code
 
-### 4. Không có eval trước khi đổi prompt/model
+Vendor details lan khắp business system.
 
-Nếu không có dataset + metric, câu "model mới tốt hơn" chỉ là cảm giác.
+### No degraded mode
 
-## Production checklist
+Model provider outage → whole core product unavailable dù AI feature không critical.
 
-- [ ] secret không nằm trong source control;
-- [ ] model/config lấy từ configuration;
-- [ ] timeout/cancellation rõ ràng;
-- [ ] structured output cho business contract;
-- [ ] tool có authorization riêng;
-- [ ] request/response telemetry không leak PII;
-- [ ] latency/token/cost có metric;
-- [ ] eval regression chạy trước release;
-- [ ] có fallback/degradation strategy khi model provider lỗi;
-- [ ] prompt/model/retrieval config có version.
+## 18. Production checklist
+
+- [ ] AI feature gắn với business outcome rõ;
+- [ ] backend/API/data foundation production-ready;
+- [ ] auth/AuthZ ngoài prompt;
+- [ ] secrets không nằm source;
+- [ ] model/provider config versioned;
+- [ ] timeout/cancellation rõ;
+- [ ] structured output validated;
+- [ ] tools enforce authorization + idempotency;
+- [ ] retrieval respects ACL/deletion/versioning;
+- [ ] PII-safe telemetry;
+- [ ] quality/latency/cost metrics;
+- [ ] eval regression before release;
+- [ ] fallback/degradation strategy tested;
+- [ ] cloud deployment + rollback;
+- [ ] failure drills documented;
+- [ ] project runnable/demoable.
 
 ## Học tiếp
 
-1. [Structured Output và Tool Calling](structured-output-and-tool-calling.md)
-2. [RAG, Evaluation và Observability](rag-evaluation-and-observability.md)
-3. Module AI Coding Agents để hiểu agent loop, repository context, MCP, tests và PR workflow.
+1. [Structured Output & Tool Calling](structured-output-and-tool-calling.md)
+2. [RAG, Evaluation & Observability](rag-evaluation-and-observability.md)
+3. [Cloud & Azure](../14-cloud/README.md)
+4. [System Design](../24-system-design/README.md)
+5. [Software Architecture](../25-software-architecture/README.md)
+6. [AI Coding Agents](../21-ai-coding-agents/README.md)
 
 ## Official English Sources
 
@@ -267,6 +613,6 @@ Nếu không có dataset + metric, câu "model mới tốt hơn" chỉ là cảm
 
 ## Verification metadata
 
-- Verified: 2026-08-12
-- Target: .NET 10-oriented examples
-- Stable concept vs version-specific APIs: package/API versions must follow `technology-baseline.md`.
+- Updated: 2026-08-19.
+- Target: production AI engineering on top of software/backend foundations.
+- Version-specific APIs/packages must follow current official docs and `technology-baseline.md`.
