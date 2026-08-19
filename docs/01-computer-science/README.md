@@ -42,9 +42,7 @@ Virtual address space không phải RAM. Managed heap không phải toàn bộ p
 
 ## Cách chạy lab — portable path
 
-Không dùng đường dẫn theo máy cá nhân như `E:\Documents\Dev\...`.
-
-Clone repo một lần:
+Không dùng absolute path theo máy cá nhân. Clone repo một lần:
 
 ```powershell
 git clone https://github.com/Trinhduyet/trinhduyet.github.io.git
