@@ -1,11 +1,70 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 520 664" role="img" aria-labelledby="title desc">
-<title id="title">Readme — diagram 2</title><desc id="desc">Readme — diagram 2</desc>
-<style>@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap');
-text{font-family:'Geist',Inter,system-ui,sans-serif;fill:#2d3142}.mono{font-family:'Geist Mono',ui-monospace,monospace}.node-title{font-size:12px;font-weight:600}.sub{font-size:9px;fill:#4f5d75}.tag{font-size:7px;font-weight:500;letter-spacing:.16em;fill:#7a8399}.edge-label{font-size:8px;fill:#4f5d75}.callout{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:14px;fill:#4f5d75}svg{background:#f5f5f5}path,line,rect,polygon,circle{vector-effect:non-scaling-stroke}</style>
-<defs>
- <marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#4f5d75"/></marker>
- <marker id="arr-accent" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#eb6c36"/></marker>
- <marker id="arr-link" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#2e5aa8"/></marker>
-</defs>
-<rect width="520" height="664" fill="#f5f5f5"/>
-<path d="M 260.0 94 V 105.0 Q 260.0 113.0 252.0 113.0 H 192.0 Q 184.0 113.0 184.0 121.0 V 132" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 184.0 194 V 205.0 Q 184.0 213.0 176.0 213.0 H 116.0 Q 108.0 213.0 108.0 221.0 V 232" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 260.0 94 V 105.0 Q 260.0 113.0 268.0 113.0 H 328.0 Q 336.0 113.0 336.0 121.0 V 132" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 108.0 294 V 255.0 Q 108.0 263.0 116.0 263.0 H 252.0 Q 260.0 263.0 260.0 255.0 V 232" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 336.0 194 V 205.0 Q 336.0 213.0 328.0 213.0 H 268.0 Q 260.0 213.0 260.0 221.0 V 232" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 184.0 194 V 205.0 Q 184.0 213.0 192.0 213.0 H 404.0 Q 412.0 213.0 412.0 221.0 V 232" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 108.0 294 V 255.0 Q 108.0 263.0 116.0 263.0 H 404.0 Q 412.0 263.0 412.0 255.0 V 232" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 336.0 194 V 205.0 Q 336.0 213.0 344.0 213.0 H 404.0 Q 412.0 213.0 412.0 221.0 V 232" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 260.0 294 V 255.0 Q 260.0 263.0 268.0 263.0 H 404.0 Q 412.0 263.0 412.0 255.0 V 232" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 412.0 294 V 305.0 Q 412.0 313.0 404.0 313.0 H 192.0 Q 184.0 313.0 184.0 321.0 V 332" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 412.0 294 V 305.0 Q 412.0 313.0 404.0 313.0 H 344.0 Q 336.0 313.0 336.0 321.0 V 332" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 336.0 394 V 405.0 Q 336.0 413.0 328.0 413.0 H 268.0 Q 260.0 413.0 260.0 421.0 V 432" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><path d="M 260.0 494 V 532" fill="none" stroke="#4f5d75" stroke-width="1.1" marker-end="url(#arr)"/><rect x="200.0" y="32" width="120" height="62" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1.1"/><text x="260.0" y="60.0" text-anchor="middle" class="node-title">Prerequisite</text><text x="260.0" y="74.0" text-anchor="middle" class="sub">C# syntax cơ bản</text><rect x="124.0" y="132" width="120" height="62" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1.1"/><text x="184.0" y="167.0" text-anchor="middle" class="node-title">1. Complexity + workload</text><rect x="48.0" y="232" width="120" height="62" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1.1"/><text x="108.0" y="267.0" text-anchor="middle" class="node-title">2. Data structures</text><rect x="276.0" y="132" width="120" height="62" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1.1"/><text x="336.0" y="167.0" text-anchor="middle" class="node-title">3. Scheduling + concurrency</text><rect x="200.0" y="232" width="120" height="62" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1.1"/><text x="260.0" y="267.0" text-anchor="middle" class="node-title">4. Memory + cache</text><rect x="352.0" y="232" width="120" height="62" rx="8" fill="#fff0e9" stroke="#eb6c36" stroke-width="1.1"/><text x="412.0" y="260.0" text-anchor="middle" class="node-title">WorkloadLab</text><text x="412.0" y="274.0" text-anchor="middle" class="sub">lookup · race · locality</text><rect x="124.0" y="332" width="120" height="62" rx="8" fill="#e8edf2" stroke="#7a8399" stroke-width="1.1"/><text x="184.0" y="360.0" text-anchor="middle" class="node-title">Module 02</text><text x="184.0" y="374.0" text-anchor="middle" class="sub">Linux resource diagnosis</text><rect x="276.0" y="332" width="120" height="62" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1.1"/><text x="336.0" y="360.0" text-anchor="middle" class="node-title">Module 03</text><text x="336.0" y="374.0" text-anchor="middle" class="sub">.NET runtime deep dive</text><rect x="200.0" y="432" width="120" height="62" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1.1"/><text x="260.0" y="460.0" text-anchor="middle" class="node-title">Module 10</text><text x="260.0" y="474.0" text-anchor="middle" class="sub">Performance engineering</text><rect x="200.0" y="532" width="120" height="62" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1.1"/><text x="260.0" y="560.0" text-anchor="middle" class="node-title">Module 17</text><text x="260.0" y="574.0" text-anchor="middle" class="sub">Distributed systems</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 900 760" role="img" aria-labelledby="title desc">
+  <title id="title">Module 01 dependency map</title>
+  <desc id="desc">Dependency map từ prerequisite C# qua complexity, data structures, scheduling, memory và các module production tiếp theo.</desc>
+  <style>
+    text{font-family:Inter,Segoe UI,Arial,sans-serif;fill:#2d3142}
+    .title{font-size:19px;font-weight:700}
+    .sub{font-size:14px;fill:#4f5d75}
+    .box{fill:#fff;stroke:#2d3142;stroke-width:1.4}
+    .soft{fill:#e8edf2;stroke:#7a8399;stroke-width:1.4}
+    .accent{fill:#fff0e9;stroke:#eb6c36;stroke-width:1.6}
+    .edge{fill:none;stroke:#64748b;stroke-width:1.5}
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect width="900" height="760" fill="#f8fafc"/>
+
+  <rect class="box" x="320" y="35" width="260" height="90" rx="14"/>
+  <text class="title" x="450" y="73" text-anchor="middle">Prerequisite</text>
+  <text class="sub" x="450" y="100" text-anchor="middle">C# syntax cơ bản</text>
+
+  <path class="edge" d="M450 125 V165 H230 V195" marker-end="url(#arrow)"/>
+  <path class="edge" d="M450 125 V165 H670 V195" marker-end="url(#arrow)"/>
+
+  <rect class="box" x="110" y="195" width="240" height="100" rx="14"/>
+  <text class="title" x="230" y="235" text-anchor="middle">
+    <tspan x="230" dy="0">1. Complexity</tspan>
+    <tspan x="230" dy="25">+ workload</tspan>
+  </text>
+
+  <rect class="box" x="550" y="195" width="240" height="100" rx="14"/>
+  <text class="title" x="670" y="235" text-anchor="middle">
+    <tspan x="670" dy="0">3. Scheduling</tspan>
+    <tspan x="670" dy="25">+ concurrency</tspan>
+  </text>
+
+  <path class="edge" d="M230 295 V335 H175 V365" marker-end="url(#arrow)"/>
+  <path class="edge" d="M670 295 V335 H450 V365" marker-end="url(#arrow)"/>
+  <path class="edge" d="M670 295 V335 H725 V365" marker-end="url(#arrow)"/>
+
+  <rect class="box" x="55" y="365" width="240" height="95" rx="14"/>
+  <text class="title" x="175" y="420" text-anchor="middle">2. Data structures</text>
+
+  <rect class="box" x="330" y="365" width="240" height="95" rx="14"/>
+  <text class="title" x="450" y="420" text-anchor="middle">4. Memory + cache</text>
+
+  <rect class="accent" x="605" y="365" width="240" height="95" rx="14"/>
+  <text class="title" x="725" y="405" text-anchor="middle">WorkloadLab</text>
+  <text class="sub" x="725" y="435" text-anchor="middle">lookup · race · locality</text>
+
+  <path class="edge" d="M175 460 V505 H330 V535" marker-end="url(#arrow)"/>
+  <path class="edge" d="M450 460 V505 H570 V535" marker-end="url(#arrow)"/>
+  <path class="edge" d="M725 460 V505 H570"/>
+
+  <rect class="soft" x="210" y="535" width="240" height="95" rx="14"/>
+  <text class="title" x="330" y="575" text-anchor="middle">Module 02</text>
+  <text class="sub" x="330" y="605" text-anchor="middle">Linux resource diagnosis</text>
+
+  <rect class="box" x="490" y="535" width="240" height="95" rx="14"/>
+  <text class="title" x="610" y="575" text-anchor="middle">Module 03</text>
+  <text class="sub" x="610" y="605" text-anchor="middle">.NET runtime deep dive</text>
+
+  <path class="edge" d="M330 630 V670 H450 V695" marker-end="url(#arrow)"/>
+  <path class="edge" d="M610 630 V670 H450"/>
+
+  <rect class="box" x="320" y="695" width="260" height="55" rx="14"/>
+  <text class="title" x="450" y="730" text-anchor="middle">Module 10 · Performance</text>
+</svg>
