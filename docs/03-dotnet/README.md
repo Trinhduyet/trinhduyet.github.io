@@ -43,12 +43,6 @@ Generic Host gom DI, configuration, logging, hosted services và lifetime. Host 
 
 ## Cách chạy lab — portable path
 
-Không dùng path hard-code theo máy cá nhân như:
-
-```text
-E:\Documents\Dev\labs\03-dotnet\runtime-lab
-```
-
 Clone repo một lần:
 
 ```powershell
@@ -67,7 +61,7 @@ dotnet run -c Release --no-build -- allocation
 dotnet run -c Release --no-build -- diagnostics
 ```
 
-Forward slash chạy được trong PowerShell và Bash. Mọi command trong tài liệu phải được hiểu tương đối từ repository root trừ khi trang nói rõ working directory khác.
+Không dùng absolute path theo máy cá nhân. Forward slash chạy được trong PowerShell và Bash. Mọi command trong tài liệu phải được hiểu tương đối từ repository root trừ khi trang nói rõ working directory khác.
 
 RuntimeLab không dùng external NuGet package, có hard bounds và in runtime context. Diagnostics production vẫn cần permission, sampling, privacy và tool/version policy.
 
