@@ -52,6 +52,9 @@ jobs:
       - name: Audit portable documentation paths
         run: python scripts/audit-docs.py
 
+      - name: Audit learning quality and runnable evidence
+        run: python scripts/audit-learning-quality.py
+
       - name: Normalize legacy SVG text bounds
         run: python scripts/normalize-diagrams.py
 
