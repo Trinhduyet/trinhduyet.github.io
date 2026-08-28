@@ -177,23 +177,30 @@ nav:
           - Safe Delivery & Recovery: 13-devops-iac/safe-delivery-drift-and-recovery.md
 
   - Azure & Platform:
-      - Cloud & Azure:
-          - Overview: 14-cloud/README.md
-          - Cloud Primitives, Identity & Network: 14-cloud/cloud-primitives-identity-and-networking.md
-          - Azure Foundations & Landing Zones: 14-cloud/azure-foundations-resource-hierarchy-and-landing-zones.md
-          - Azure Identity, Network & Zero Trust: 14-cloud/azure-identity-networking-and-zero-trust.md
-          - Azure Compute, Data & Messaging: 14-cloud/azure-compute-data-messaging-and-integration.md
-          - AKS Production Architecture: 14-cloud/azure-kubernetes-service-aks-production-architecture.md
-          - Azure Reliability, Observability & Cost: 14-cloud/azure-reliability-observability-governance-and-cost.md
-          - Azure .NET Reference Architecture: 14-cloud/azure-dotnet-reference-architecture.md
-          - Regions, Availability & DR: 14-cloud/regions-availability-and-disaster-recovery.md
-          - Cloud Cost Governance: 14-cloud/cloud-cost-governance-and-operations.md
-          - References: 14-cloud/references.md
-      - Kubernetes:
-          - Overview: 15-kubernetes/README.md
-          - Architecture & Reconciliation: 15-kubernetes/cluster-architecture-and-reconciliation.md
-          - Workloads, Network & Storage: 15-kubernetes/workloads-networking-and-storage.md
-          - Security & Observability: 15-kubernetes/kubernetes-security-observability-and-operations.md
+      - Overview: 14-cloud/README.md
+      - Foundations & Landing Zones: 14-cloud/azure-foundations-resource-hierarchy-and-landing-zones.md
+      - Cloud Primitives, Identity & Network: 14-cloud/cloud-primitives-identity-and-networking.md
+      - Production Compute Handbook: 14-cloud/azure-production-handbook-compute.md
+      - Production Data & Messaging Handbook: 14-cloud/azure-production-handbook-data-messaging.md
+      - Production Network & Security Handbook: 14-cloud/azure-production-handbook-network-security.md
+      - Production Operations & Cost Handbook: 14-cloud/azure-production-handbook-operations-cost.md
+      - Azure Identity, Network & Zero Trust: 14-cloud/azure-identity-networking-and-zero-trust.md
+      - Azure Compute, Data & Messaging Deep Dive: 14-cloud/azure-compute-data-messaging-and-integration.md
+      - Azure Reliability, Observability & Cost: 14-cloud/azure-reliability-observability-governance-and-cost.md
+      - Azure .NET Reference Architecture: 14-cloud/azure-dotnet-reference-architecture.md
+      - Regions, Availability & DR: 14-cloud/regions-availability-and-disaster-recovery.md
+      - Cloud Cost Governance: 14-cloud/cloud-cost-governance-and-operations.md
+      - References: 14-cloud/references.md
+
+  - Kubernetes:
+      - Overview & Learning Path: 15-kubernetes/README.md
+      - Architecture & Reconciliation: 15-kubernetes/cluster-architecture-and-reconciliation.md
+      - Workloads, Network & Storage: 15-kubernetes/workloads-networking-and-storage.md
+      - Application Configuration & Scheduling: 15-kubernetes/application-configuration-and-scheduling.md
+      - Security & Observability: 15-kubernetes/kubernetes-security-observability-and-operations.md
+      - kubectl Debugging & CKAD Practice: 15-kubernetes/kubectl-debugging-and-ckad-practice.md
+      - AKS on Azure Production Mapping: 15-kubernetes/aks-on-azure-production-architecture.md
+      - References: 15-kubernetes/references.md
 
   - Distributed:
       - Distributed Systems:
