@@ -1,105 +1,232 @@
-# Skills matrix
+# Skills Matrix — Capability, Target Depth & Evidence
 
-## Cách chấm level
+> Public repository không hard-code “current skill level” của một cá nhân. Matrix này mô tả **capability cần đạt, target depth, content maturity và evidence thực sự có trong repo**.
 
-| Level | Ý nghĩa | Bằng chứng tối thiểu |
-| --- | --- | --- |
-| 0 | Unknown | Chưa đánh giá |
-| 1 | Awareness | Mô tả use case và vocabulary |
-| 2 | Can Explain | Giải thích mental model, failure và trade-off |
-| 3 | Can Implement | Tạo implementation đúng và có test |
-| 4 | Can Operate | Deploy, observe, diagnose, recover |
-| 5 | Can Design / Review | Chọn/loại bỏ phương án bằng requirements, evidence, cost |
+Learner progress nên copy vào [Progress Template](progress-template.md) và chỉ tăng level khi có evidence.
 
-Ký hiệu “current → target”. Level current bằng 0 cho đến khi có assessment evidence. Dấu * chỉ input tự khai báo, chưa phải verified evidence.
+## Level model
 
-## Matrix
+| Level | Capability | Evidence tối thiểu |
+|---:|---|---|
+| 1 | Awareness | mô tả problem/use case/vocabulary |
+| 2 | Explain | mental model + failure + trade-off |
+| 3 | Implement | code/config đúng + tests |
+| 4 | Operate | deploy/observe/debug/recover |
+| 5 | Design / Review | chọn/loại solution bằng requirements, evidence, cost |
 
-| Area | Topic | Priority | Level | Status | Evidence |
-| --- | --- | --- | --- | --- | --- |
-| CS | Big-O và workload reasoning | P1 | 0 → 3 | In progress | [Complexity chapter](../01-computer-science/complexity-and-workload-reasoning.md) + WorkloadLab evidence pending |
-| CS | Arrays/lists/hash/heap/queue/graph | P1/P2 | 0 → 3 | In progress | [Data structures chapter](../01-computer-science/data-structures-for-backend-systems.md) + learner decision evidence pending |
-| CS | Process/thread/scheduling | P0 | 0 → 4 | In progress | [Scheduling/concurrency chapter](../01-computer-science/process-thread-scheduling-and-concurrency.md) + race/diagnostic evidence pending |
-| CS | Memory/stack/heap/virtual memory | P0 | 0 → 4 | In progress | [Memory/cache chapter](../01-computer-science/memory-stack-heap-virtual-memory-and-cache.md) + locality/memory investigation pending |
-| Linux | Filesystem, permissions, users/groups | P0 | 0 → 4 | In progress | [Filesystem chapter](../02-linux-git-networking/filesystem-permissions-and-identities.md) + permission failure lab output pending |
-| Linux | Process, signals, resource diagnosis | P0 | 0 → 4 | In progress | [Process/resource chapter](../02-linux-git-networking/process-signals-and-resource-pressure.md) + lab output pending |
-| Git | History, diff, branch, merge, revert/recovery | P0 | 0 → 4 | In progress | [Git recovery chapter](../02-linux-git-networking/git-mental-model-and-safe-recovery.md) + learner recovery exercise pending |
-| Networking | DNS/TCP/UDP/TLS/HTTP | P0 | 0 → 5 | In progress | [Protocol deep dive](../02-linux-git-networking/dns-tcp-tls-http-deep-dive.md) + layer-by-layer lab output pending |
-| Networking | NAT, proxy, load balancer | P0/P1 | 0 → 4 | In progress | [Network boundaries chapter](../02-linux-git-networking/proxy-nat-load-balancer-and-network-boundaries.md) + [incident lab](../02-linux-git-networking/incident-lab-dotnet-service.md) output pending |
-| C# | Type system, generics, collections, LINQ | P0 | 0 → 4 | In progress | [Types chapter](../03-dotnet/csharp-types-generics-and-collections.md) + Project 01 code/review |
-| .NET | Exceptions, IDisposable, resource ownership | P0 | 0 → 5 | In progress | [Ownership chapter](../03-dotnet/exceptions-disposable-and-resource-ownership.md) + failure/cleanup tests |
-| .NET | Task, async/await, CancellationToken | P0 | 0 → 5 | In progress | [Async chapter](../03-dotnet/async-await-cancellation-and-task-lifecycle.md) + RuntimeLab cancel evidence |
-| .NET | ThreadPool và concurrency | P0 | 0 → 5 | In progress | [ThreadPool chapter](../03-dotnet/threadpool-concurrency-and-diagnostics.md) + saturation/race lab |
-| .NET | GC, allocations, memory | P0 | 0 → 4 | In progress | [GC chapter](../03-dotnet/gc-allocations-and-runtime-memory.md) + RuntimeLab allocation/diagnostics |
-| .NET | Generic Host, DI, config, logging | P0 | 0 → 5 | In progress | [ThreadPool/Host chapter](../03-dotnet/threadpool-concurrency-and-diagnostics.md) + hosted app/lifecycle tests |
-| Backend | HTTP request lifecycle | P0 | 0 → 5 | In progress | [Request lifecycle](../04-backend/request-lifecycle-and-endpoint-contract.md) + trace từ socket đến handler |
-| Backend | Authn/authz/validation | P0 | 0 → 5 | In progress | [Auth chapter](../04-backend/authentication-authorization-and-validation.md) + threat tests/policy matrix |
-| Backend | Pagination/filtering/sorting | P0 | 0 → 4 | In progress | [Capacity chapter](../04-backend/pagination-idempotency-rate-limiting-and-caching.md) + BackendLab contract evidence |
-| Backend | Idempotency/rate limiting/caching | P0 | 0 → 5 | In progress | [Capacity chapter](../04-backend/pagination-idempotency-rate-limiting-and-caching.md) + duplicate/overload experiments |
-| Backend | Background jobs/files/webhooks | P0 | 0 → 4 | In progress | [Integration chapter](../04-backend/background-jobs-files-and-webhooks.md) + recovery/replay tests |
-| SQL | Relational model/schema/constraints | P0 | 0 → 5 | In progress | [Relational chapter](../05-sql/relational-model-schema-and-sql.md) + data model review |
-| SQL | Querying, joins, windows, CTEs | P0 | 0 → 4 | In progress | [Relational chapter](../05-sql/relational-model-schema-and-sql.md) + query portfolio |
-| SQL | Transactions/isolation/locking/deadlocks | P0 | 0 → 5 | In progress | [Transactions chapter](../05-sql/transactions-isolation-and-concurrency.md) + blocking/deadlock lab |
-| SQL | Indexes/statistics/execution plans | P0 | 0 → 5 | In progress | [Plans chapter](../05-sql/indexes-execution-plans-and-operations.md) + actual plan analysis |
-| SQL Server | Query Store/plan cache/parameterization | P0/P1 | 0 → 4 | In progress | [Plans chapter](../05-sql/indexes-execution-plans-and-operations.md) + incident diagnosis |
-| SQL Server | tempdb/log/storage/backup overview | P1/P2 | 0 → 4 | In progress | [Plans chapter](../05-sql/indexes-execution-plans-and-operations.md) + recovery review |
-| EF Core | Query translation/tracking/loading | P0 | 0 → 5 | Planned | LINQ → SQL → plan → index evidence |
-| EF Core | Transactions/concurrency/migrations | P0 | 0 → 4 | Planned | Migration/rollback exercise |
-| API Design | Resources, methods, status/error model | P0 | 0 → 5 | In progress | [HTTP contract](../06-api-design/http-resource-contracts-and-semantics.md) + API review |
-| API Design | Evolution/versioning/compatibility | P0 | 0 → 5 | In progress | [Evolution chapter](../06-api-design/api-evolution-errors-and-pagination.md) + breaking-change exercise |
-| API Design | REST/RPC/gRPC/GraphQL/events | P1 | 0 → 5 | In progress | [Events chapter](../06-api-design/events-grpc-webhooks-and-contracts.md) + decision record |
-| ASP.NET Core | Hosting/pipeline/routing/binding | P0 | 0 → 5 | In progress | [Pipeline chapter](../07-aspnet-core/pipeline-hosting-and-configuration.md) + request trace |
-| ASP.NET Core | Security/rate limit/health checks | P0 | 0 → 5 | In progress | [Resilience chapter](../07-aspnet-core/resilience-security-and-middleware.md) + probe tests |
-| ASP.NET Core | HttpClientFactory/workers/caching | P0 | 0 → 4 | In progress | [Operations chapter](../07-aspnet-core/deployment-observability-and-operations.md) + dependency lab |
-| Testing | Unit/integration/API/database/contract | P0 | 0 → 5 | In progress | [Test strategy](../08-testing-code-review/test-strategy-and-boundaries.md) + boundary evidence |
-| Testing | Load/resilience/security/AI eval | P0 | 0 → 4 | In progress | [Load testing](../08-testing-code-review/integration-contract-and-load-testing.md) + automated gates |
-| Code Review | Correctness/design/security/perf/ops | P0 | 0 → 5 | In progress | [Review chapter](../08-testing-code-review/code-review-quality-and-failure-analysis.md) + multi-role report |
-| Security | OAuth/OIDC/JWT/cookies/CSRF/CORS | P0 | 0 → 5 | In progress | [Identity chapter](../09-security-devsecops/identity-secrets-and-data-protection.md) + threat tests |
-| Security | Injection/SSRF/secrets/TLS/least privilege | P0 | 0 → 5 | In progress | [Threat modeling](../09-security-devsecops/threat-modeling-and-application-security.md) + mitigation lab |
-| DevSecOps | SAST/dependencies/secrets/SBOM/supply chain | P1 | 0 → 4 | In progress | [Supply-chain chapter](../09-security-devsecops/secure-supply-chain-and-devsecops.md) + CI gates |
-| Performance | Latency/throughput/tails/resources | P0 | 0 → 5 | In progress | [Measurement](../10-performance/measurement-profiling-and-bottlenecks.md) + performance report |
-| Performance | Profiling/load/capacity | P0 | 0 → 5 | In progress | [Capacity chapter](../10-performance/load-capacity-and-scalability.md) + bottleneck cycle |
-| Redis | Data structures/TTL/cache patterns | P1 | 0 → 4 | In progress | [Redis data types](../11-redis-caching/redis-data-structures-and-command-shape.md) + cache lab |
-| Redis | Persistence/replication/eviction/failure | P1 | 0 → 5 | In progress | [Redis operations](../11-redis-caching/redis-operations-ha-and-coordination.md) + outage/stampede lab |
-| Docker | Image/layers/build/cache/registry | P0 | 0 → 4 | In progress | [Docker images](../12-docker/images-builds-and-reproducibility.md) + reproducible image |
-| Docker | Runtime/network/volume/signals/resources | P0 | 0 → 5 | In progress | [Docker runtime](../12-docker/runtime-networking-storage-and-resources.md) + failure lab |
-| DevOps | Git strategy/CI/CD/artifact promotion | P1 | 0 → 5 | In progress | [CI/CD chapter](../13-devops-iac/ci-cd-artifacts-and-promotion.md) + rollback |
-| Terraform | State/plan/apply/drift/modules | P1 | 0 → 4 | In progress | [Terraform chapter](../13-devops-iac/terraform-state-modules-and-drift.md) + drift exercise |
-| Cloud | Compute/network/data/identity/regions/DR | P1 | 0 → 5 | In progress | [Cloud primitives](../14-cloud/cloud-primitives-identity-and-networking.md) + architecture |
-| Kubernetes | Reconciliation/control plane/workloads | P1 | 0 → 5 | In progress | [Reconciliation](../15-kubernetes/cluster-architecture-and-reconciliation.md) + rollout diagnosis |
-| Kubernetes | Networking/storage/resources/autoscaling | P1 | 0 → 5 | In progress | [Workloads](../15-kubernetes/workloads-networking-and-storage.md) + capacity lab |
-| Kubernetes | RBAC/policy/upgrades/troubleshooting | P1 | 0 → 5 | In progress | [Kubernetes operations](../15-kubernetes/kubernetes-security-observability-and-operations.md) + security runbook |
-| Observability | Structured logs/metrics/traces/correlation | P0 | 0 → 5 | Planned | End-to-end telemetry |
-| Observability | OpenTelemetry/SLI/SLO/alerts/incidents | P0/P1 | 0 → 5 | Planned | SLO + incident investigation |
-| Distributed | Timeout/retry/backoff/jitter/resilience | P0 | 0 → 5 | Planned | Dependency failure matrix |
-| Distributed | Messaging/delivery/order/backpressure/DLQ | P0 | 0 → 5 | Planned | Project 04 |
-| Distributed | Outbox/inbox/saga/consistency | P0 | 0 → 5 | Planned | ADR + recovery tests |
-| Distributed | Replication/partition/sharding/time | P0/P2 | 0 → 5 | Planned | System design review |
-| Data Engineering | Ingestion/batch/stream/CDC/lineage | P2 | 0 → 3 | Planned | Project 05 ingestion |
-| AI Engineering | Model/provider/structured output/tools | P0 | 2* → 5 | Gap assessment | Existing experience; production evidence pending |
-| AI Evaluation | Dataset/ground truth/judge/regression | P0 | 2* → 5 | Gap assessment | Eval suite + gate required |
-| RAG | Ingestion/retrieval/rerank/citation | P0 | 2* → 5 | Gap assessment | Project 05 quality evidence |
-| RAG | ACL/tenancy/deletion/versioning/cost | P0 | 1* → 5 | Gap assessment | Lifecycle/security evidence required |
-| Agents | Agent/workflow/tool/state design | P0 | 2* → 5 | Gap assessment | Project 06 |
-| MCP | Client/server/tools/resources/auth/trust | P0 | 1* → 5 | Gap assessment | Threat model + audited tools |
-| AI Security | Injection/exfiltration/tool abuse/agency | P0 | 1* → 5 | Gap assessment | Red-team suite |
-| GenAIOps | Prompt/model/index version/canary/rollback | P0/P1 | 1* → 5 | Gap assessment | AI release pipeline |
-| MLOps | Dataset/experiment/registry/training/drift | P2 | 0 → 3 | Planned | Selective architecture review |
-| System Design | FR/NFR/capacity/component selection | P0 | 0 → 5 | Planned | Design dossiers |
-| System Design | AI latency/cost/fallback/safety/data | P0 | 1* → 5 | Gap assessment | Project 07 |
-| Architecture | Boundaries/styles/DDD/data/security/deploy | P0 | 0 → 5 | Planned | Architecture review |
-| Architecture | Evolution/migration/rollback/cost | P0 | 0 → 5 | Planned | Migration plan + ADR |
-| Documentation | C4/sequence/data/deployment/trust | P1 | 0 → 5 | Planned | Diagram set |
-| Documentation | ADR/RFC/NFR/threat/failure/runbook | P1 | 0 → 5 | Planned | Project architecture packet |
+Target level thay đổi theo role. Xem [Role-based Learning Paths](role-based-learning-paths.md).
+
+## Content maturity
+
+```text
+Reference < Guided < Deep
+```
+
+`Runnable lab` là dimension riêng; Deep content có thể chưa có dedicated executable lab.
+
+---
+
+# Foundations
+
+| Area | Capability | Priority | Typical target | Content | Runnable lab | Evidence path |
+|---|---|---:|---:|---|---:|---|
+| CS | complexity/workload reasoning | P1 | 3 | Deep | **Yes** | [Complexity](../01-computer-science/complexity-and-workload-reasoning.md) + `labs/01-computer-science` |
+| CS | data structures by backend workload | P1/P2 | 3 | Deep | **Yes** | [Data structures](../01-computer-science/data-structures-for-backend-systems.md) |
+| CS | process/thread/scheduling/concurrency | P0 | 4 | Deep | **Yes** | [Scheduling](../01-computer-science/process-thread-scheduling-and-concurrency.md) |
+| CS | memory/virtual memory/cache locality | P0/P1 | 4 | Deep | **Yes** | [Memory](../01-computer-science/memory-stack-heap-virtual-memory-and-cache.md) |
+| Linux | filesystem/permissions/identity | P0 | 4 | Deep | **Yes** | [Filesystem](../02-linux-git-networking/filesystem-permissions-and-identities.md) |
+| Linux | process/signals/resource pressure | P0 | 4 | Deep | **Yes** | [Processes](../02-linux-git-networking/process-signals-and-resource-pressure.md) |
+| Git | history/diff/branch/revert/recovery | P0 | 4 | Deep | **Yes** | [Git mental model](../02-linux-git-networking/git-mental-model-and-safe-recovery.md) |
+| Networking | DNS/TCP/TLS/HTTP | P0 | 5 | Deep | **Yes** | [Protocol deep dive](../02-linux-git-networking/dns-tcp-tls-http-deep-dive.md) |
+| Networking | proxy/NAT/load balancer | P0/P1 | 4 | Deep | **Yes** | [Network boundaries](../02-linux-git-networking/proxy-nat-load-balancer-and-network-boundaries.md) + incident lab |
+
+---
+
+# .NET & Backend
+
+| Area | Capability | Priority | Typical target | Content | Runnable lab | Evidence path |
+|---|---|---:|---:|---|---:|---|
+| C# | types/generics/collections/LINQ | P0 | 4 | Deep | **Yes** | [Types](../03-dotnet/csharp-types-generics-and-collections.md) + `labs/03-dotnet` |
+| .NET | exceptions/IDisposable/resource ownership | P0 | 5 | Deep | **Yes** | [Resource ownership](../03-dotnet/exceptions-disposable-and-resource-ownership.md) |
+| .NET | async/await/CancellationToken | P0 | 5 | Deep | **Yes** | [Async/cancellation](../03-dotnet/async-await-cancellation-and-task-lifecycle.md) |
+| .NET | ThreadPool/concurrency diagnosis | P0 | 5 | Deep | **Yes** | [ThreadPool](../03-dotnet/threadpool-concurrency-and-diagnostics.md) |
+| .NET | GC/allocations/runtime memory | P0 | 4 | Deep | **Yes** | [GC](../03-dotnet/gc-allocations-and-runtime-memory.md) |
+| Backend | HTTP request lifecycle | P0 | 5 | Deep | **Yes** | [Request lifecycle](../04-backend/request-lifecycle-and-endpoint-contract.md) + `labs/04-backend` |
+| Backend | AuthN/AuthZ/validation | P0 | 5 | Deep | **Yes** | [Authentication/Authorization](../04-backend/authentication-authorization-and-validation.md) |
+| Backend | pagination/idempotency/rate limiting/cache boundary | P0 | 5 | Deep | **Yes** | [Idempotency & traffic](../04-backend/pagination-idempotency-rate-limiting-and-caching.md) |
+| Backend | background jobs/files/webhooks | P0 | 4 | Deep | **Yes** | [Jobs/webhooks](../04-backend/background-jobs-files-and-webhooks.md) |
+
+---
+
+# SQL, API & ASP.NET Core
+
+| Area | Capability | Priority | Typical target | Content | Runnable lab | Evidence path |
+|---|---|---:|---:|---|---:|---|
+| SQL | relational model/schema/constraints | P0 | 5 | Deep | No dedicated | [Relational model](../05-sql/relational-model-schema-and-sql.md) |
+| SQL | joins/windows/CTE/query reasoning | P0 | 4 | Deep | No dedicated | [Relational model](../05-sql/relational-model-schema-and-sql.md) |
+| SQL | transactions/isolation/locks/deadlocks | P0 | 5 | Deep | No dedicated | [Transactions](../05-sql/transactions-isolation-and-concurrency.md) |
+| SQL | indexes/statistics/execution plans | P0 | 5 | Deep | No dedicated | [Indexes & plans](../05-sql/indexes-execution-plans-and-operations.md) |
+| EF Core | LINQ → SQL → plan/query shape | P0 | 5 | **Deep/Active** | No dedicated | [EF Core query shape](../05-sql/ef-core-query-shape-and-sql.md) |
+| API | HTTP resources/methods/status/errors | P0 | 5 | Deep | No dedicated | [HTTP contracts](../06-api-design/http-resource-contracts-and-semantics.md) |
+| API | auth/OAuth/CORS/security boundary | P0 | 5 | Deep | No dedicated | [API security](../06-api-design/security-auth-oauth-and-cors.md) |
+| API | evolution/versioning/compatibility | P0 | 5 | Deep | No dedicated | [API evolution](../06-api-design/api-evolution-errors-and-pagination.md) |
+| API | traffic/cache/rate-limit/resilience | P0 | 5 | Deep | No dedicated | [Traffic & resilience](../06-api-design/traffic-caching-rate-limits-and-resilience.md) |
+| API | REST/gRPC/events/webhooks/realtime decision | P1 | 4/5 | Deep | No dedicated | [Events/gRPC](../06-api-design/events-grpc-webhooks-and-contracts.md) |
+| ASP.NET | hosting/pipeline/routing/config | P0 | 5 | Deep | No dedicated | [Pipeline/hosting](../07-aspnet-core/pipeline-hosting-and-configuration.md) |
+| ASP.NET | resilience/security/middleware/health | P0 | 5 | Deep | No dedicated | [Resilience](../07-aspnet-core/resilience-security-and-middleware.md) |
+| ASP.NET | deployment/observability/operations | P0 | 4/5 | Deep | No dedicated | [Operations](../07-aspnet-core/deployment-observability-and-operations.md) |
+
+---
+
+# Production Engineering
+
+| Area | Capability | Priority | Typical target | Content | Runnable lab | Evidence path |
+|---|---|---:|---:|---|---:|---|
+| Testing | unit/integration/API/database/contract strategy | P0 | 5 | Deep | No dedicated | [Test strategy](../08-testing-code-review/test-strategy-and-boundaries.md) |
+| Testing | load/resilience/security gates | P0 | 4 | Deep | No dedicated | [Integration/contract/load](../08-testing-code-review/integration-contract-and-load-testing.md) |
+| Review | correctness/security/perf/ops review | P0 | 5 | Deep | No dedicated | [Code review](../08-testing-code-review/code-review-quality-and-failure-analysis.md) |
+| Security | threat modeling/trust boundaries | P0 | 5 | Deep/Guided | No | [Module 09](../09-security-devsecops/README.md) |
+| Security | OAuth/OIDC/AuthZ/secrets/data protection | P0 | 5 | Deep/Guided | No | [Identity/secrets](../09-security-devsecops/identity-secrets-and-data-protection.md) |
+| DevSecOps | dependencies/secrets/SAST/SBOM/supply chain | P1 | 4 | Deep/Guided | No | [Supply chain](../09-security-devsecops/secure-supply-chain-and-devsecops.md) |
+| Performance | latency/throughput/tails/saturation | P0 | 5 | Deep/Guided | No | [Module 10](../10-performance/README.md) |
+| Performance | profiling/load/capacity/bottleneck | P0 | 5 | Deep/Guided | No | [Load & capacity](../10-performance/load-capacity-and-scalability.md) |
+| Performance | budgets/regression control | P0/P1 | 4 | Deep/Guided | No | [Regression control](../10-performance/optimization-budgets-and-regression-control.md) |
+| Redis | data structures/TTL/cache policy | P1 | 4 | Deep/Guided | No | [Module 11](../11-redis-caching/README.md) |
+| Redis | invalidation/stampede/failure | P1 | 5 | Deep/Guided | No | [Consistency](../11-redis-caching/cache-consistency-invalidation-and-stampede.md) |
+| Redis | memory/eviction/HA/coordination | P1 | 4/5 | Deep/Guided | No | [Operations](../11-redis-caching/redis-operations-ha-and-coordination.md) |
+| Docker | image/layers/build/registry identity | P0 | 4 | Deep/Guided | No | [Images](../12-docker/images-builds-and-reproducibility.md) |
+| Docker | runtime/network/storage/signals/resources | P0 | 5 | Deep/Guided | No | [Runtime](../12-docker/runtime-networking-storage-and-resources.md) |
+| Docker | security/Compose/operations | P0/P1 | 4 | Deep/Guided | No | [Security/Compose](../12-docker/docker-security-compose-and-operations.md) |
+
+---
+
+# DevOps, Azure & Kubernetes
+
+| Area | Capability | Priority | Typical target | Content | Runnable lab | Evidence path |
+|---|---|---:|---:|---|---:|---|
+| DevOps | CI/CD/artifact promotion/rollback | P1 | 5 | Deep/Guided | No | [CI/CD](../13-devops-iac/ci-cd-artifacts-and-promotion.md) |
+| Terraform | state/plan/apply/modules/drift | P1 | 4 | Deep/Guided | No | [Terraform](../13-devops-iac/terraform-state-modules-and-drift.md) |
+| Delivery | testing → image → registry → K8s/GitOps | P1 | 4/5 | Deep/Guided | No | [Production Delivery](../13-devops-iac/devops-kubernetes-production-delivery.md) |
+| Azure | landing zone/resource hierarchy/governance | P1 | 4 | Deep handbook | No | [Azure foundations](../14-cloud/azure-foundations-resource-hierarchy-and-landing-zones.md) |
+| Azure | identity/network/private access/edge | P0/P1 | 5 | Deep handbook | No | [Network/Security handbook](../14-cloud/azure-production-handbook-network-security.md) |
+| Azure | compute service selection/config/cost | P0/P1 | 5 | Deep handbook | No | [Compute handbook](../14-cloud/azure-production-handbook-compute.md) |
+| Azure | SQL/storage/cache/messaging selection | P0/P1 | 5 | Deep handbook | No | [Data/Messaging handbook](../14-cloud/azure-production-handbook-data-messaging.md) |
+| Azure | monitor/delivery/backup/DR/cost | P0/P1 | 5 | Deep handbook | No | [Operations/Cost handbook](../14-cloud/azure-production-handbook-operations-cost.md) |
+| Kubernetes | cluster/reconciliation/control plane/workers | P1 | 4/5 | Deep/Guided | No | [Architecture](../15-kubernetes/cluster-architecture-and-reconciliation.md) |
+| Kubernetes | Deployment/Pod/Service/network/storage | P1 | 5 | Deep/Guided | No | [Workloads](../15-kubernetes/workloads-networking-and-storage.md) |
+| Kubernetes | config/resources/scheduling/autoscaling | P1 | 4/5 | Deep/Guided | No | [Configuration/Scheduling](../15-kubernetes/application-configuration-and-scheduling.md) |
+| Kubernetes | RBAC/security/observability/operations | P1 | 4/5 | Deep/Guided | No | [Security/Operations](../15-kubernetes/kubernetes-security-observability-and-operations.md) |
+| Kubernetes | kubectl troubleshooting/CKAD application skills | P1 | 4/5 | Deep/Guided | No | [Debugging](../15-kubernetes/kubectl-debugging-and-ckad-practice.md) |
+| AKS | map K8s core to Azure production platform | P1 | 4/5 | Deep/Guided | No | [AKS mapping](../15-kubernetes/aks-on-azure-production-architecture.md) |
+
+---
+
+# Distributed Systems & Microservices
+
+| Area | Capability | Priority | Typical target | Content | Runnable lab | Evidence path |
+|---|---|---:|---:|---|---:|---|
+| Distributed | timeout/unknown outcome/retry/idempotency | P0 | 5 | **Deep/Active** | No | [Partial failure](../17-distributed-systems/partial-failure-timeouts-retries-and-idempotency.md) |
+| Distributed | messaging/at-least-once/outbox/inbox/dedup | P0 | 5 | **Deep/Active** | No | [Messaging](../17-distributed-systems/messaging-outbox-inbox-and-dedup.md) |
+| Distributed | consistency/ordering/saga/backpressure | P0 | 5 | **Deep/Active** | No | [Consistency](../17-distributed-systems/consistency-ordering-saga-and-backpressure.md) |
+| Microservices | business boundaries/data ownership/contracts | P0/P1 | 5 | Deep/Active | No | [Boundaries](../18-microservices-architecture/service-boundaries-data-ownership-and-contracts.md) |
+| Microservices | saga/unknown outcome/reconciliation | P0/P1 | 5 | Deep/Active | No | [Checkout saga](../18-microservices-architecture/checkout-saga-unknown-outcome-and-reconciliation.md) |
+| Microservices | communication/gateway/discovery/deployment | P1 | 4/5 | Deep/Active | No | [Communication](../18-microservices-architecture/communication-gateway-discovery-and-deployment.md) |
+| Microservices | testing/observability/migration | P1 | 4/5 | Deep/Active | No | [Testing/Migration](../18-microservices-architecture/testing-observability-and-migration.md) |
+
+---
+
+# System Design & Software Architecture
+
+| Area | Capability | Priority | Typical target | Content | Runnable lab | Evidence path |
+|---|---|---:|---:|---|---:|---|
+| System Design | requirements/NFR/capacity estimation | P0 | 5 | **Deep/Active** | No direct | [Requirements/Capacity](../24-system-design/requirements-nfr-and-capacity-estimation.md) |
+| System Design | traffic/LB/CDN/cache | P0 | 5 | **Deep/Active** | No direct | [Traffic](../24-system-design/traffic-load-balancing-cdn-and-cache.md) |
+| System Design | data/replication/partition/consistency | P0 | 5 | **Deep/Active** | No direct | [Data](../24-system-design/data-partitioning-replication-and-consistency.md) |
+| System Design | async/queue/backpressure/reliability | P0 | 5 | **Deep/Active** | No direct | [Async/Queues](../24-system-design/async-queues-backpressure-and-reliability.md) |
+| System Design | availability/multi-region/DR/security/cost | P0/P1 | 5 | **Deep/Active** | No direct | [Availability/DR](../24-system-design/availability-multiregion-dr-security-and-cost.md) |
+| System Design | case/design review | P0 | 5 | **Deep/Active** | No direct | [Case studies](../24-system-design/case-studies-and-design-review.md) |
+| Architecture | quality attributes/boundaries/styles | P0 | 5 | **Deep/Active** | No direct | [Quality/Styles](../25-software-architecture/quality-attributes-boundaries-and-styles.md) |
+| Architecture | DDD/modular monolith/microservices | P0 | 5 | **Deep/Active** | No direct | [DDD/Modularity](../25-software-architecture/ddd-modular-monolith-and-microservices.md) |
+| Architecture | Clean/Hexagonal/Vertical Slice | P0/P1 | 5 | **Deep/Active** | No direct | [Application structure](../25-software-architecture/clean-hexagonal-and-vertical-slice.md) |
+| Architecture | EDA/CQRS/integration | P0/P1 | 5 | **Deep/Active** | No direct | [Integration architecture](../25-software-architecture/event-driven-cqrs-and-integration.md) |
+| Architecture | ADR/fitness functions/evolution | P0 | 5 | **Deep/Active** | No direct | [Evolution](../25-software-architecture/architecture-decisions-evolution-and-fitness-functions.md) |
+| Architecture | architecture review | P0 | 5 | **Deep/Active** | No direct | [Review playbook](../25-software-architecture/architecture-review-playbook.md) |
+
+---
+
+# AI Engineering & Coding Agents
+
+| Area | Capability | Priority | Typical target | Content | Runnable lab | Evidence path |
+|---|---|---:|---:|---|---:|---|
+| AI Engineering | model/provider abstraction + structured output | P0 | 4/5 | Deep/Guided | No | [AI Engineering](../19-ai-engineering/README.md) |
+| AI Tools | tool calling + application authorization | P0 | 5 | Deep/Guided | No | [Structured Output & Tools](../19-ai-engineering/structured-output-and-tool-calling.md) |
+| RAG | ingestion/retrieval/ACL/deletion/versioning | P0 | 4/5 | **Integrated in 19** | No | [RAG/Eval/Observability](../19-ai-engineering/rag-evaluation-and-observability.md) |
+| AI Evaluation | dataset/regression/latency/cost | P0 | 5 | **Integrated in 19** | No | [RAG/Eval/Observability](../19-ai-engineering/rag-evaluation-and-observability.md) |
+| AI Security | injection/tool abuse/data boundary | P0 | 4/5 | Integrated 19/21 | No | [AI Engineering](../19-ai-engineering/README.md) + [Coding Agents](../21-ai-coding-agents/README.md) |
+| Coding Agents | repo context/instructions/task scoping | P0/P1 | 4 | Deep/Guided | No | [Repository Context](../21-ai-coding-agents/repository-context-mcp-and-instructions.md) |
+| Coding Agents | permissions/sandbox/build-test-review workflow | P0/P1 | 4/5 | Deep/Guided | No | [Safe Agentic Workflow](../21-ai-coding-agents/safe-agentic-coding-workflow.md) |
+
+---
+
+# Integrated capabilities without dedicated module
+
+Không gán trạng thái `Planned` cho capability đã có content sâu ở module khác.
+
+| Capability | Current home | Status |
+|---|---|---|
+| Observability / OTel / SLO | 07, 10, 14, 15, 17, 19 | Integrated; dedicated module optional later |
+| RAG | 19 | Integrated |
+| AI Security | 19, 21 | Integrated foundation; dedicated red-team track future candidate |
+| GenAIOps | 19 | Integrated foundation; executable release/eval lab pending |
+| Architecture documentation | 24, 25 | Integrated; reusable examples can expand |
+| Data Engineering | — | Selective/future P2 |
+
+---
+
+# Repository evidence gap
+
+Current dedicated runnable lab directories cover modules 01–04. That means the highest-leverage backlog is **not adding more rows**; it is turning later deep content into executable integrated scenarios.
+
+Priority:
+
+```text
+05–08 Production Backend
+09–13 Production Delivery
+15 Kubernetes Local
+17 Distributed Reliability
+18 Checkout Saga
+14 Azure IaC
+19 Production AI
+```
+
+→ [Repository Quality Review](repository-quality-review-2026-08-28.md)
 
 ## Update rule
 
-Level chỉ tăng khi cột Evidence trỏ đến artifact hoặc kết quả kiểm tra. “Đã đọc”, số năm kinh nghiệm hoặc hoàn thành tutorial không tự động nâng level.
+Learner level only increases when evidence exists.
+
+```text
+"đã đọc"
+"đã dùng 3 năm"
+"đã xem tutorial"
+```
+
+không tự động nâng level.
+
+Use:
+
+```text
+behavior test
+failure reproduction
+debug evidence
+deployment/recovery
+measured trade-off
+design review
+```
 
 ## Verification metadata
 
-- Verified: 2026-08-11
-- Technology version: [technology-baseline.md](technology-baseline.md)
-- Official sources: evidence sẽ được quản lý theo module/project
-- Context7 queries used: /dotnet/docs cho evidence links của module Linux/networking; roadmap-wide matrix không dùng Context7 để tự nâng level
-- Notes: AI current levels có dấu * là giả định bảo thủ từ kinh nghiệm người đọc đã nêu; phải thay bằng assessment evidence.
+- Rebuilt: 2026-08-28.
+- Scope aligned with actual repository modules at review time.
+- Removed public user-specific assumed current levels.
+- Distributed Systems, System Design, Software Architecture and EF Core statuses corrected from stale `Planned` labels to current active/deep coverage.
