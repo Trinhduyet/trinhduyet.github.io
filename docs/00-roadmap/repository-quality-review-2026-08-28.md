@@ -25,7 +25,7 @@ Gap lớn nhất không còn là “thiếu topic”. Gap lớn nhất là **con
 ### 5 findings quan trọng
 
 1. **Content maturity không đồng đều.** Module mới giàu scenario/failure/trade-off; một số overview cũ vẫn generic-template.
-2. **Runnable evidence chưa theo kịp content.** Repo hiện có executable lab rõ dưới `labs/` cho modules 01–04; nhiều module sau có guided exercises nhưng chưa có runnable artifact tương ứng.
+2. **Runnable evidence chưa theo kịp content.** Trước review, dedicated executable labs tập trung ở 01–04; review này bổ sung Kubernetes core lab cho Module 15, nhưng nhiều module sâu khác vẫn chưa có runnable artifact tương ứng.
 3. **Roadmap/status bị stale.** Một số capability đã có deep module nhưng skills matrix vẫn ghi `Planned`.
 4. **Planned coverage bị trộn với module thật.** Điều này khiến người đọc tưởng repository thiếu các module số 16/20/22/23/26/27 dù nhiều nội dung đã integrated vào module khác.
 5. **Technology baseline cần refresh thường xuyên.** .NET patch, Kubernetes upstream minor và Terraform stable line đã thay đổi từ snapshot 2026-08-11.
@@ -58,7 +58,7 @@ Legend:
 | 12 Docker | Deep/Guided | No | commands tốt; nên có Compose artifact trong repo |
 | 13 DevOps/IaC | Deep/Guided | No | strong delivery reasoning; cần sample pipeline/IaC lab |
 | 14 Azure | Deep handbook | No | service-selection depth mạnh; labs/IaC là next gap |
-| 15 Kubernetes | Deep/Guided | No | strong core + AKS + debugging; cần committed manifests/local cluster lab |
+| 15 Kubernetes | Deep/Guided | **Yes — core** | review thêm manifests/Kustomize + reconciliation/network/probe/rollout failure drills |
 | 17 Distributed Systems | Deep/Guided | No | failure semantics tốt; executable outbox/dedup lab là P0 next step |
 | 18 Microservices | Deep/Guided | No | strong boundary reasoning; checkout saga lab là next step |
 | 19 AI Engineering | Deep/Guided | No | production mindset mạnh; eval/RAG/tool runnable project cần bổ sung |
@@ -173,7 +173,33 @@ Guided exercise
 Runnable repo lab
 ```
 
-Hiện `labs/` có executable artifacts cho 01–04. Các module sau chủ yếu có commands/config snippets và failure exercise trong docs.
+Dedicated runnable artifacts hiện có cho Modules 01–04 và **Kubernetes core (15)**. Các module sâu còn lại chủ yếu có commands/config snippets/failure exercises trong docs.
+
+Review này thêm:
+
+```text
+labs/15-kubernetes
+├─ kustomization.yaml
+├─ namespace.yaml
+├─ deployment.yaml
+├─ service.yaml
+└─ README.md
+```
+
+Lab chứng minh trực tiếp:
+
+```text
+Deployment → ReplicaSet → Pod
+Service → selector → Ready Pods
+reconciliation
+ImagePullBackOff
+selector failure
+readiness failure
+resources
+scale
+rollout/rollback
+kubectl debugging
+```
 
 ### P0 lab backlog
 
@@ -181,11 +207,11 @@ Hiện `labs/` có executable artifacts cho 01–04. Các module sau chủ yếu
 
 1. **05–08 Production Backend Lab** — SQL + API + ASP.NET + tests trong một app thay vì 4 lab nhỏ rời nhau.
 2. **09–13 Production Delivery Lab** — security gates + load test + Redis + Docker + CI.
-3. **15 Kubernetes Local Lab** — manifests + kind/k3d/minikube-agnostic instructions, failures/debugging.
-4. **17 Distributed Reliability Lab** — SQL outbox/inbox + duplicate + crash-before-ACK.
-5. **18 Checkout Saga Lab** — payment unknown outcome + reconciliation.
-6. **14 Azure IaC Lab** — one reference environment with cost-aware defaults.
-7. **19 AI Product Lab** — authorized RAG/tool/eval path.
+3. **17 Distributed Reliability Lab** — SQL outbox/inbox + duplicate + crash-before-ACK.
+4. **18 Checkout Saga Lab** — payment unknown outcome + reconciliation.
+5. **14 Azure IaC Lab** — one reference environment with cost-aware defaults.
+6. **19 AI Product Lab** — authorized RAG/tool/eval path.
+7. **Extend Kubernetes lab** — ConfigMap/Secret, RBAC, PVC, NetworkPolicy, HPA as separate problem-driven exercises.
 
 Một integrated lab có giá trị hơn 20 snippets không liên kết.
 
@@ -302,7 +328,7 @@ Managed Kubernetes provider có thể lag upstream. Production phải check prov
 
 ## Improvements
 
-Start Here nên ưu tiên:
+Start Here ưu tiên sau review:
 
 ```text
 1. Role-based path
@@ -313,9 +339,9 @@ Start Here nên ưu tiên:
 
 Không bắt người mới đọc master roadmap trước.
 
-Homepage cần một CTA rõ:
+Homepage có CTA rõ:
 
-> “Tôi có 60 phút — bắt đầu đâu?”
+> “Có 60 phút? Đừng đọc roadmap trước.”
 
 ---
 
@@ -329,7 +355,7 @@ Current CI đã tốt ở:
 - generated-site verification;
 - live deployed commit verification.
 
-Gap: CI chưa kiểm learning-system quality debt.
+Gap trước review: CI chưa kiểm learning-system quality debt.
 
 ### Improvement
 
@@ -351,9 +377,9 @@ Audit ban đầu **report warnings**, không block legacy debt. Khi backlog đư
 
 - integrated Production Backend lab (05–08);
 - Docker/Redis/security/performance delivery lab (09–13);
-- Kubernetes local runnable lab;
 - Distributed outbox/idempotency runnable lab;
-- keep roadmap/skills/status generated or audit-checked.
+- keep roadmap/skills/status generated or audit-checked;
+- extend Kubernetes core lab only when each extra concept has a real problem scenario.
 
 ## P1
 
@@ -376,12 +402,12 @@ Audit ban đầu **report warnings**, không block legacy debt. Khi backlog đư
 |---|---|
 | Breadth | Strong |
 | Core technical depth | Strong |
-| Production reasoning | Strong in newer modules |
-| Failure-first learning | Strong but inconsistent in legacy overviews |
-| Navigation | Good → improved with role paths |
+| Production reasoning | Strong in newer modules; 09–11 overview upgraded |
+| Failure-first learning | Strong and more consistent after review |
+| Navigation | Good → role/action-first |
 | Source policy | Strong |
-| Version freshness | Needs periodic automation/manual refresh |
-| Executable labs | **Primary gap** |
+| Version freshness | Refreshed; still requires cadence |
+| Executable labs | **Still primary gap, but Kubernetes core now runnable** |
 | Evidence honesty | Improved by separating Guided vs Runnable |
 | Status consistency | Improved by roadmap/matrix rewrite |
 
@@ -410,5 +436,6 @@ hơn việc thêm 10 pattern names.
 
 - Review date: 2026-08-28.
 - Repository base reviewed: `main` at `b18390ee03b0c446bd9a68029597a8b37734cb28`.
+- Improvements in this review include roadmap/status/quality CI changes and new `labs/15-kubernetes` core executable evidence.
 - Scope: current `docs/`, `labs/`, `mkdocs.yml`, documentation scripts/workflow.
 - Current upstream version checks use official/vendor sources; see [Technology Baseline](technology-baseline.md).
