@@ -113,7 +113,7 @@ Target level phụ thuộc role. Kubernetes có thể P1 cho Backend Engineer nh
 | 12 Docker | build/runtime/network/storage/resources/security | Deep/Guided | No |
 | 13 DevOps/IaC | CI/CD, artifact promotion, Terraform, recovery | Deep/Guided | No |
 | 14 Azure | service selection/config/cost/reliability/.NET architecture | Deep handbook | No |
-| 15 Kubernetes | reconciliation, workloads/network/storage/security/debugging/AKS | Deep/Guided | No |
+| 15 Kubernetes | reconciliation, workloads/network/storage/security/debugging/AKS | Deep/Guided | **Yes — core** |
 | 17 Distributed Systems | partial failure, idempotency, messaging, outbox/saga/backpressure | Deep/Guided | No |
 | 18 Microservices Architecture | boundaries, data ownership, saga, deployment/migration | Deep/Guided | No |
 | 19 AI Engineering | models/tools/RAG/eval/security/operations | Deep/Guided | No |
@@ -258,6 +258,12 @@ Deployment → ReplicaSet → Pod → Container
 Client → DNS → Service → selector → Ready Pods
 ```
 
+Runnable core evidence now exists at:
+
+→ [`labs/15-kubernetes`](https://github.com/Trinhduyet/trinhduyet.github.io/tree/main/labs/15-kubernetes)
+
+The lab intentionally covers the core flow/failures first. PVC, RBAC, NetworkPolicy and HPA should be added as separate problem-driven exercises, not dumped into one giant manifest.
+
 → [Module 15](../15-kubernetes/README.md)
 
 ---
@@ -392,6 +398,7 @@ labs/01-computer-science
 labs/02-linux-git-networking
 labs/03-dotnet
 labs/04-backend
+labs/15-kubernetes
 ```
 
 ## Documented project/evidence targets
@@ -402,7 +409,7 @@ Các module sau mô tả project/failure drills nhưng chưa phải tất cả �
 |---|---|---|
 | Production Backend | 05–08 | schema/tests/OpenAPI/query plan |
 | Production Delivery | 09–13 | security/load/cache/Docker/CI evidence |
-| Kubernetes App | 15 | manifests + failures + rollout/debug |
+| Kubernetes extensions | 15 | ConfigMap/Secret, RBAC, PVC, NetworkPolicy, HPA scenarios beyond core lab |
 | Distributed Checkout | 17–18 | outbox/dedup/UNKNOWN/reconciliation |
 | Azure .NET Platform | 14 | IaC + network/identity/cost/DR |
 | Enterprise AI Assistant | 19 | AuthZ/RAG/tools/eval/telemetry |
