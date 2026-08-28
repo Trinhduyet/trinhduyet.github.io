@@ -149,27 +149,43 @@ Chi tiết maturity/evidence thật:
 
 # 5. Executable evidence hiện có
 
-Dedicated runnable artifacts dưới `labs/` hiện tập trung ở:
+Dedicated runnable artifacts dưới `labs/` hiện có cho:
 
 ```text
 01 Computer Science
 02 Linux/Git/Networking
 03 .NET Runtime
 04 Backend
+15 Kubernetes Core
 ```
 
-Nhiều module sau đã có guided commands/config/failure drills nhưng **chưa có dedicated runnable lab**. Đây là backlog chính tiếp theo, không được che bằng chữ “Done”.
+Kubernetes core lab mới chứng minh trực tiếp:
+
+```text
+Deployment → ReplicaSet → Pod
+Service → selector → Ready Pods
+reconciliation
+bad image / ImagePullBackOff
+wrong selector
+readiness failure
+resources / scaling / rollout
+kubectl debugging
+```
+
+→ [`labs/15-kubernetes`](https://github.com/Trinhduyet/trinhduyet.github.io/tree/main/labs/15-kubernetes)
+
+Nhiều module sau vẫn có deep guided commands/config/failure drills nhưng **chưa có dedicated runnable lab**. Đây vẫn là backlog chính tiếp theo, không được che bằng chữ “Done”.
 
 Ưu tiên lab integration:
 
 ```text
 05–08 Production Backend Lab
 09–13 Production Delivery Lab
-15 Kubernetes Local Lab
 17 Distributed Reliability Lab
 18 Checkout Saga Lab
 14 Azure IaC Lab
 19 Production AI Lab
+15 Kubernetes extensions only when problem-driven
 ```
 
 Một integrated system được phá/debug xuyên nhiều module tốt hơn nhiều sample rời.
