@@ -6,7 +6,7 @@
 
 Azure service behavior, limits, retirement timelines, security controls và architecture recommendations có thể thay đổi. Vì vậy module này dùng **Microsoft Learn / Azure Architecture Center / Cloud Adoption Framework / Azure Well-Architected Framework** làm source of truth cho Azure-specific claims.
 
-Community/awesome repositories chỉ dùng để kiểm tra breadth và tìm topic cần học, không dùng thay official behavior documentation.
+Kubernetes behavior dùng **kubernetes.io official documentation** làm source of truth. Community/awesome repositories chỉ dùng để kiểm tra breadth và tìm topic cần học, không dùng thay official behavior documentation.
 
 ## Azure foundations / landing zones
 
@@ -21,8 +21,24 @@ Community/awesome repositories chỉ dùng để kiểm tra breadth và tìm top
 - [Technology choices for Azure solutions](https://learn.microsoft.com/en-us/azure/architecture/guide/technology-choices/technology-choices-overview)
 - [Choose an Azure compute service](https://learn.microsoft.com/en-us/azure/architecture/guide/technology-choices/compute-decision-tree)
 - [Choose an Azure container service](https://learn.microsoft.com/en-us/azure/architecture/guide/choose-azure-container-service)
+- [Architectural considerations for choosing an Azure container service](https://learn.microsoft.com/en-us/azure/architecture/guide/container-service-general-considerations)
 - [Choose compute for microservices](https://learn.microsoft.com/en-us/azure/architecture/microservices/design/compute-options)
 - [Cloud design patterns](https://learn.microsoft.com/en-us/azure/architecture/patterns/)
+
+## Kubernetes / AKS
+
+- [Azure Kubernetes Service documentation](https://learn.microsoft.com/en-us/azure/aks/)
+- [AKS — Plan your design and operations](https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/containers/aks-start-here)
+- [Baseline architecture for an AKS cluster](https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/containers/aks/baseline-aks)
+- [Microservices architecture on Azure Kubernetes Service](https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/containers/aks-microservices/aks-microservices)
+- [Architecture best practices for AKS — Azure Well-Architected Framework](https://learn.microsoft.com/en-us/azure/well-architected/service-guides/azure-kubernetes-service)
+- [Kubernetes official documentation](https://kubernetes.io/docs/)
+- [Kubernetes releases](https://kubernetes.io/releases/)
+- [Kubernetes 1.36 release series](https://kubernetes.io/releases/1.36/)
+
+> **Current note (verified 2026-08-28):** Microsoft guidance distinguishes AKS Automatic and AKS Standard. For typical workloads, current AKS planning guidance presents Automatic as a production path with opinionated defaults; Standard remains the reference path when specialized/custom cluster architecture is required. Re-check this guidance before a production decision because AKS capabilities evolve quickly.
+
+> **Networking note (verified 2026-08-28):** Microsoft's current AKS microservices reference architecture recommends Azure CNI powered by Cilium for production microservices scenarios. Treat this as a reference baseline, not a reason to copy networking configuration without IP/network-policy/egress analysis.
 
 ## Identity / networking / security
 
@@ -77,7 +93,9 @@ Useful scope from that repository includes cloud design patterns, cloud best pra
 
 ## Verification metadata
 
-- Verified: 2026-08-19.
+- Verified: 2026-08-28 for Azure/AKS planning references added in this update.
+- Kubernetes baseline checked against actively supported 1.36 release series.
 - Azure-specific claims: prefer Microsoft official documentation.
-- Community repositories: supplementary discovery/coverage only.
+- Kubernetes behavior: prefer kubernetes.io official documentation.
+- Community repositories/artifacts: supplementary discovery/coverage only.
 - Learner evidence still phải được tạo bằng code, deployment, metrics, failure drills và ADR thực tế.
