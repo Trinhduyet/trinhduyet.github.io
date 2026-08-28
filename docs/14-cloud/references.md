@@ -1,86 +1,187 @@
-# References — Module 14 Cloud & Microsoft Azure
+# References — Module 14 Microsoft Azure
 
-> [← Module overview](README.md)
+> [← Azure overview](README.md)
 
 ## Source policy
 
-Azure service behavior, limits, retirement timelines, security controls và architecture recommendations có thể thay đổi. Vì vậy module này dùng **Microsoft Learn / Azure Architecture Center / Cloud Adoption Framework / Azure Well-Architected Framework** làm source of truth cho Azure-specific claims.
+Module 14 dùng **Microsoft Learn / Azure Architecture Center / Cloud Adoption Framework / Azure Well-Architected Framework** làm source of truth cho Azure-specific behavior.
 
-Kubernetes behavior dùng **kubernetes.io official documentation** làm source of truth. Community/awesome repositories chỉ dùng để kiểm tra breadth và tìm topic cần học, không dùng thay official behavior documentation.
+Pricing, SKU, limits, retirement dates và feature availability thay đổi theo thời gian/region. Vì vậy handbook lưu **cost drivers + sizing model**, không hard-code một bảng giá vĩnh viễn.
 
-## Azure foundations / landing zones
+Kubernetes đã được tách sang [Module 15](../15-kubernetes/README.md); Kubernetes official documentation nằm trong references của module đó.
 
-- [Azure landing zones — Cloud Adoption Framework](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/)
-- [Azure landing zone design areas](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/design-areas)
-- [Azure landing zone design principles](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/design-principles)
-- [Management groups — Cloud Adoption Framework](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/design-area/resource-org-management-groups)
+---
 
-## Architecture / technology choices
+## Foundations / architecture
 
 - [Azure Architecture Center](https://learn.microsoft.com/en-us/azure/architecture/)
+- [Azure Well-Architected Framework](https://learn.microsoft.com/en-us/azure/well-architected/)
+- [Cloud Adoption Framework](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/)
+- [Azure landing zones](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/)
 - [Technology choices for Azure solutions](https://learn.microsoft.com/en-us/azure/architecture/guide/technology-choices/technology-choices-overview)
 - [Choose an Azure compute service](https://learn.microsoft.com/en-us/azure/architecture/guide/technology-choices/compute-decision-tree)
 - [Choose an Azure container service](https://learn.microsoft.com/en-us/azure/architecture/guide/choose-azure-container-service)
-- [Architectural considerations for choosing an Azure container service](https://learn.microsoft.com/en-us/azure/architecture/guide/container-service-general-considerations)
-- [Choose compute for microservices](https://learn.microsoft.com/en-us/azure/architecture/microservices/design/compute-options)
 - [Cloud design patterns](https://learn.microsoft.com/en-us/azure/architecture/patterns/)
 
-## Kubernetes / AKS
+---
 
-- [Azure Kubernetes Service documentation](https://learn.microsoft.com/en-us/azure/aks/)
-- [AKS — Plan your design and operations](https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/containers/aks-start-here)
-- [Baseline architecture for an AKS cluster](https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/containers/aks/baseline-aks)
-- [Microservices architecture on Azure Kubernetes Service](https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/containers/aks-microservices/aks-microservices)
-- [Architecture best practices for AKS — Azure Well-Architected Framework](https://learn.microsoft.com/en-us/azure/well-architected/service-guides/azure-kubernetes-service)
-- [Kubernetes official documentation](https://kubernetes.io/docs/)
-- [Kubernetes releases](https://kubernetes.io/releases/)
-- [Kubernetes 1.36 release series](https://kubernetes.io/releases/1.36/)
+## Compute
 
-> **Current note (verified 2026-08-28):** Microsoft guidance distinguishes AKS Automatic and AKS Standard. For typical workloads, current AKS planning guidance presents Automatic as a production path with opinionated defaults; Standard remains the reference path when specialized/custom cluster architecture is required. Re-check this guidance before a production decision because AKS capabilities evolve quickly.
+### App Service
 
-> **Networking note (verified 2026-08-28):** Microsoft's current AKS microservices reference architecture recommends Azure CNI powered by Cilium for production microservices scenarios. Treat this as a reference baseline, not a reason to copy networking configuration without IP/network-policy/egress analysis.
+- [App Service plans](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)
+- [App Service networking](https://learn.microsoft.com/en-us/azure/app-service/networking-features)
+- [App Service reliability](https://learn.microsoft.com/en-us/azure/reliability/reliability-app-service)
 
-## Identity / networking / security
+### Functions
 
-- [Azure identity architecture](https://learn.microsoft.com/en-us/azure/architecture/guide/technology-choices/identity)
-- [Managed identities for Azure resources](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview)
-- [Azure role-based access control](https://learn.microsoft.com/en-us/azure/role-based-access-control/overview)
-- [Azure Private Link](https://learn.microsoft.com/en-us/azure/private-link/private-link-overview)
-- [Azure network security](https://learn.microsoft.com/en-us/azure/security/fundamentals/network-overview)
+- [Azure Functions hosting options](https://learn.microsoft.com/en-us/azure/azure-functions/functions-scale)
+- [Flex Consumption plan](https://learn.microsoft.com/en-us/azure/azure-functions/flex-consumption-plan)
 
-## Data / cache / messaging
+### Container Apps
 
-- [Choose a data store — Azure Architecture Center](https://learn.microsoft.com/en-us/azure/architecture/guide/technology-choices/data-store-overview)
-- [Compare Azure messaging services: Event Grid, Event Hubs, Service Bus](https://learn.microsoft.com/en-us/azure/service-bus-messaging/compare-messaging-services)
-- [Integration architecture — Azure Architecture Center](https://learn.microsoft.com/en-us/azure/architecture/integration/integration-get-started)
-- [Azure Managed Redis](https://learn.microsoft.com/en-us/azure/redis/overview)
-- [Azure Cache for Redis retirement / migration notice](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-whats-new)
+- [Container Apps plans / structure](https://learn.microsoft.com/en-us/azure/container-apps/structure)
+- [Container Apps billing](https://learn.microsoft.com/en-us/azure/container-apps/billing)
+- [Container Apps networking](https://learn.microsoft.com/en-us/azure/container-apps/networking)
 
-> **Current note (verified 2026-08-19):** Microsoft recommends Azure Managed Redis for new Redis workloads; Azure Cache for Redis has announced retirement timelines. Re-check official migration/retirement documentation before a production decision.
+### Virtual Machines
 
-## Reliability / Well-Architected
+- [Azure Virtual Machines documentation](https://learn.microsoft.com/en-us/azure/virtual-machines/)
+- [VM sizes](https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/overview)
+- [Virtual Machine Scale Sets](https://learn.microsoft.com/en-us/azure/virtual-machine-scale-sets/overview)
 
-- [Azure Well-Architected Framework](https://learn.microsoft.com/en-us/azure/well-architected/)
-- [What is the Azure Well-Architected Framework?](https://learn.microsoft.com/en-us/azure/well-architected/what-is-well-architected-framework)
-- [Reliability overview](https://learn.microsoft.com/en-us/azure/well-architected/reliability/)
-- [Define reliability targets: SLI, SLO, SLA, RTO, RPO](https://learn.microsoft.com/en-us/azure/well-architected/reliability/metrics)
+> AKS is intentionally not taught here. See [Module 15 — Kubernetes](../15-kubernetes/README.md).
+
+---
+
+## Data / storage / cache
+
+### Azure SQL
+
+- [Azure SQL Database overview](https://learn.microsoft.com/en-us/azure/azure-sql/database/sql-database-paas-overview?view=azuresql-db)
+- [vCore vs DTU purchasing models](https://learn.microsoft.com/en-us/azure/azure-sql/database/purchasing-models?view=azuresql)
+- [Serverless compute tier](https://learn.microsoft.com/en-us/azure/azure-sql/database/serverless-tier-overview?view=azuresql)
+- [Business continuity](https://learn.microsoft.com/en-us/azure/azure-sql/database/business-continuity-high-availability-disaster-recover-hadr-overview?view=azuresql)
+
+### Cosmos DB
+
+- [Cosmos DB request units](https://learn.microsoft.com/en-us/azure/cosmos-db/request-units)
+- [Partitioning overview](https://learn.microsoft.com/en-us/azure/cosmos-db/partitioning-overview)
+- [Cosmos DB reliability](https://learn.microsoft.com/en-us/azure/reliability/reliability-cosmos-db-nosql)
+
+### Blob Storage
+
+- [Blob access tiers](https://learn.microsoft.com/en-us/azure/storage/blobs/access-tiers-overview)
+- [Azure Storage redundancy](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy)
+- [Blob lifecycle management](https://learn.microsoft.com/en-us/azure/storage/blobs/lifecycle-management-overview)
+
+### Redis
+
+- [Azure Managed Redis overview](https://learn.microsoft.com/en-us/azure/redis/overview)
+- [Azure Managed Redis architecture](https://learn.microsoft.com/en-us/azure/redis/architecture)
+- [Azure Cache for Redis migration/retirement information](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-whats-new)
+
+---
+
+## Messaging / events
+
+- [Compare Service Bus, Event Grid and Event Hubs](https://learn.microsoft.com/en-us/azure/service-bus-messaging/compare-messaging-services)
+- [Service Bus quotas and limits](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-quotas)
+- [Service Bus reliability](https://learn.microsoft.com/en-us/azure/reliability/reliability-service-bus)
+- [Event Grid overview](https://learn.microsoft.com/en-us/azure/event-grid/overview)
+- [Event Hubs scalability](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-scalability)
+- [Event Hubs features/tier overview](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-features)
+
+---
+
+## Networking / edge
+
+### DNS / VNet / private connectivity
+
+- [Azure DNS overview](https://learn.microsoft.com/en-us/azure/dns/dns-overview)
+- [Azure DNS Private Resolver](https://learn.microsoft.com/en-us/azure/dns/dns-private-resolver-overview)
+- [Virtual Network overview](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-overview)
+- [Network Security Groups](https://learn.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview)
+- [Private Link](https://learn.microsoft.com/en-us/azure/private-link/private-link-overview)
+- [NAT Gateway resource](https://learn.microsoft.com/en-us/azure/nat-gateway/nat-gateway-resource)
+
+### Traffic / gateway / WAF
+
+- [Azure Load Balancer](https://learn.microsoft.com/en-us/azure/load-balancer/load-balancer-overview)
+- [Application Gateway v2](https://learn.microsoft.com/en-us/azure/application-gateway/overview-v2)
+- [Application Gateway pricing model](https://learn.microsoft.com/en-us/azure/application-gateway/understanding-pricing)
+- [Azure Front Door](https://learn.microsoft.com/en-us/azure/frontdoor/)
+- [WAF on Front Door](https://learn.microsoft.com/en-us/azure/web-application-firewall/afds/afds-overview)
+- [Front Door classic retirement/mapping](https://learn.microsoft.com/en-us/azure/frontdoor/tier-mapping)
+
+### DDoS / firewall / hybrid
+
+- [Azure DDoS Protection](https://learn.microsoft.com/en-us/azure/ddos-protection/)
+- [DDoS tier comparison](https://learn.microsoft.com/en-us/azure/ddos-protection/ddos-protection-sku-comparison)
+- [DDoS best practices](https://learn.microsoft.com/en-us/azure/ddos-protection/fundamental-best-practices)
+- [Azure Firewall](https://learn.microsoft.com/en-us/azure/firewall/overview)
+- [VPN Gateway](https://learn.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-about-vpngateways)
+- [ExpressRoute](https://learn.microsoft.com/en-us/azure/expressroute/expressroute-introduction)
+
+---
+
+## API Management
+
+- [API Management overview](https://learn.microsoft.com/en-us/azure/api-management/api-management-key-concepts)
+- [API Management v2 tiers](https://learn.microsoft.com/en-us/azure/api-management/v2-service-tiers-overview)
+- [API Management feature comparison](https://learn.microsoft.com/en-us/azure/api-management/api-management-features)
+- [API Management limits](https://learn.microsoft.com/en-us/azure/api-management/service-limits)
+
+---
+
+## Identity / secrets
+
+- [Microsoft Entra architecture](https://learn.microsoft.com/en-us/azure/architecture/guide/technology-choices/identity)
+- [Managed identities](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview)
+- [Azure RBAC](https://learn.microsoft.com/en-us/azure/role-based-access-control/overview)
+- [Azure Key Vault](https://learn.microsoft.com/en-us/azure/key-vault/general/overview)
+
+---
+
+## Observability
+
+- [Azure Monitor overview](https://learn.microsoft.com/en-us/azure/azure-monitor/fundamentals/overview)
+- [Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview)
+- [Azure Monitor cost and usage](https://learn.microsoft.com/en-us/azure/azure-monitor/fundamentals/cost-usage)
+- [Azure Monitor cost optimization](https://learn.microsoft.com/en-us/azure/azure-monitor/fundamentals/best-practices-cost)
+- [Estimate Azure Monitor costs](https://learn.microsoft.com/en-us/azure/azure-monitor/fundamentals/cost-estimate)
+- [Log Analytics retention](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/data-retention-configure)
+
+---
+
+## Delivery / registry / IaC
+
+- [Azure Container Registry SKUs](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-skus)
+- [GitHub Actions for Azure](https://learn.microsoft.com/en-us/azure/developer/github/github-actions)
+- [OpenID Connect with Azure login](https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure-openid-connect)
+- [Bicep](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/overview)
+- [Terraform on Azure](https://learn.microsoft.com/en-us/azure/developer/terraform/)
+
+---
+
+## Backup / DR
+
+- [Azure Backup](https://learn.microsoft.com/en-us/azure/backup/)
+- [Site Recovery overview](https://learn.microsoft.com/en-us/azure/site-recovery/site-recovery-overview)
+- [Site Recovery recovery plans](https://learn.microsoft.com/en-us/azure/site-recovery/recovery-plan-overview)
 - [Disaster recovery design guide](https://learn.microsoft.com/en-us/azure/well-architected/design-guides/disaster-recovery)
 - [Azure reliability](https://learn.microsoft.com/en-us/azure/reliability/)
 
-## Observability / operations / cost
+---
 
-- [Azure Monitor](https://learn.microsoft.com/en-us/azure/azure-monitor/fundamentals/overview)
-- [Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview)
-- [Cost Management](https://learn.microsoft.com/en-us/azure/cost-management-billing/cost-management-billing-overview)
-- [Azure Policy](https://learn.microsoft.com/en-us/azure/governance/policy/overview)
+## Cost / FinOps
 
-## Supplementary architecture scope
+- [Cost Management + Billing](https://learn.microsoft.com/en-us/azure/cost-management-billing/cost-management-billing-overview)
+- [Azure Pricing Calculator](https://azure.microsoft.com/en-us/pricing/calculator/)
+- [Cost Optimization — Well-Architected](https://learn.microsoft.com/en-us/azure/well-architected/cost-optimization/)
+- [Azure Advisor cost recommendations](https://learn.microsoft.com/en-us/azure/advisor/advisor-cost-recommendations)
 
-User-supplied repository used as a curated breadth checklist:
-
-- [mehdihadeli/awesome-software-architecture](https://github.com/mehdihadeli/awesome-software-architecture)
-
-Useful scope from that repository includes cloud design patterns, cloud best practices, cloud native, PaaS/IaaS, reverse proxy/load balancing, service discovery, service mesh, messaging, distributed transactions, caching, databases and Microsoft Azure Cloud. Nội dung course này được viết lại theo problem → failure → trade-off thay vì sao chép danh sách links.
+---
 
 ## Related repository modules
 
@@ -93,9 +194,11 @@ Useful scope from that repository includes cloud design patterns, cloud best pra
 
 ## Verification metadata
 
-- Verified: 2026-08-28 for Azure/AKS planning references added in this update.
-- Kubernetes baseline checked against actively supported 1.36 release series.
-- Azure-specific claims: prefer Microsoft official documentation.
-- Kubernetes behavior: prefer kubernetes.io official documentation.
-- Community repositories/artifacts: supplementary discovery/coverage only.
-- Learner evidence still phải được tạo bằng code, deployment, metrics, failure drills và ADR thực tế.
+- Verified: 2026-08-28.
+- Application Gateway v1 retired 2026-04-28; handbook uses v2 guidance.
+- Azure Front Door classic is on retirement path; handbook uses Standard/Premium for new design.
+- Current App Service tiers include Premium v4 where available.
+- Container Apps uses workload-profile based Consumption/Dedicated models.
+- Azure SQL vCore/DTU and serverless purchasing models checked against current docs.
+- Azure Monitor logs ingestion remains a major cost dimension and requires explicit retention/sampling design.
+- Live pricing and regional availability must be checked again before provisioning.

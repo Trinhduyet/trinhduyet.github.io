@@ -1,241 +1,194 @@
-# Module 14 — Azure & Cloud Platform Architecture
+# Module 14 — Microsoft Azure & Cloud Platform
 
-> [← Module 13 — DevOps & IaC](../13-devops-iac/README.md) · [Roadmap](../00-roadmap/README.md) · [Kubernetes →](../15-kubernetes/README.md)
+> [← Module 13 — DevOps & IaC](../13-devops-iac/README.md) · [Roadmap](../00-roadmap/README.md) · [Kubernetes là module riêng →](../15-kubernetes/README.md)
 
 <div class="lesson-meta">
   <span><strong>Priority</strong>&nbsp;P0/P1</span>
-  <span><strong>Focus</strong>&nbsp;Azure Architecture · Platform · AKS</span>
+  <span><strong>Focus</strong>&nbsp;Azure Architecture · Services · Configuration · Cost</span>
   <span><strong>Audience</strong>&nbsp;.NET Backend → Senior/Architect</span>
-  <span><strong>Mode</strong>&nbsp;architecture-first · project-first</span>
+  <span><strong>Mode</strong>&nbsp;architecture-first · production-first</span>
 </div>
 
-Module này không nhằm giúp bạn “nhớ Azure có những service gì”. Mục tiêu là để bạn có thể nhìn một backend thực tế và trả lời được:
+Module 14 chỉ tập trung vào **Microsoft Azure**: chọn service, cấu hình production, networking/identity, reliability, backup/DR, observability và cost model.
 
-1. **Workload nên được đặt ở đâu trong Azure resource hierarchy?**
-2. **Request đi từ Internet tới application và data qua những boundary nào?**
-3. **Khi nào chọn App Service, Functions, Container Apps hoặc AKS?**
-4. **Làm sao deploy, observe, recover, govern và kiểm soát cost như một production system?**
+**Kubernetes không còn được dạy trong page Azure này.** AKS chỉ xuất hiện như một lựa chọn compute của Azure; toàn bộ Kubernetes object model, scheduling, networking, storage, security, troubleshooting và CKAD practice nằm ở [Module 15 — Kubernetes](../15-kubernetes/README.md).
 
 <div class="key-takeaway" markdown>
-<strong>Cloud architecture không bắt đầu bằng service name.</strong>
+<strong>Mục tiêu không phải thuộc tên service.</strong>
 
-Bắt đầu bằng workload + NFR + failure model + team capability. Sau đó mới map sang Azure services.
+Sau module này bạn phải trả lời được: **dùng service nào, vì sao, cấu hình tier/SKU nào, scale thế nào, public/private ra sao, backup thế nào, failure nào cần test và bill tăng theo biến số nào**.
 </div>
 
 ---
 
-# 1. Bức tranh tổng thể — Azure platform gồm những lớp nào?
-
-Một workload production không chỉ là `API + database`.
-
-```text
-┌──────────────────────────────────────────────────────────────┐
-│ ORGANIZATION / GOVERNANCE PLANE                              │
-│ Tenant → Management Groups → Subscriptions → Resource Groups │
-│ Policy · RBAC · Budget · Tags · Compliance · Ownership       │
-└──────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-┌──────────────────────────────────────────────────────────────┐
-│ PLATFORM / CONNECTIVITY PLANE                                │
-│ VNet · DNS · Firewall · Private Link · Shared ACR · Monitor  │
-│ Key Vault · central logging · shared ingress/egress controls │
-└──────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-┌──────────────────────────────────────────────────────────────┐
-│ WORKLOAD PLANE                                               │
-│ Edge → API ingress → Compute → Data → Messaging → Storage    │
-│ App Service / Container Apps / AKS / Functions               │
-└──────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-┌──────────────────────────────────────────────────────────────┐
-│ DELIVERY + OPERATIONS PLANE                                  │
-│ Git → CI → Artifact → IaC → Deploy → Observe → Rollback      │
-│ SLO · alerts · runbooks · backup · restore · DR · FinOps     │
-└──────────────────────────────────────────────────────────────┘
-```
-
-Nếu chỉ học từng Azure service độc lập, bạn sẽ biết “service làm gì” nhưng vẫn không biết **ghép chúng thành một system**.
-
----
-
-# 2. Reference architecture — một backend .NET thực tế trên Azure
-
-Ví dụ một hệ thống commerce/checkout:
+# 1. Bức tranh Azure production
 
 ```text
 Users / Mobile / Web
         │
         ▼
+Azure DNS
+        │
+        ▼
 Azure Front Door + WAF
         │
         ▼
-API Management
+API Management / Application Gateway
         │
         ▼
-┌─────────────────────────────────────┐
-│ Application compute                 │
-│                                     │
-│ Option A: App Service               │
-│ Option B: Container Apps            │
-│ Option C: AKS                       │
-└─────────────────────────────────────┘
-        │             │
-        │             ├──────────────► Azure Service Bus
-        │             │                  │
-        │             │                  ▼
-        │             │              Workers / Jobs
-        │             │
-        ├─────────────► Azure SQL
-        ├─────────────► Azure Managed Redis
-        └─────────────► Blob Storage
+┌─────────────────────────────────────────────┐
+│ COMPUTE                                     │
+│ App Service · Functions · Container Apps    │
+│ Virtual Machines · AKS (K8s module riêng)   │
+└─────────────────────────────────────────────┘
+        │              │
+        │              ├──────────► Service Bus / Event Grid / Event Hubs
+        │              │
+        ├──────────────► Azure SQL / Cosmos DB
+        ├──────────────► Azure Managed Redis
+        └──────────────► Blob Storage
 
-Application identity
+Runtime identity
         │
         ▼
-Managed Identity / Entra Workload Identity
+Microsoft Entra ID / Managed Identity
         │
-        ├─────────────► Key Vault
-        ├─────────────► SQL
-        ├─────────────► Service Bus
-        └─────────────► Storage
+        ├──────────────► Key Vault
+        ├──────────────► SQL / Storage / Messaging RBAC
+        └──────────────► private dependencies
 
-Telemetry
-        │
-        ▼
-Azure Monitor / Application Insights / Log Analytics
+Network
+VNet · Subnet · NSG · Route · Private Link · NAT Gateway · Firewall
+
+Delivery
+GitHub Actions / Azure DevOps → ACR → Terraform/Bicep → deploy
+
+Operations
+Azure Monitor · Application Insights · Log Analytics
+Backup · PITR · restore · DR · Cost Management · Budgets
 ```
 
-Điểm quan trọng là **compute chỉ là một phần của architecture**. Chuyển App Service thành AKS không tự giải quyết:
-
-```text
-data consistency
-idempotency
-message duplication
-payment timeout
-schema migration
-secret rotation
-network authorization
-backup / restore
-SLO / alerting
-cost governance
-```
+Azure architecture tốt không phải là stack thật nhiều service. Mỗi lớp phải có **requirement + owner + failure model + cost model**.
 
 ---
 
-# 3. Chọn compute: App Service, Functions, Container Apps hay AKS?
+# 2. Azure service map — các dịch vụ backend thường dùng
 
-Đây là decision quan trọng nhất vì nó thay đổi mức **control vs operating burden**.
-
-| Platform | Nên bắt đầu cân nhắc khi | Bạn phải vận hành nhiều hơn ở đâu? |
+| Nhóm | Azure services chính | Bạn phải biết gì ngoài tên service? |
 |---|---|---|
-| **App Service** | HTTP API/web app tương đối thẳng, team muốn PaaS đơn giản | app/runtime/config/scaling policy |
-| **Functions** | event/trigger/job, traffic bursty hoặc execution ngắn | retry, concurrency, poison message, idempotency |
-| **Container Apps** | cần container, revisions, autoscale, microservice primitives nhưng không cần Kubernetes API | app-level container lifecycle và environment design |
-| **AKS** | Kubernetes API/ecosystem/control là requirement thật | cluster + node pools + networking + policy + upgrades + workload ops |
-
-Mental model:
-
-```text
-Need a web/API workload
-        │
-        ├─ App Service đáp ứng NFR? ───────────────► dùng App Service
-        │
-        ▼ no
-Need container-native lifecycle / per-app scale?
-        │
-        ├─ Container Apps đáp ứng? ────────────────► dùng Container Apps
-        │
-        ▼ no
-Need direct Kubernetes API / operators / scheduling /
-cluster networking policy / platform standardization?
-        │
-        ├─ yes ───────────────────────────────────► cân nhắc AKS
-        │
-        └─ no ────────────────────────────────────► đừng dùng AKS vì trend
-```
-
-Microsoft hiện phân biệt **AKS Automatic** và **AKS Standard**. Automatic phù hợp với nhiều workload phổ biến khi muốn opinionated defaults và giảm số quyết định vận hành; Standard phù hợp khi bạn cần mức custom/control cao hơn. Dù dùng mode nào, **Kubernetes vẫn có operating model riêng** và team phải hiểu workload behavior.
-
-Xem deep dive: [AKS Production Architecture](azure-kubernetes-service-aks-production-architecture.md).
+| Hosting & Compute | App Service, Functions, Container Apps, VMs, AKS | plan/SKU, CPU/RAM, scale, zone, networking, deployment, cost when idle |
+| Database & Storage | Azure SQL, Cosmos DB, Blob Storage, Managed Redis | consistency, tier, throughput, storage, backup, replication, cost/operation |
+| Networking & Edge | DNS, VNet, NSG, Private Link, NAT Gateway, Load Balancer, Application Gateway, Front Door | traffic path, public/private, IP/DNS, capacity, WAF/DDoS, data processing cost |
+| API | API Management | tier, policies, quotas, auth, VNet/private endpoint, gateway capacity |
+| Identity & Secrets | Entra ID, Managed Identity, RBAC, Key Vault | principal, scope, data-plane roles, secret reduction, rotation, audit |
+| Messaging | Service Bus, Event Grid, Event Hubs | delivery semantics, tier, throughput/capacity, partition, retention, DLQ |
+| Observability | Azure Monitor, Application Insights, Log Analytics | sampling, ingestion, retention, alerting, SLO, telemetry cost |
+| CI/CD & IaC | GitHub Actions, Azure DevOps, ACR, Terraform, Bicep | OIDC/federation, immutable artifacts, promotion, drift, rollback |
+| Backup & DR | Azure Backup, SQL PITR/LTR, storage redundancy, Site Recovery | RTO/RPO, restore path, replication scope, test frequency, storage cost |
+| FinOps | Cost Management, Budgets, Advisor, tags, Pricing Calculator | cost allocation, unit economics, idle/peak, egress, reservations/savings |
 
 ---
 
-# 4. Hai kiến trúc thực tế: PaaS-first và Kubernetes platform
+# 3. Production Service Handbook
 
-## 4.1 PaaS-first — lựa chọn tốt cho phần lớn team nhỏ/vừa
+Đây là phần nên đọc khi bạn cần **cấu hình dự án thật**, không chỉ học architecture.
+
+| Handbook | Nội dung |
+|---|---|
+| [Hosting & Compute](azure-production-handbook-compute.md) | App Service, Functions, Container Apps, VM, compute decision, scale, networking, cost |
+| [Data, Storage & Messaging](azure-production-handbook-data-messaging.md) | Azure SQL, Cosmos DB, Blob, Managed Redis, Service Bus, Event Grid, Event Hubs |
+| [Networking, Edge, IAM & Security](azure-production-handbook-network-security.md) | DNS, VNet, Private Link, NAT, LB, App Gateway, Front Door/WAF/DDoS, APIM, Entra, Key Vault |
+| [Observability, Delivery, Backup, DR & Cost](azure-production-handbook-operations-cost.md) | Monitor/App Insights/Logs, GitHub/Azure DevOps, ACR, IaC, backup/restore, FinOps |
+
+Mỗi service card dùng cùng mental model:
+
+```text
+Problem solved
+→ When to use / when not to use
+→ Tier / SKU / purchasing model
+→ Minimal production configuration
+→ Networking + identity
+→ Scale + availability
+→ Backup / recovery if applicable
+→ Quotas / limits
+→ Observability
+→ Cost drivers + cost traps
+→ Failure drills
+→ Official source
+```
+
+---
+
+# 4. Chọn compute — Azure trước, Kubernetes sau
+
+```text
+HTTP/API thông thường
+        │
+        ├─ App Service đáp ứng NFR? ─────────► App Service
+        │
+        ▼ no
+Container lifecycle + autoscale/revisions?
+        │
+        ├─ Container Apps đáp ứng? ──────────► Container Apps
+        │
+        ▼ no
+Event/trigger execution?
+        │
+        ├─ yes ──────────────────────────────► Functions
+        │
+        ▼
+Need OS-level control / legacy software? ────► VM / VMSS
+        │
+        ▼
+Need Kubernetes API/operators/scheduling/platform controls?
+        └────────────────────────────────────► AKS → Module 15
+```
+
+**AKS không phải mặc định cho microservices.** Nếu Azure PaaS đáp ứng NFR với ít operating surface hơn, đó thường là phương án cần được cân nhắc trước.
+
+→ [Kubernetes & AKS learning path](../15-kubernetes/README.md)
+
+---
+
+# 5. Reference architecture — .NET backend PaaS-first
 
 ```text
 Internet
   ↓
-Front Door + WAF
+Azure DNS
   ↓
-API Management
+Front Door Premium + WAF        (khi global edge/WAF justify)
   ↓
-Container Apps / App Service
+API Management                  (khi cần API product/policy boundary)
+  ↓
+App Service / Container Apps
   ├─ Checkout API
   ├─ Payment Worker
   └─ Notification Worker
+  │
+  ├── Azure SQL                 source of truth
+  ├── Service Bus               durable async work
+  ├── Blob Storage              objects/files
+  └── Managed Redis             derived fast state
+
+Managed Identity
+  ├── SQL data permission
+  ├── Service Bus sender/receiver
+  ├── Storage data roles
+  └── Key Vault only for real external secrets
+
+Private Link / VNet integration where required
+
+Azure Monitor + Application Insights + Log Analytics
   ↓
-Azure SQL + Service Bus + Blob + Redis
+SLO · traces · alerts · cost/ingestion control
 ```
 
-Phù hợp khi:
-
-- team muốn tập trung vào product/backend hơn platform engineering;
-- không cần custom Kubernetes operators;
-- không cần complex node scheduling;
-- không cần cluster-level multi-tenant controls;
-- số service vừa phải;
-- deploy/revision/autoscale của PaaS đã đáp ứng requirement.
-
-**Lợi ích:** ít control plane phải sở hữu, ít upgrade surface, incident scope nhỏ hơn.
-
-## 4.2 AKS platform — khi control thực sự có giá trị
-
-```text
-Internet
-  ↓
-Front Door + WAF
-  ↓
-Regional ingress / gateway
-  ↓
-AKS
-  ├─ system node pool
-  ├─ application node pool(s)
-  ├─ namespace: checkout
-  │    ├─ Deployment checkout-api
-  │    ├─ Deployment payment-worker
-  │    └─ Service checkout-api
-  ├─ HPA / KEDA
-  ├─ NetworkPolicy
-  └─ Workload Identity
-       │
-       ├─ Key Vault
-       ├─ SQL
-       ├─ Service Bus
-       └─ Storage
-```
-
-AKS hợp lý hơn khi:
-
-- organization đã có platform/SRE capability;
-- cần Kubernetes API và ecosystem;
-- cần namespace/policy/scheduling isolation;
-- có nhiều workload cần một platform chuẩn hóa;
-- cần custom controllers/operators;
-- cần node pools/GPU/specialized compute;
-- cần network policy/service mesh/platform-level control mà PaaS không đáp ứng.
-
-**Không dùng AKS chỉ vì “microservices = Kubernetes”.**
+Đây là baseline dễ vận hành hơn một Kubernetes platform nếu team chưa có Kubernetes-specific requirement.
 
 ---
 
-# 5. Azure resource hierarchy — application nằm ở đâu?
-
-Azure có nhiều boundary khác nhau và mỗi boundary giải quyết một problem khác nhau.
+# 6. Resource hierarchy và landing zone
 
 ```text
 Microsoft Entra tenant
@@ -249,445 +202,290 @@ Resource Groups
 Resources
 ```
 
-Một enterprise setup có thể trông như:
+Production design phải làm rõ:
+
+```text
+ownership
+billing boundary
+policy boundary
+prod/non-prod isolation
+blast radius
+quota
+compliance
+lifecycle
+```
+
+Một setup phổ biến:
 
 ```text
 Tenant
 ├─ Platform
 │  ├─ Connectivity subscription
-│  ├─ Identity/shared services subscription
-│  └─ Management/monitoring subscription
+│  └─ Management/shared-services subscription
 │
-├─ Landing Zones
-│  ├─ Production subscription
-│  │    ├─ rg-checkout-prod-compute
-│  │    ├─ rg-checkout-prod-data
-│  │    └─ rg-checkout-prod-observability
-│  │
-│  └─ NonProduction subscription
-│       └─ dev / test workloads
-│
-└─ Sandbox
+└─ Landing Zones
+   ├─ Production subscription
+   └─ Non-production subscription
 ```
 
-Không có một hierarchy universal. Design phải phản ánh:
-
-```text
-ownership
-billing
-policy boundary
-blast radius
-environment isolation
-compliance
-quota
-lifecycle
-```
-
-Xem [Azure Foundations, Resource Hierarchy & Landing Zones](azure-foundations-resource-hierarchy-and-landing-zones.md).
+→ [Azure Foundations & Landing Zones](azure-foundations-resource-hierarchy-and-landing-zones.md)
 
 ---
 
-# 6. Identity + Network — đừng biến VNet thành “trusted zone”
+# 7. Identity + Network là hai control khác nhau
 
-Một request production nên được reason theo path:
+```text
+Private Endpoint
+!=
+authorized caller
+```
+
+Một path production nên reason như sau:
 
 ```text
 Internet
-  ↓ HTTPS
-Edge / WAF
-  ↓
-API ingress
-  ↓ authenticated caller
-Application
-  ↓ workload identity
-Private service endpoint
-  ↓ authorization
-SQL / Service Bus / Storage / Key Vault
+→ WAF / ingress
+→ authenticated API caller
+→ application
+→ Managed Identity
+→ private endpoint where required
+→ target resource authorization
 ```
 
-Hai control khác nhau:
+Checklist:
 
-```text
-Network isolation
-!=
-Authorization
-```
+- public endpoints inventory;
+- VNet/subnet/IP plan;
+- private DNS ownership;
+- outbound IP requirement;
+- RBAC/data-plane roles;
+- secret rotation;
+- least privilege;
+- audit trail.
 
-Private Endpoint giúp giảm exposure nhưng không thay RBAC, database permission hay application authorization.
-
-Production checklist:
-
-- public endpoint nào thực sự cần public?
-- origin có chỉ nhận traffic từ ingress expected không?
-- app dùng Managed Identity/Workload Identity thay secret tĩnh được không?
-- SQL/Service Bus/Storage có private path khi requirement cần không?
-- outbound traffic có kiểm soát không?
-- Private DNS có owner/runbook rõ không?
-
-Xem [Azure Identity, Networking & Zero Trust](azure-identity-networking-and-zero-trust.md).
+→ [Azure Identity, Networking & Zero Trust](azure-identity-networking-and-zero-trust.md)
 
 ---
 
-# 7. Data + Messaging — chọn theo semantics
+# 8. Cost không phải giá trên pricing page
 
-## Data
+Không hard-code một con số `$X/tháng` rồi dùng cho mọi project. Azure bill phụ thuộc region, agreement, tier và workload.
 
-Trước khi chọn Azure SQL/Cosmos/Blob/Redis, viết:
-
-```text
-source of truth là gì?
-transaction boundary ở đâu?
-consistency requirement là gì?
-query/access pattern nào quan trọng?
-partition key nếu distributed data?
-retention + backup + restore ra sao?
-```
-
-## Messaging
+Dùng model:
 
 ```text
-Business command / work queue
-→ Service Bus
-
-Event notification / routing
-→ Event Grid
-
-High-throughput telemetry / stream ingestion
-→ Event Hubs
+monthly_cost
+=
+base / allocated capacity
++ runtime compute
++ storage
++ operations / requests
++ data processing
++ network egress
++ observability ingestion + retention
++ backup / replica / DR
++ security / gateway fixed capacity
 ```
-
-Đây là starting model, không phải mapping cứng.
-
-Xem [Azure Compute, Data, Messaging & Integration](azure-compute-data-messaging-and-integration.md).
-
----
-
-# 8. Cách áp dụng vào một dự án thật — từ requirements tới production
-
-Đừng deploy Azure trước rồi mới “thêm architecture”. Đi theo sequence này.
-
-## Step 0 — Viết workload brief
 
 Ví dụ:
 
 ```text
-System               Checkout
-Peak traffic         2,000 checkout/min
-Availability         99.95%
-P95 intake latency   < 500 ms
-RTO                  30 min
-RPO                  5 min
-Sensitive data       payment/customer identifiers
-Team                 5 backend + 1 DevOps
-```
+App Service
+≈ plan instances × running time
 
-## Step 1 — Chốt architecture boundary
+Container Apps Consumption
+≈ active/idle resource consumption + requests + networking extras
 
-```text
-Prod subscription
-Non-prod subscription
-Resource groups theo ownership/lifecycle
-Policy + RBAC
-Cost budget
-```
-
-Output: **resource organization ADR**.
-
-## Step 2 — Thiết kế request path + network
-
-```text
-Client
-→ Front Door/WAF
-→ APIM
-→ Compute
-→ private data dependencies
-```
-
-Output: **network/data-flow diagram + threat boundary**.
-
-## Step 3 — Chọn compute
-
-Hỏi:
-
-```text
-App Service đủ không?
-Container Apps đủ không?
-AKS requirement cụ thể là gì?
-Team có day-2 operational capability không?
-```
-
-Output: **compute ADR**.
-
-## Step 4 — Chọn source of truth + async boundaries
-
-Ví dụ:
-
-```text
 Azure SQL
-  ├─ Orders
-  ├─ PaymentAttempts
-  └─ OutboxMessages
-       ↓
+≈ compute + reserved data storage + backup storage + replica/DR
+
+Cosmos DB
+≈ RU capacity/consumption + storage + regions
+
+Blob
+≈ capacity + transactions + retrieval + redundancy + egress
+
 Service Bus
-       ↓
-Payment Worker
+≈ namespace/tier capacity + operations/features
+
+Event Hubs
+≈ TU/PU capacity + retention/capture/data transfer
+
+Log Analytics
+≈ ingestion + retention/query/export model
 ```
 
-Output: **data + messaging ADR**, schema constraints, idempotency strategy.
-
-## Step 5 — Identity + secrets
+Luôn lưu trong ADR/FinOps note:
 
 ```text
-Application identity
-→ SQL permission
-→ Service Bus sender/receiver permission
-→ Storage permission
-→ Key Vault only where actual secret is required
+Region
+Pricing date
+Workload assumptions
+Peak + idle assumptions
+Data volume
+Retention
+HA/DR assumptions
 ```
 
-Output: **permission matrix**.
+→ [Operations, Backup, DR & Cost Handbook](azure-production-handbook-operations-cost.md)
 
-## Step 6 — IaC + CI/CD
+---
+
+# 9. Cách áp dụng vào dự án thật
+
+## Step 0 — workload brief
 
 ```text
-Git
-→ test
-→ build
-→ immutable artifact/container image
+Peak RPS / jobs / messages
+P95/P99 latency
+availability SLO
+RTO / RPO
+DB size + growth
+file volume
+log GB/day
+external egress
+security/compliance
+team capability
+```
+
+## Step 1 — resource organization
+
+Output:
+
+```text
+subscriptions
+resource groups
+tags
+RBAC
+budgets
+policy
+```
+
+## Step 2 — request/network path
+
+Output:
+
+```text
+DNS
+edge/WAF
+API ingress
+compute
+private dependencies
+outbound path
+```
+
+## Step 3 — service/SKU decision
+
+Không ghi:
+
+```text
+"Use Azure SQL"
+```
+
+Ghi:
+
+```text
+Azure SQL Database
+vCore purchasing model
+General Purpose / Hyperscale depending measured workload
+serverless vs provisioned decision
+backup retention
+zone/geo requirement
+max compute/storage guardrail
+```
+
+## Step 4 — identity
+
+```text
+human identities
+CI/CD deploy identity
+runtime Managed Identity
+resource data-plane roles
+external secrets only in Key Vault
+```
+
+## Step 5 — delivery
+
+```text
+commit
+→ tests
+→ immutable artifact/image
 → security checks
 → IaC plan
-→ deploy non-prod
+→ non-prod
 → smoke/integration
-→ progressive production rollout
+→ production rollout
 → SLO gate
 → rollback
 ```
 
-Output: **repeatable environment**, không phải click Azure Portal bằng tay.
-
-## Step 7 — Observability
-
-Theo dõi cả system metrics và business outcome:
+## Step 6 — observability + cost baseline
 
 ```text
-HTTP P95/P99
-error rate
-SQL latency
-queue depth
-oldest message age
-DLQ count
-payment_unknown_total
-checkout_completion_latency
-```
-
-Output: dashboard + alert + correlation IDs + runbook.
-
-## Step 8 — Failure drills
-
-Test thực tế:
-
-```text
-kill instance/pod
-break readiness
-DB unavailable
-Service Bus delayed
-provider timeout
-secret rotation
-bad deployment
-restore database
-zone/region failure scenario nếu NFR yêu cầu
-```
-
-Output: **evidence**, không chỉ diagram.
-
-## Step 9 — Cost + governance
-
-Theo dõi:
-
-```text
-cost / environment
-cost / workload
-cost / request/order nếu có thể
-unused capacity
+business SLI
+service latency/error
+capacity
+queue age
+DB metrics
+logs GB/day
+monthly cost by resource/tag
 budget alert
-expensive log ingestion
-AKS idle node cost nếu dùng cluster
 ```
 
-Output: budget + ownership + optimization backlog.
-
----
-
-# 9. Checkout example — correctness không biến mất khi lên Azure
-
-Flow:
+## Step 7 — failure/restore drills
 
 ```text
-Client
-  ↓
-Checkout API
-  ↓ local transaction
-Azure SQL
-  ├─ Order
-  ├─ PaymentAttempt
-  └─ Outbox
-       ↓
-Service Bus
-       ↓
-Payment Worker
-       ↓
-External Payment Provider
+bad deployment
+compute instance loss
+dependency timeout
+DB throttling
+queue backlog
+secret rotation
+restore database
+restore object
+zone/region scenario when NFR requires
 ```
 
-Nếu provider timeout:
+---
 
-```text
-timeout
-!= payment failed
+# 10. Learning path
 
-payment may be UNKNOWN
-```
-
-Safer flow:
-
-```text
-same business/idempotency key
-→ query provider / verified webhook
-→ reconcile
-→ SUCCEEDED or FAILED
-```
-
-App Service, Container Apps hay AKS đều **không tự giải quyết business correctness** này.
-
-Xem full case study: [Azure .NET Checkout Reference Architecture](azure-dotnet-reference-architecture.md).
+| Guide | Mục tiêu |
+|---|---|
+| [Cloud Primitives, Identity & Networking](cloud-primitives-identity-and-networking.md) | hiểu primitive cloud trước Azure product names |
+| [Azure Foundations & Landing Zones](azure-foundations-resource-hierarchy-and-landing-zones.md) | hierarchy, subscription, policy, governance |
+| [Compute Handbook](azure-production-handbook-compute.md) | cấu hình + cost App Service/Functions/Container Apps/VM |
+| [Data & Messaging Handbook](azure-production-handbook-data-messaging.md) | database/storage/cache/messaging + capacity/cost |
+| [Network & Security Handbook](azure-production-handbook-network-security.md) | edge, DNS, VNet, private connectivity, IAM/security |
+| [Operations & Cost Handbook](azure-production-handbook-operations-cost.md) | observability, CI/CD, ACR/IaC, backup/DR, FinOps |
+| [Azure Reliability, Observability & Cost](azure-reliability-observability-governance-and-cost.md) | reliability reasoning / SLO / failure model |
+| [Azure .NET Reference Architecture](azure-dotnet-reference-architecture.md) | ghép các quyết định thành hệ thống checkout thật |
+| [References](references.md) | Microsoft source of truth |
 
 ---
 
-# 10. Kubernetes nằm ở đâu trong learning path?
+# 11. Exit criteria
 
-Kubernetes có hai lớp kiến thức khác nhau:
+Bạn hoàn thành Module 14 khi có thể lấy một backend .NET và tạo được:
 
-```text
-Layer 1 — Kubernetes generic
-Deployment · ReplicaSet · Pod · Service · Ingress/Gateway
-ConfigMap · Secret · PVC · RBAC · NetworkPolicy
-scheduler · controller · reconciliation · probes · resources
+- architecture diagram + traffic path;
+- resource hierarchy/ownership;
+- compute decision có tier/SKU;
+- database/storage/message decision có capacity model;
+- network + DNS + private/public boundary;
+- Managed Identity/RBAC matrix;
+- IaC + CI/CD path;
+- observability/SLO dashboard plan;
+- backup/restore/DR plan;
+- monthly cost worksheet với assumptions;
+- failure drills + runbook;
+- ADR giải thích trade-off.
 
-Layer 2 — Azure implementation with AKS
-AKS control plane · node pools · ACR · Entra Workload Identity
-Azure networking · ingress/egress · Key Vault · Monitor
-Azure Policy · cluster upgrades · DR · cost
-```
+Nếu requirement dẫn tới AKS, chuyển sang **[Module 15 — Kubernetes](../15-kubernetes/README.md)** thay vì biến Module 14 thành khóa Kubernetes.
 
-Học theo thứ tự:
+## Verification metadata
 
-1. [Module 15 — Kubernetes](../15-kubernetes/README.md) để hiểu object model và reconciliation.
-2. [AKS Production Architecture](azure-kubernetes-service-aks-production-architecture.md) để map Kubernetes vào Azure production platform.
-
-Đừng học AKS bằng cách thuộc `az aks create` trước khi hiểu Pod/Service/Deployment/requests/limits/probes.
-
----
-
-# 11. Learning path của Module 14
-
-| Guide | Học gì | Sau khi đọc phải trả lời được |
-|---|---|---|
-| [Cloud Primitives, Identity & Networking](cloud-primitives-identity-and-networking.md) | cloud primitives generic | compute/network/storage/identity thực sự là gì? |
-| [Azure Foundations, Resource Hierarchy & Landing Zones](azure-foundations-resource-hierarchy-and-landing-zones.md) | tenant → management groups → subscription → policy | workload nên nằm ở boundary nào và ai được quản trị? |
-| [Azure Identity, Networking & Zero Trust](azure-identity-networking-and-zero-trust.md) | Entra, RBAC, Managed Identity, VNet, Private Link, edge/gateway | request đi từ Internet tới app/data an toàn thế nào? |
-| [Azure Compute, Data, Messaging & Integration](azure-compute-data-messaging-and-integration.md) | App Service, Functions, Container Apps, AKS, SQL, Redis, Service Bus… | chọn managed service theo workload thế nào? |
-| [AKS Production Architecture](azure-kubernetes-service-aks-production-architecture.md) | Kubernetes trên Azure ở production | khi nào AKS đáng dùng và cluster/workload được thiết kế ra sao? |
-| [Azure Reliability, Observability, Governance & Cost](azure-reliability-observability-governance-and-cost.md) | zone/region, DR, Monitor, Policy, Cost | system fail/recover ra sao và ai biết? |
-| [Azure .NET Checkout Reference Architecture](azure-dotnet-reference-architecture.md) | ghép thành một production system | backend .NET deploy lên Azure thế nào mà giữ correctness? |
-| [Regions, Availability & DR](regions-availability-and-disaster-recovery.md) | cloud reliability generic | zone/region/multi-region trade-off là gì? |
-| [Cloud Cost Governance & Operations](cloud-cost-governance-and-operations.md) | FinOps + operations | cost và operations trở thành design input thế nào? |
-| [References](references.md) | Microsoft Learn + Architecture Center | tra source of truth ở đâu? |
-
----
-
-# 12. Azure service map cho backend architect
-
-Không cần thuộc hàng trăm service. Map theo responsibility:
-
-| Responsibility | Azure services thường gặp | Architecture question |
-|---|---|---|
-| Identity | Microsoft Entra ID, Managed Identity, Workload Identity | ai/cái gì đang gọi và quyền tối thiểu là gì? |
-| Secrets / keys | Key Vault | secret nào thực sự cần tồn tại? rotate thế nào? |
-| Global edge | Front Door | routing/WAF/global failover cần ở đâu? |
-| Regional ingress | Application Gateway / platform ingress | request vào workload region thế nào? |
-| API management | API Management | auth, policy, quota, version boundary ở đâu? |
-| Network | VNet, subnet, NSG, Private Endpoint, Firewall | traffic nào public/private/egress-controlled? |
-| Web/API compute | App Service | PaaS HTTP workload có đủ không? |
-| Event compute | Functions | workload có event-driven/bursty không? |
-| Container PaaS | Container Apps | cần container/revision/autoscale nhưng không cần K8s API? |
-| Kubernetes | AKS | requirement nào justify Kubernetes control? |
-| Relational data | Azure SQL | transaction + relational source of truth? |
-| Distributed NoSQL | Cosmos DB | partition/distribution model có justify không? |
-| Object storage | Blob Storage | object/binary/large payload lifecycle? |
-| Cache | Azure Managed Redis | staleness budget/fallback/hot-key? |
-| Messaging | Service Bus | delivery semantics, queue/topic, DLQ? |
-| Event routing | Event Grid | notification/routing event? |
-| Streaming | Event Hubs | high-throughput log/stream ingestion? |
-| Observability | Azure Monitor, Application Insights | SLI/SLO và trace xuyên service? |
-| Governance | Management Groups, Policy, RBAC, tags | guardrail nào được enforce tự động? |
-| Cost | Cost Management, budgets | unit economics + budget guardrail? |
-
----
-
-# 13. Architecture review checklist
-
-Trước khi approve một Azure workload, hỏi:
-
-1. Workload owner, subscription và resource-group boundary rõ chưa?
-2. SLO/RTO/RPO có business justification không?
-3. Public endpoint nào thực sự cần public?
-4. Identity nào gọi SQL/Service Bus/Storage/Key Vault?
-5. Có static secret nào thay bằng Managed/Workload Identity được không?
-6. Compute choice dựa trên workload hay team preference?
-7. Nếu chọn AKS, Kubernetes-specific requirement là gì?
-8. Team nào sở hữu cluster upgrades, node pools, policy và incident response?
-9. Database source of truth và transaction boundary ở đâu?
-10. Retry có idempotency + bounded backoff không?
-11. Queue/topic/stream được chọn dựa trên semantics nào?
-12. Zone outage xử lý thế nào?
-13. Region outage có thực sự nằm trong requirement không?
-14. Backup có restore test không?
-15. SLO dashboard đo user outcome hay chỉ CPU/memory?
-16. Deployment có progressive rollout/rollback strategy không?
-17. Database migration có compatible với rolling versions không?
-18. Policy/RBAC/tags/budget có guardrail tự động chưa?
-19. Cost theo workload/unit business là bao nhiêu?
-20. Có runbook + failure drill evidence chưa?
-
----
-
-# 14. Exit criteria — khi nào coi là “biết Azure”?
-
-Không phải khi bạn thi xong certificate hay deploy được một Web App.
-
-Bạn hoàn thành module khi có thể:
-
-- vẽ được Azure architecture end-to-end từ Internet tới data;
-- giải thích resource hierarchy + ownership + blast radius;
-- chọn App Service/Functions/Container Apps/AKS bằng trade-off;
-- giải thích khi nào **không nên dùng Kubernetes**;
-- thiết kế identity/network/private access mà không dựa vào “VNet = secure”;
-- chọn data/messaging theo semantics;
-- triển khai bằng IaC + repeatable pipeline;
-- định nghĩa SLI/SLO + dashboard + alerts;
-- test backup/restore/failure paths;
-- reason về zone/region/DR;
-- có ADR cho những quyết định khó đảo ngược;
-- chứng minh architecture bằng code, deployment, metrics và failure drills.
-
-<div class="key-takeaway" markdown>
-<strong>Architect-level outcome</strong>
-
-Bạn không chỉ biết “Azure service X dùng để làm gì”. Bạn biết **đưa một workload thật vào Azure, chọn đúng mức abstraction, bảo vệ boundary, vận hành failure và chứng minh decision bằng evidence**.
-</div>
-
-## Nguồn tham khảo
-
-Module ưu tiên **Microsoft Learn, Azure Architecture Center, Azure Well-Architected Framework, Cloud Adoption Framework và Kubernetes official documentation** làm source of truth.
-
-Xem [references.md](references.md).
+- Verified: 2026-08-28.
+- Azure-specific behavior: Microsoft Learn / Azure Architecture Center / Azure Well-Architected are canonical.
+- Pricing: document cost drivers and calculator assumptions; re-check live price before production decisions.
+- Kubernetes: intentionally separated to Module 15.
