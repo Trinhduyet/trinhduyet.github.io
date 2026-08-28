@@ -1,5 +1,5 @@
 site_name: Software Architecture Engineering
-site_description: Học cách build hệ thống thật từ .NET Backend, Database, API, Azure/Cloud, Distributed Systems, System Design, Software Architecture đến Production AI Engineering.
+site_description: Học cách build hệ thống thật từ .NET Backend, Database, API, Testing, DevOps, Kubernetes, Azure/Cloud, Distributed Systems, System Design, Software Architecture đến Production AI Engineering.
 site_url: https://trinhduyet.github.io/
 repo_url: https://github.com/Trinhduyet/trinhduyet.github.io
 repo_name: Trinhduyet/trinhduyet.github.io
@@ -150,6 +150,7 @@ nav:
           - Test Strategy: 08-testing-code-review/test-strategy-and-boundaries.md
           - Integration & Load Testing: 08-testing-code-review/integration-contract-and-load-testing.md
           - Code Review & Failure Analysis: 08-testing-code-review/code-review-quality-and-failure-analysis.md
+          - References: 08-testing-code-review/references.md
       - Security & DevSecOps:
           - Overview: 09-security-devsecops/README.md
           - Threat Modeling: 09-security-devsecops/threat-modeling-and-application-security.md
@@ -170,11 +171,24 @@ nav:
           - Images & Reproducibility: 12-docker/images-builds-and-reproducibility.md
           - Runtime, Network & Storage: 12-docker/runtime-networking-storage-and-resources.md
           - Security, Compose & Operations: 12-docker/docker-security-compose-and-operations.md
+
+  - DevOps & Kubernetes:
+      - End-to-End Delivery Path: 13-devops-iac/devops-kubernetes-production-delivery.md
       - DevOps & IaC:
           - Overview: 13-devops-iac/README.md
           - CI/CD & Artifacts: 13-devops-iac/ci-cd-artifacts-and-promotion.md
           - Terraform State & Modules: 13-devops-iac/terraform-state-modules-and-drift.md
           - Safe Delivery & Recovery: 13-devops-iac/safe-delivery-drift-and-recovery.md
+          - References: 13-devops-iac/references.md
+      - Kubernetes:
+          - Overview & Learning Path: 15-kubernetes/README.md
+          - Architecture & Reconciliation: 15-kubernetes/cluster-architecture-and-reconciliation.md
+          - Workloads, Network & Storage: 15-kubernetes/workloads-networking-and-storage.md
+          - Application Configuration & Scheduling: 15-kubernetes/application-configuration-and-scheduling.md
+          - Security & Observability: 15-kubernetes/kubernetes-security-observability-and-operations.md
+          - kubectl Debugging & CKAD Practice: 15-kubernetes/kubectl-debugging-and-ckad-practice.md
+          - AKS on Azure Production Mapping: 15-kubernetes/aks-on-azure-production-architecture.md
+          - References: 15-kubernetes/references.md
 
   - Azure & Platform:
       - Overview: 14-cloud/README.md
@@ -191,16 +205,6 @@ nav:
       - Regions, Availability & DR: 14-cloud/regions-availability-and-disaster-recovery.md
       - Cloud Cost Governance: 14-cloud/cloud-cost-governance-and-operations.md
       - References: 14-cloud/references.md
-
-  - Kubernetes:
-      - Overview & Learning Path: 15-kubernetes/README.md
-      - Architecture & Reconciliation: 15-kubernetes/cluster-architecture-and-reconciliation.md
-      - Workloads, Network & Storage: 15-kubernetes/workloads-networking-and-storage.md
-      - Application Configuration & Scheduling: 15-kubernetes/application-configuration-and-scheduling.md
-      - Security & Observability: 15-kubernetes/kubernetes-security-observability-and-operations.md
-      - kubectl Debugging & CKAD Practice: 15-kubernetes/kubectl-debugging-and-ckad-practice.md
-      - AKS on Azure Production Mapping: 15-kubernetes/aks-on-azure-production-architecture.md
-      - References: 15-kubernetes/references.md
 
   - Distributed:
       - Distributed Systems:
