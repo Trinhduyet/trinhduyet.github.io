@@ -229,7 +229,7 @@ Ready Pods
 
 Sau đó mới học ConfigMap/Secret, resources, probes, PVC, RBAC, HPA, rollout và `kubectl` debugging.
 
-→ [Module 15 — Kubernetes](15-kubernetes/README.md)
+→ [Module 15 — Kubernetes](15-kubernetes/README.md) · [Core runnable lab](https://github.com/Trinhduyet/trinhduyet.github.io/tree/main/labs/15-kubernetes)
 
 ---
 
@@ -337,9 +337,9 @@ ADR + cost + migration trigger
 
 ### Quan trọng: content depth != runnable lab
 
-Repository hiện có dedicated executable labs rõ cho Modules **01–04**. Nhiều module sau đã có deep guided exercises/failure drills nhưng chưa có committed runnable lab tương ứng.
+Dedicated executable labs hiện có cho Modules **01–04** và **Kubernetes core (15)**. Nhiều module còn lại đã có deep guided exercises/failure drills nhưng chưa có committed runnable lab tương ứng.
 
-Đây là backlog chính tiếp theo, không được che bằng chữ “Done”.
+Đây vẫn là backlog chính tiếp theo, không được che bằng chữ “Done”.
 
 → [Repository Quality Review — 2026-08-28](00-roadmap/repository-quality-review-2026-08-28.md)
 
