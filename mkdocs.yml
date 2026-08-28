@@ -183,6 +183,7 @@ nav:
           - Azure Foundations & Landing Zones: 14-cloud/azure-foundations-resource-hierarchy-and-landing-zones.md
           - Azure Identity, Network & Zero Trust: 14-cloud/azure-identity-networking-and-zero-trust.md
           - Azure Compute, Data & Messaging: 14-cloud/azure-compute-data-messaging-and-integration.md
+          - AKS Production Architecture: 14-cloud/azure-kubernetes-service-aks-production-architecture.md
           - Azure Reliability, Observability & Cost: 14-cloud/azure-reliability-observability-governance-and-cost.md
           - Azure .NET Reference Architecture: 14-cloud/azure-dotnet-reference-architecture.md
           - Regions, Availability & DR: 14-cloud/regions-availability-and-disaster-recovery.md
