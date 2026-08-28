@@ -1,158 +1,337 @@
 # Roadmap Overview
 
-> **Kho này là reference + practice system, không phải sách phải đọc hết.** Nếu bạn đọc nhiều nhưng khó nhớ, bắt đầu lại bằng ví dụ chứ không đọc thêm lý thuyết.
+> Repository này là **learning + reference + practice system**, không phải sách phải đọc từ Module 01 đến Module 25.
 
-## 3 lối vào
+## Có 60 phút? Bắt đầu như này
 
-### Học để hiểu
+```text
+1. Chọn role/problem hiện tại
+2. Mở đúng một module
+3. Học một mental model
+4. Chạy/thiết kế một failure scenario
+5. Lưu evidence
+6. Viết 3 điều hiểu + 1 gap
+```
 
-**[Human Learning Mode](human-learning-mode.md)**
+→ **[Role-based Learning Paths](role-based-learning-paths.md)** — Backend, Senior Backend, DevOps/Platform, Kubernetes, Azure, Architect, Production AI.
+
+Nếu chưa có role rõ, chọn **Backend Engineer** và đi từ request → SQL → API → tests trước.
+
+---
+
+# 1. Bốn lối vào
+
+## Học để hiểu
+
+[Human Learning Mode](human-learning-mode.md)
 
 ```text
 scenario → code → failure → 3 điều cần nhớ
 ```
 
-### Học để làm
+## Học để làm
 
-**[Example-First Checkout Learning Path](example-first-learning-path.md)**
+[Example-First Checkout Learning Path](example-first-learning-path.md)
 
-Một hệ thống duy nhất nối:
+Một scenario nối:
 
 ```text
 C# / async
 → SQL
 → API Design
 → ASP.NET Core
+→ Testing
 → Cache
-→ Docker / Kubernetes
+→ Docker / DevOps / Kubernetes
 → Distributed Systems
 → Microservices
-→ System Design
-→ AI Engineering
-→ AI Coding Agents
+→ System Design / Architecture
+→ AI capability
 ```
 
-### Tra nhanh khái niệm
+## Học theo nghề
 
-**[Concept Cards](concept-cards.md)** — Transaction, Index, Idempotency, Cache, Outbox, Saga, Reconciliation, Kubernetes probes, SLO, RAG, Tool Calling...
-
----
-
-# Deep roadmap
-
-Khi đã có một problem cụ thể, đi vào module sâu tương ứng:
+[Role-based Learning Paths](role-based-learning-paths.md)
 
 ```text
-.NET
-→ Backend
-→ SQL
-→ API Design
-→ ASP.NET Core
-→ Production Engineering
-→ Docker / Kubernetes
-→ Distributed Systems
-→ Microservices Architecture
-→ System Design
-→ Software Architecture
+role
+→ minimum concepts
+→ core modules
+→ evidence target
+→ optional depth
 ```
 
-AI lane chạy song song sau backend foundations:
+## Tra nhanh
+
+[Concept Cards](concept-cards.md)
+
+Dùng khi cần nhắc mental model về transaction, index, idempotency, cache, outbox, saga, Kubernetes probes, SLO, RAG, tool calling...
+
+---
+
+# 2. Core learning graph
 
 ```text
-AI Engineering
-→ RAG
-→ Agents / MCP
-→ AI Security
-→ GenAIOps
-→ AI System Design
+FOUNDATION
+CS + Linux/Git/Networking
+        ↓
+BACKEND
+.NET → Backend → SQL → API → ASP.NET Core
+        ↓
+PRODUCTION
+Testing → Security → Performance → Redis when justified → Docker
+        ↓
+DELIVERY / PLATFORM
+DevOps/IaC → Azure
+           ↘ Kubernetes when justified
+        ↓
+DISTRIBUTED
+Distributed Systems → Microservices when autonomy pressure exists
+        ↓
+DESIGN
+System Design → Software Architecture
+        ↓
+AI
+AI Engineering / Coding Agents on top of engineering foundation
 ```
 
-Chi tiết dependency/priority: [Master Roadmap](master-roadmap.md).
+Không phải mọi Backend Engineer đều cần Kubernetes Level 5. Không phải mọi project cần Microservices. Roadmap là dependency graph, không phải checklist CV.
+
+→ [Master Roadmap](master-roadmap.md)
 
 ---
 
-# Active code-first modules
+# 3. Content maturity — đọc đúng trạng thái
 
-| Module | Status | Example-first hook |
-|---|---|---|
-| 05 SQL | deep rewrite v1 | UNIQUE idempotency + transactions + plans |
-| 06 API Design | deep rewrite v1 / 25-topic coverage | `POST /checkouts` |
-| 07 ASP.NET Core | deep rewrite v1 | checkout endpoint + explicit state |
-| 12 Docker | deep rewrite v1 | package Checkout API |
-| 15 Kubernetes | deep rewrite v1 | readiness/liveness + rollout |
-| 17 Distributed Systems | code-first v1 | Outbox / Inbox / duplicate delivery |
-| 18 Microservices Architecture | code-first v1 | payment UNKNOWN + reconciliation |
-| 19 AI Engineering | code-first v1 | order-status tool + authorization |
-| AI Coding Agents | code-first v1 | issue → edit → build/test → PR |
-| 24 System Design | code-first v1 | capacity + scale + failure + cost |
+Tách **content depth** khỏi **runnable evidence**.
 
-Các module khác vẫn có giá trị reference nhưng một số còn cần thêm scenario/code để đạt cùng quality bar.
+| Maturity | Nghĩa |
+|---|---|
+| Reference | vocabulary + mental model + canonical sources |
+| Guided | scenario + examples + guided failure/debug exercise |
+| Deep | production/security/operations/cost/trade-off reasoning |
+| Runnable | artifact thực sự tồn tại trong repo và chạy được |
+| Verified Evidence | expected output/failure/recovery có thể kiểm chứng |
+
+Một page có nhiều commands không tự động trở thành runnable lab nếu artifact tương ứng chưa nằm trong `labs/`.
+
+→ [Learning Quality Standard](learning-quality-standard.md)
 
 ---
 
-# Quality Gate mới cho tài liệu
+# 4. Repository hiện mạnh ở đâu?
 
-Một chapter không nên chỉ có:
+Deep content hiện đặc biệt mạnh ở:
+
+```text
+05 SQL
+06 API Design
+07 ASP.NET Core
+08 Testing & Code Review
+12 Docker
+13 DevOps & IaC
+14 Azure
+15 Kubernetes
+17 Distributed Systems
+18 Microservices Architecture
+19 AI Engineering
+21 AI Coding Agents
+24 System Design
+25 Software Architecture
+```
+
+Module 09 Security, 10 Performance và 11 Redis đã được nâng overview theo quality bar mới trong review 2026-08-28.
+
+Chi tiết maturity/evidence thật:
+[Repository Quality Review — 2026-08-28](repository-quality-review-2026-08-28.md).
+
+---
+
+# 5. Executable evidence hiện có
+
+Dedicated runnable artifacts dưới `labs/` hiện tập trung ở:
+
+```text
+01 Computer Science
+02 Linux/Git/Networking
+03 .NET Runtime
+04 Backend
+```
+
+Nhiều module sau đã có guided commands/config/failure drills nhưng **chưa có dedicated runnable lab**. Đây là backlog chính tiếp theo, không được che bằng chữ “Done”.
+
+Ưu tiên lab integration:
+
+```text
+05–08 Production Backend Lab
+09–13 Production Delivery Lab
+15 Kubernetes Local Lab
+17 Distributed Reliability Lab
+18 Checkout Saga Lab
+14 Azure IaC Lab
+19 Production AI Lab
+```
+
+Một integrated system được phá/debug xuyên nhiều module tốt hơn nhiều sample rời.
+
+---
+
+# 6. Quality loop cho mọi topic P0/P1
+
+```text
+Problem thật
+  ↓
+Mental model
+  ↓
+Minimal code/config
+  ↓
+Expected state
+  ↓
+Failure experiment
+  ↓
+Debugging
+  ↓
+Fix / recovery
+  ↓
+Trade-off
+  ↓
+Evidence
+```
+
+Bad chapter:
 
 ```text
 definition
 pattern list
-architect paragraph
+tool list
 ```
 
-Với topic P0/P1, ưu tiên:
+Good chapter phải nối được lý thuyết vào ít nhất một:
 
 ```text
-1. Problem thật
-2. Minimal code/config
-3. Expected output/state
-4. Failure experiment
-5. Fix
-6. 3 điều cần nhớ
-7. Deep internals (optional)
-8. Trade-offs
+request
+state transition
+SQL query
+message
+container/Pod
+failure
+metric/trace
+business decision
 ```
-
-Nếu phần lý thuyết không nối được vào một request, state transition, query, message, failure hoặc metric cụ thể thì nó chưa đủ dễ học.
 
 ---
 
-# Evidence thay cho “đã đọc”
+# 7. Evidence thay cho “đã đọc”
+
+Examples:
 
 ```text
 reproduce duplicate checkout
-viết SQL invariant
-xem execution plan
-simulate payment timeout
-reconcile UNKNOWN state
-kill Pod / observe readiness
-build queue backlog
-measure capacity
-viết regression test
+prove SQL uniqueness invariant
+inspect actual execution plan
+simulate dependency timeout
+reconcile UNKNOWN payment
+break Kubernetes readiness
+wrong Service selector → inspect endpoints
+create queue backlog
+measure P95/P99 at saturation
+run authorization-negative test
+write ADR rejecting unnecessary complexity
 ```
 
-Mục tiêu:
+Evidence hierarchy:
 
 ```text
-Problem
-→ Mechanism
-→ Failure
-→ Evidence
-→ Trade-off
+read
+< explain
+< implement
+< test
+< break
+< debug
+< recover
+< design/review from evidence
 ```
-
-Không phải thuộc càng nhiều thuật ngữ càng tốt.
 
 ---
 
-# Source / version policy
+# 8. Source/version policy
 
-Deep technical claims vẫn theo:
+Use:
 
-- official specifications / official docs;
-- English source of truth;
-- Vietnamese explanation để hiểu nhanh;
-- Context7 cho framework/library version-sensitive APIs khi có;
-- roadmap.sh để kiểm scope, không làm canonical implementation source.
+```text
+Official spec/docs
+→ official release/support source
+→ provider compatibility matrix
+→ measured evidence
+```
 
-Xem [Source Policy](source-policy.md) và [Technology Baseline](technology-baseline.md).
+Community/Vietnamese resources có thể giúp explanation. `roadmap.sh` giúp breadth audit. Chúng không override current official behavior/security/version.
+
+→ [Source Policy](source-policy.md)
+
+Version snapshot:
+→ [Technology Baseline](technology-baseline.md)
+
+Important:
+
+```text
+upstream current
+!= provider supported
+!= lab pinned
+```
+
+---
+
+# 9. Skills không phải checklist cá nhân trong public docs
+
+[Skills Matrix](skills-matrix.md) mô tả:
+
+```text
+capability
+priority
+target depth
+content maturity
+runnable evidence
+where to prove it
+```
+
+Current learner level nên được track riêng bằng progress/evidence, không hard-code giả định kinh nghiệm của một người vào public repository.
+
+→ [Progress Template](progress-template.md)
+
+---
+
+# 10. Nếu bị overload
+
+Đừng mở thêm module.
+
+Chọn một flow:
+
+```text
+HTTP request
+→ application
+→ SQL
+```
+
+Sau đó lần lượt thêm pressure thật:
+
+```text
+security
+performance
+cache
+container
+deployment
+failure
+queue
+cloud/platform
+```
+
+Technology chỉ xuất hiện khi pressure yêu cầu nó.
+
+## Tiếp theo
+
+- **Không biết học gì:** [Role-based Learning Paths](role-based-learning-paths.md)
+- **Muốn học bằng một system:** [Example-First Path](example-first-learning-path.md)
+- **Muốn xem toàn landscape:** [Master Roadmap](master-roadmap.md)
+- **Muốn xem debt/chất lượng repo:** [Repository Quality Review](repository-quality-review-2026-08-28.md)
+- **Muốn biết chuẩn viết content:** [Learning Quality Standard](learning-quality-standard.md)
