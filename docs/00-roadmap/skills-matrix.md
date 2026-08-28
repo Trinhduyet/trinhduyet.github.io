@@ -112,11 +112,11 @@ Reference < Guided < Deep
 | Azure | compute service selection/config/cost | P0/P1 | 5 | Deep handbook | No | [Compute handbook](../14-cloud/azure-production-handbook-compute.md) |
 | Azure | SQL/storage/cache/messaging selection | P0/P1 | 5 | Deep handbook | No | [Data/Messaging handbook](../14-cloud/azure-production-handbook-data-messaging.md) |
 | Azure | monitor/delivery/backup/DR/cost | P0/P1 | 5 | Deep handbook | No | [Operations/Cost handbook](../14-cloud/azure-production-handbook-operations-cost.md) |
-| Kubernetes | cluster/reconciliation/control plane/workers | P1 | 4/5 | Deep/Guided | No | [Architecture](../15-kubernetes/cluster-architecture-and-reconciliation.md) |
-| Kubernetes | Deployment/Pod/Service/network/storage | P1 | 5 | Deep/Guided | No | [Workloads](../15-kubernetes/workloads-networking-and-storage.md) |
-| Kubernetes | config/resources/scheduling/autoscaling | P1 | 4/5 | Deep/Guided | No | [Configuration/Scheduling](../15-kubernetes/application-configuration-and-scheduling.md) |
-| Kubernetes | RBAC/security/observability/operations | P1 | 4/5 | Deep/Guided | No | [Security/Operations](../15-kubernetes/kubernetes-security-observability-and-operations.md) |
-| Kubernetes | kubectl troubleshooting/CKAD application skills | P1 | 4/5 | Deep/Guided | No | [Debugging](../15-kubernetes/kubectl-debugging-and-ckad-practice.md) |
+| Kubernetes | cluster/reconciliation/control plane/workers | P1 | 4/5 | Deep/Guided | **Yes — core** | [Architecture](../15-kubernetes/cluster-architecture-and-reconciliation.md) + `labs/15-kubernetes` |
+| Kubernetes | Deployment/Pod/Service/network basics | P1 | 5 | Deep/Guided | **Yes — core** | [Workloads](../15-kubernetes/workloads-networking-and-storage.md) + `labs/15-kubernetes` |
+| Kubernetes | resources/probes/rollout/scaling basics | P1 | 4/5 | Deep/Guided | **Yes — core/partial** | [Configuration/Scheduling](../15-kubernetes/application-configuration-and-scheduling.md) + `labs/15-kubernetes` |
+| Kubernetes | RBAC/security/NetworkPolicy/advanced operations | P1 | 4/5 | Deep/Guided | No dedicated yet | [Security/Operations](../15-kubernetes/kubernetes-security-observability-and-operations.md) |
+| Kubernetes | kubectl troubleshooting | P1 | 4/5 | Deep/Guided | **Yes — core** | [Debugging](../15-kubernetes/kubectl-debugging-and-ckad-practice.md) + `labs/15-kubernetes` |
 | AKS | map K8s core to Azure production platform | P1 | 4/5 | Deep/Guided | No | [AKS mapping](../15-kubernetes/aks-on-azure-production-architecture.md) |
 
 ---
@@ -185,18 +185,18 @@ Không gán trạng thái `Planned` cho capability đã có content sâu ở mod
 
 # Repository evidence gap
 
-Current dedicated runnable lab directories cover modules 01–04. That means the highest-leverage backlog is **not adding more rows**; it is turning later deep content into executable integrated scenarios.
+Dedicated runnable lab directories now cover Modules **01–04 plus Kubernetes core (15)**. The highest-leverage backlog is still **not adding more rows**; it is turning later deep content into executable integrated scenarios.
 
 Priority:
 
 ```text
 05–08 Production Backend
 09–13 Production Delivery
-15 Kubernetes Local
 17 Distributed Reliability
 18 Checkout Saga
 14 Azure IaC
 19 Production AI
+15 Kubernetes RBAC/PVC/NetworkPolicy/HPA extensions
 ```
 
 → [Repository Quality Review](repository-quality-review-2026-08-28.md)
@@ -227,6 +227,7 @@ design review
 ## Verification metadata
 
 - Rebuilt: 2026-08-28.
-- Scope aligned with actual repository modules at review time.
+- Scope aligned with actual repository modules and runnable lab directories at review time.
 - Removed public user-specific assumed current levels.
 - Distributed Systems, System Design, Software Architecture and EF Core statuses corrected from stale `Planned` labels to current active/deep coverage.
+- Kubernetes core lab coverage added for reconciliation, Service/selectors, probes, resources, rollout and debugging.
