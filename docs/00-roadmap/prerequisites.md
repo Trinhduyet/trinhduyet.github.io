@@ -1,205 +1,381 @@
-# Knowledge dependency graph
+# Knowledge Dependency Graph
 
-## Mental model
-
-Một topic “đứng trước” topic khác khi thiếu nó sẽ làm người học chỉ nhớ syntax mà không giải thích được behavior, failure hoặc trade-off.
+> Một topic đứng trước topic khác khi thiếu nó khiến người học chỉ nhớ syntax mà không giải thích được behavior, failure hoặc trade-off.
 
 ![Dependency layers từ foundations đến architecture](../assets/diagrams/prerequisites-layer-stack.svg)
-
----
 
 ## Dependency rules quan trọng
 
 | Học sau | Prerequisite tối thiểu | Vì sao |
-| --- | --- | --- |
-| ASP.NET Core | HTTP, process/socket, DI, async | Middleware syntax không giải thích request lifecycle/saturation |
+|---|---|---|
+| ASP.NET Core | HTTP, process/socket, DI, async/cancellation | middleware syntax không giải thích request lifecycle/saturation |
 | EF Core performance | SQL, indexes, execution plan | LINQ không cho biết database thực sự làm gì |
-| Docker | Linux process/filesystem/signals/networking | Container là process isolation, không phải “VM nhẹ” |
-| Kubernetes | container model, DNS/networking, resources | YAML không giải thích reconciliation/readiness/scheduling |
-| Outbox | local transaction, messaging, idempotency | Pattern vô nghĩa nếu chưa hiểu atomic boundary và duplicates |
-| **Microservices** | **modular boundaries + Distributed Systems + observability** | **Tách process tạo network/data-consistency/deployment/operations cost** |
-| RAG | embeddings/retrieval, data lifecycle, evaluation | Demo retrieval không đủ cho ACL/deletion/regression |
-| MCP/Agents | tool contract, identity/authz, trust boundaries | Discovery/transport không thay authorization |
-| System Design | FR/NFR, capacity, data/distributed fundamentals | Component choice phải theo requirement/scale |
-| Software Architecture | System Design, boundaries, migration, docs | Pattern không phải recipe; architecture phải tiến hóa được |
+| Security/AuthZ | HTTP/API identity + resource ownership | token syntax không thay authorization model |
+| Performance | workload + telemetry + SQL/runtime basics | optimization không có baseline dễ tối ưu sai layer |
+| Redis caching | performance bottleneck + source of truth + staleness tolerance | cache thêm consistency/failure cost |
+| Docker | Linux process/filesystem/signals/networking | container là process isolation, không phải “VM nhẹ” |
+| DevOps/IaC | Git + tests + artifact/container concepts | pipeline phải promote evidence/artifact, không chạy command mù |
+| Kubernetes | Docker/container model, DNS/networking, resources, health semantics | YAML không giải thích reconciliation/readiness/scheduling |
+| AKS | Kubernetes core + Azure identity/networking | provider mapping không thay Kubernetes mental model |
+| Outbox | local transaction, messaging, idempotency | pattern vô nghĩa nếu chưa hiểu atomic boundary và duplicate |
+| Microservices | modular boundaries + Distributed Systems + observability/delivery | tách process tạo network/data/deployment/operations cost |
+| System Design | FR/NFR, capacity, data/distributed fundamentals | component choice phải theo requirement/scale/failure |
+| Software Architecture | system behavior + boundaries/ownership + migration | pattern không phải recipe; structure phải bảo vệ quality attributes |
+| Production RAG | data lifecycle, retrieval, AuthZ, evaluation | vector search demo không đủ cho ACL/deletion/regression |
+| AI tools/agents | tool contracts, identity/AuthZ, distributed side-effect reasoning | prompt/tool discovery không thay security/correctness boundary |
 
 ---
 
-# Entry criteria theo track
+# Dependency stack
 
-## 05 SQL
+```text
+CS + Linux/Git/Networking
+        ↓
+.NET Runtime
+        ↓
+Backend + SQL + API + ASP.NET Core
+        ↓
+Testing + Security + Performance
+        ↓
+Redis only when justified
+        ↓
+Docker
+        ↓
+DevOps / IaC
+        ↓
+Azure provider knowledge
+        ↘
+         Kubernetes core when needed
+        ↓
+Distributed Systems
+        ↓
+Microservices when justified
+        ↓
+System Design
+        ↓
+Software Architecture
+```
 
-- logic/sets và data types cơ bản;
-- có thể đọc code backend đơn giản;
-- không yêu cầu EF Core trước.
+AI Engineering can branch after Backend/Production foundations and then reuse Cloud, Distributed, System Design and Architecture depth as the product demands.
 
-## 07 ASP.NET Core
+---
 
-- HTTP semantics;
-- C# async/cancellation;
-- DI/config/logging;
-- API design fundamentals;
-- SQL/EF basics.
+# Entry criteria theo major track
 
-## 15 Kubernetes
+## Backend Core
 
-- Linux/network diagnostics;
-- container image/runtime/lifecycle;
-- configuration/secrets;
-- observability basics.
+Before deep ASP.NET Core:
 
-## 17 Distributed Systems
+```text
+HTTP semantics
+C# async/cancellation
+DI/config/logging
+SQL basics
+API contract basics
+```
 
-Phải có thể:
+Evidence:
+
+- trace one request;
+- explain cancellation propagation;
+- design one transaction invariant;
+- distinguish authentication vs authorization.
+
+---
+
+## Performance / Redis
+
+Before cache optimization:
+
+```text
+representative workload
+P95/P99 or other target
+source of truth
+measured bottleneck
+allowed staleness
+```
+
+Anti-shortcut:
+
+```text
+SQL query slow
+→ first inspect query/index/plan
+not automatically
+→ add Redis
+```
+
+---
+
+## Docker
+
+Need:
+
+```text
+Linux process
+filesystem
+signals
+ports/DNS/network
+CPU/memory basics
+```
+
+Must explain:
+
+```text
+image != container
+container != VM
+container filesystem != durable storage
+localhost inside container != another container
+```
+
+---
+
+## DevOps / IaC
+
+Need:
+
+```text
+Git commit/branch/diff
+quality tests
+artifact identity
+container build basics
+```
+
+Then reason:
+
+```text
+PR
+→ gates
+→ immutable artifact
+→ promotion
+→ deployment
+→ verification
+→ rollback/recovery
+```
+
+Terraform is easier to learn correctly after understanding resource lifecycle/state and environment boundaries.
+
+---
+
+## Kubernetes
+
+Need:
+
+```text
+Linux/network diagnostics
+container image/runtime/lifecycle
+configuration/secrets concepts
+CPU/memory requests intuition
+health/readiness semantics
+artifact/deployment lifecycle
+```
+
+Minimum mental model before advanced YAML:
+
+```text
+Control Plane manages desired state
+Worker runs workloads
+kube-apiserver is API boundary
+scheduler chooses node
+kubelet materializes Pod on node
+```
+
+And:
+
+```text
+Deployment → ReplicaSet → Pod → Container
+Client → DNS → Service → selector → Ready Pods
+```
+
+Do not start with Helm/service mesh/GitOps before these flows are clear.
+
+---
+
+## Azure / AKS
+
+Azure service selection needs cloud primitives:
+
+```text
+identity
+network
+compute
+data
+messaging
+availability
+cost
+```
+
+AKS needs both:
+
+```text
+Kubernetes core
++
+Azure identity/network/compute/observability
+```
+
+Avoid learning AKS as a list of Azure blades while Kubernetes concepts remain unclear.
+
+---
+
+## Distributed Systems
+
+Entry knowledge:
 
 ```text
 network timeout
-transaction boundary
-idempotency
-basic messaging
+local transaction boundary
+idempotency basics
+API/message contracts
 logs/metrics/traces
 ```
 
-Trước khi qua Module 18, cần giải thích được:
+Before Microservices, explain:
 
-- timeout = unknown outcome trong một số side-effect operations;
-- retry amplification;
+- timeout can mean unknown outcome;
+- retry can amplify/duplicate;
 - Outbox/Inbox/Dedup;
 - at-least-once delivery;
 - eventual consistency;
-- Saga/compensation;
-- backpressure/order basics.
+- Saga/compensation/reconciliation;
+- backpressure/order scope.
 
-## 18 Microservices Architecture
+→ [Module 17](../17-distributed-systems/README.md)
+
+---
+
+## Microservices Architecture
 
 Prerequisite:
 
 ```text
-Module 17 Distributed Systems
+Distributed Systems
 +
-module boundaries / domain ownership
+module/domain boundaries
 +
-API contract evolution
+data ownership
 +
-observability / deployment basics
+API/event compatibility
++
+observability/deployment basics
 ```
 
-Entry evidence tối thiểu:
+Entry evidence:
 
 ```text
-[ ] Có thể thiết kế idempotent side effect.
-[ ] Có thể mô tả Outbox dual-write problem.
-[ ] Có thể phân biệt authoritative state và read model.
-[ ] Có thể trace request qua ít nhất 2 network boundaries.
-[ ] Có thể giải thích rolling deployment + backward compatibility.
+[ ] design idempotent side effect
+[ ] explain DB + broker dual-write gap
+[ ] distinguish authoritative state vs projection
+[ ] trace across network boundaries
+[ ] explain rolling compatibility
+[ ] identify why one capability actually needs independent lifecycle
 ```
 
-Không nên học Microservices bằng cách chỉ dựng:
-
-```text
-3 Spring/.NET services + Docker Compose
-```
-
-nếu chưa reasoning được failure/data/deployment semantics.
+Do not call this learning complete because three APIs run in Docker Compose.
 
 ---
 
-# Microservices dependency detail
+## System Design
 
-## Step 1 — Modular boundary trước network boundary
-
-```text
-Order module
-Payment module
-Inventory module
-```
-
-Nếu code trong một process còn xuyên module bằng shared table/internal type, tách thành HTTP services thường chỉ biến coupling thành remote coupling.
-
-## Step 2 — Distributed failure
+Need enough foundation to quantify:
 
 ```text
-local call
-→ deterministic result/exception boundary
-
-remote call
-→ request may execute while response is lost
+FR/NFR
+RPS/concurrency/data volume
+latency/SLO
+source of truth
+consistency
+failure modes
 ```
 
-Do đó microservice checkout cần `Unknown/Pending` state và reconciliation cho operation không thể prove outcome.
+Then component selection becomes a response to pressure rather than a pattern quiz.
 
-## Step 3 — Data ownership
+---
+
+## Software Architecture
+
+Need:
 
 ```text
-service boundary
-→ owned data/schema/migrations
-→ integration via API/events
+system behavior/failure
+quality attributes
+business/data ownership
+integration/deployment constraints
 ```
 
-Shared DB schema phá independent lifecycle.
+Architecture must answer why a boundary/style protects a quality attribute and what complexity it buys.
 
-## Step 4 — Contract evolution
+---
 
-Independent deploy cần overlap:
+## Production AI
+
+Before advanced AI orchestration, know:
 
 ```text
-old consumer + new provider
-new consumer + old provider
+backend/API
+AuthN/AuthZ
+data lifecycle
+timeout/cancellation
+observability
+release/test discipline
 ```
 
-hoặc migration strategy rõ.
-
-## Step 5 — Operations
-
-Mỗi service thêm:
+RAG adds:
 
 ```text
-CI/CD
-runtime resources
-SLO
-trace/log/metrics
-on-call/runbook
-security patching
-cost
+retrieval quality
+ACL/security trimming
+freshness/deletion/versioning
+evaluation
 ```
 
-Đây là lý do “nhiều service” không tự động tốt hơn monolith.
+Tools/agents add:
+
+```text
+application authorization
+side-effect idempotency/unknown outcome
+least privilege
+audit/human review where appropriate
+```
 
 ---
 
 # Anti-shortcut checks
 
-- Nếu không đọc được execution plan, chưa tối ưu EF query bằng “best practice”.
-- Nếu không giải thích được SIGTERM/readiness, chưa thiết kế rolling shutdown.
-- Nếu không có idempotency boundary, chưa thêm retry cho side effect.
-- Nếu không hiểu timeout = unknown outcome, chưa thiết kế payment checkout phân tán.
-- Nếu service share DB/domain entity, chưa có data/service autonomy thật.
-- Nếu release phải lock-step mọi service, chưa đạt independent deployment.
-- Nếu không có trace/SLO/runbook, chưa đủ production readiness cho microservices.
-- Nếu không có eval dataset, chưa tuyên bố model/prompt mới “tốt hơn”.
-- Nếu không có NFR/capacity, chưa chọn microservices/Kubernetes/multi-region.
+- Không đọc được execution plan → chưa tối ưu EF query bằng “best practice”.
+- Không có baseline/workload → chưa justify cache/autoscaling.
+- Không giải thích SIGTERM/readiness → chưa thiết kế rolling shutdown tốt.
+- Không hiểu container DNS/ports → chưa sẵn sàng Kubernetes networking.
+- Không có idempotency boundary → chưa thêm retry cho side effect.
+- Không hiểu timeout = unknown outcome → chưa thiết kế payment workflow phân tán.
+- Service share DB/domain model + lock-step release → chưa có microservice autonomy thật.
+- Không có trace/SLO/runbook → distributed/microservice operations chưa production-ready.
+- Không có eval dataset → chưa tuyên bố model/prompt/retrieval mới “tốt hơn”.
+- Không có NFR/capacity → chưa chọn Kubernetes/microservices/sharding/multi-region.
 
 ---
 
-# Recommended next path
+# Recommended path
 
 ```text
-Computer Science
-→ Linux/Networking
-→ C#/.NET
-→ Backend + SQL + API
-→ ASP.NET Core
-→ Docker/Kubernetes
+CS
+→ Linux/Git/Networking
+→ .NET
+→ Backend + SQL + API + ASP.NET Core
+→ Testing + Security + Performance
+→ Redis only when justified
+→ Docker
+→ DevOps/IaC
+→ Azure and/or Kubernetes according to role
 → Distributed Systems
-→ Microservices Architecture
+→ Microservices when justified
 → System Design
 → Software Architecture
 ```
 
-AI Engineering có thể chạy song song sau khi backend foundation đủ chắc.
+For a shorter role-specific path:
+→ [Role-based Learning Paths](role-based-learning-paths.md)
 
 ## Verification metadata
 
-- Verified: 2026-08-13.
-- Microservices dependency is explicit: Module 17 → Module 18.
-- Official sources: module-specific references.
+- Reviewed: 2026-08-28.
+- Dependency graph aligned with current DevOps/Kubernetes separation and actual repository modules.
+- Quality principle: prerequisite exists to protect mental model/failure reasoning, not to force sequential reading.
