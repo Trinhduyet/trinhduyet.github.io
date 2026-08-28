@@ -1,38 +1,61 @@
-# References — Module 13 DevOps và IaC
+# References — Module 13 DevOps, IaC & Delivery Engineering
 
-> [← Module overview](README.md)
+> [← Module overview](README.md) · [DevOps → Kubernetes Delivery](devops-kubernetes-production-delivery.md)
 
-## Official sources
+## Source policy
 
-- [GitHub Actions workflows](https://docs.github.com/en/actions/writing-workflows/quickstart)
+DevOps là practice/lifecycle rộng, không có một specification duy nhất. Vì vậy:
+
+- tool behavior/version-sensitive claims dùng official project/platform documentation;
+- Kubernetes behavior dùng kubernetes.io;
+- roadmap.sh dùng để kiểm tra breadth và learning order;
+- production claims cần measured evidence trong project thật.
+
+## CI/CD & GitHub Actions
+
+- [GitHub Actions documentation](https://docs.github.com/en/actions)
 - [Workflow artifacts](https://docs.github.com/en/actions/concepts/workflows-and-actions/workflow-artifacts)
 - [Deployment environments](https://docs.github.com/en/actions/concepts/workflows-and-actions/deployment-environments)
+- [Security hardening for GitHub Actions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions)
+
+## Terraform / Infrastructure as Code
+
+- [Terraform language](https://developer.hashicorp.com/terraform/language)
 - [Terraform state](https://developer.hashicorp.com/terraform/language/state)
 - [Terraform modules](https://developer.hashicorp.com/terraform/language/modules/develop)
 
-## Roadmap and repository
+## Containers & Kubernetes delivery
 
-- [Master roadmap](../00-roadmap/master-roadmap.md)
-- [Knowledge dependency graph](../00-roadmap/prerequisites.md)
-- [Technology baseline](../00-roadmap/technology-baseline.md)
-- [Source policy](../00-roadmap/source-policy.md)
+- [Kubernetes documentation](https://kubernetes.io/docs/)
+- [Kubernetes Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
+- [Kubernetes Horizontal Pod Autoscaling](https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/)
+- [Helm documentation](https://helm.sh/docs/)
+- [Kustomize documentation](https://kubectl.docs.kubernetes.io/references/kustomize/)
 
-## Source decisions
+## GitOps / Continuous Delivery
 
-| Decision | Source class | Rule |
-| --- | --- | --- |
-| Core behavior/protocol | Official documentation/specification | Prefer normative/current source |
-| Production trade-off | Official architecture guidance + measured evidence | Do not promote a blog benchmark to a guarantee |
-| Version-sensitive API | Current versioned docs | Record version and refresh before deployment |
-| Security/operations | Official security/ops guidance + threat model | Validate configuration and failure path |
+- [Argo CD documentation](https://argo-cd.readthedocs.io/en/stable/)
+- [Flux documentation](https://fluxcd.io/flux/)
 
-## Vietnamese Resources
+## Learning breadth
 
-Community Vietnamese material may aid reading, but English official documentation remains canonical for behavior, version and security claims.
+- [DevOps Roadmap — roadmap.sh](https://roadmap.sh/devops)
+- [Kubernetes Roadmap — roadmap.sh](https://roadmap.sh/kubernetes)
+- [DevOps Projects — roadmap.sh](https://roadmap.sh/devops/projects)
+
+Roadmap.sh currently frames DevOps around collaboration/automation plus skills such as programming/scripting, cloud, containerization, CI/CD, infrastructure management and monitoring/logging. Kubernetes is treated as a separate deep technical roadmap for container orchestration. This repository mirrors that relationship: **DevOps lifecycle + Kubernetes specialization**.
+
+## Related repository modules
+
+- [Testing & Code Review](../08-testing-code-review/README.md)
+- [Security & DevSecOps](../09-security-devsecops/README.md)
+- [Docker](../12-docker/README.md)
+- [Kubernetes](../15-kubernetes/README.md)
+- [Azure & Platform](../14-cloud/README.md)
 
 ## Verification metadata
 
-- Verified: 2026-08-11.
-- Technology target: DevOps và IaC content v1.
-- Context7 queries used: none; callable tool unavailable in this run.
-- Notes: links are source-of-truth candidates; learner evidence must be produced locally.
+- Verified: 2026-08-28.
+- roadmap.sh DevOps/Kubernetes pages checked against current 2026 scope.
+- Official project documentation remains canonical for behavior/version-sensitive claims.
+- Claude artifact URL supplied by the learner could not be fetched from this environment; no claims were copied from it.

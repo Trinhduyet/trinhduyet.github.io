@@ -1,73 +1,103 @@
 # Module 15 — Kubernetes
 
-> [← Docker prerequisite](../12-docker/README.md) · [Azure là module riêng](../14-cloud/README.md) · [References](references.md)
+> [← DevOps & IaC](../13-devops-iac/README.md) · [DevOps → Kubernetes Delivery](../13-devops-iac/devops-kubernetes-production-delivery.md) · [Docker prerequisite](../12-docker/README.md) · [Azure mapping](aks-on-azure-production-architecture.md)
 
 <div class="lesson-meta">
   <span><strong>Priority</strong>&nbsp;P0/P1</span>
-  <span><strong>Focus</strong>&nbsp;Kubernetes Core · Application Operations · CKAD</span>
-  <span><strong>Audience</strong>&nbsp;.NET Backend → DevOps/Platform-ready</span>
-  <span><strong>Mode</strong>&nbsp;concept → kubectl → YAML → failure/debug</span>
+  <span><strong>Focus</strong>&nbsp;Kubernetes Core · Delivery · Operations · CKAD</span>
+  <span><strong>Context</strong>&nbsp;runtime platform inside a DevOps lifecycle</span>
 </div>
 
-Kubernetes là **một module độc lập**, không còn nằm bên trong page Azure. Kubernetes có thể chạy trên AKS, EKS, GKE, on-prem hoặc local lab; vì vậy trước hết phải học đúng Kubernetes object/API model, sau đó mới map sang cloud provider.
-
-Mục tiêu không phải nhớ YAML. Mục tiêu là hiểu:
+Kubernetes là một module riêng vì object model, controllers, scheduling, networking, storage và security của nó đủ lớn để học độc lập. Tuy nhiên trong production, Kubernetes thường nằm **bên trong DevOps delivery lifecycle**:
 
 ```text
-desired state
-reconciliation
-API objects
-scheduling
-networking
-storage
-configuration
-security
-observability
-rollout
-troubleshooting
+Code
+ ↓
+Testing / Review
+ ↓
+CI
+ ↓
+Container image
+ ↓
+Registry
+ ↓
+IaC / Platform
+ ↓
+Kubernetes
+ ↓
+Observability / Recovery
 ```
 
-Các bài tiếng Việt bạn cung cấp rất hữu ích để xây mental model từ beginner: kiến trúc control plane/worker node, lifecycle tạo Pod và chuỗi thực hành kubectl/ConfigMap/Deployment. Module này dùng các nguồn đó như **supplementary learning path**, còn behavior/version-sensitive claims luôn đối chiếu `kubernetes.io`.
+Kubernetes giải quyết orchestration của containerized workloads. Nó không tự cung cấp toàn bộ source control, testing, artifact build, cloud provisioning, secrets lifecycle, SLO design hay incident process.
+
+Roadmap.sh cũng tách DevOps và Kubernetes thành hai roadmap: DevOps là breadth của delivery/operations, còn Kubernetes là deep specialization cho orchestration. Module này giữ đúng boundary đó.
+
+- DevOps roadmap: <https://roadmap.sh/devops>
+- Kubernetes roadmap: <https://roadmap.sh/kubernetes>
 
 ---
 
 # 1. Kubernetes giải quyết vấn đề gì?
 
-Container runtime giúp chạy container. Nhưng production cần quản lý nhiều workloads/nodes:
+Container runtime chạy một container. Production platform phải giải quyết nhiều container/nodes:
 
 ```text
-Where should a container run?
+Where should workloads run?
 How many replicas?
-What if one dies?
-How is traffic routed?
+What if a Pod or Node fails?
+How does traffic find healthy backends?
 How is configuration injected?
-How are CPU/RAM bounded?
-How do we roll out a new version?
-How do we persist data?
-How do we restrict access?
+How are CPU/RAM resources bounded?
+How are versions rolled out?
+How is persistent storage attached?
+How are identities and network paths restricted?
 ```
 
-Kubernetes cung cấp declarative API + controllers để liên tục đưa **observed state** gần **desired state**.
+Kubernetes dùng declarative API + reconciliation loops:
 
 ```text
-You declare desired state
-        ↓
-kube-apiserver stores/exposes intent
-        ↓
-controllers + scheduler + kubelet act
-        ↓
-observed state changes
-        ↓
+desired state
+   ↓
+Kubernetes API
+   ↓
+controllers / scheduler / kubelet
+   ↓
+observed state
+   ↓
 reconcile continuously
 ```
 
-Official overview: <https://kubernetes.io/docs/concepts/overview/>
+Official concepts: <https://kubernetes.io/docs/concepts/>
 
 ---
 
-# 2. Cluster architecture — bức tranh phải thuộc bằng mental model
+# 2. Kubernetes nằm ở đâu trong DevOps?
 
-Một cluster gồm:
+| Delivery concern | Primary owner/tool class |
+|---|---|
+| code + review | Git / PR workflow |
+| tests | CI/testing tools |
+| build artifact/image | CI + OCI tooling |
+| registry | container registry |
+| cloud/cluster infrastructure | Terraform/Bicep/cloud IaC |
+| workload orchestration | **Kubernetes** |
+| packaging/config composition | Helm/Kustomize/raw manifests |
+| continuous delivery | pipeline or GitOps controller |
+| telemetry | metrics/logs/traces stack |
+| incident/recovery | team process + platform controls |
+
+Mental model:
+
+```text
+DevOps provides lifecycle
+Kubernetes provides orchestration runtime
+```
+
+→ [DevOps → Kubernetes Production Delivery](../13-devops-iac/devops-kubernetes-production-delivery.md)
+
+---
+
+# 3. Cluster architecture
 
 ```text
 Control Plane
@@ -75,105 +105,59 @@ Control Plane
 ├─ etcd
 ├─ kube-scheduler
 ├─ kube-controller-manager
-└─ cloud-controller-manager (when applicable)
+└─ cloud-controller-manager when applicable
 
 Worker Node
 ├─ kubelet
 ├─ container runtime
-├─ kube-proxy or equivalent data-plane implementation
+├─ network/data-plane components
 └─ Pods
 ```
 
-Official components: <https://kubernetes.io/docs/concepts/overview/components/>
+Important flow:
 
-## kube-apiserver
-
-Core API boundary. `kubectl`, controllers, scheduler, kubelet và integrations communicate through Kubernetes API.
-
-## etcd
-
-Consistent key-value store for Kubernetes API state.
-
-## scheduler
-
-Watches unscheduled Pods and chooses Nodes based on resources/constraints/policies.
-
-## controller manager
-
-Runs reconciliation loops such as Deployment/ReplicaSet/Node controllers.
-
-## kubelet
-
-Node agent that ensures Pod/container state assigned to the node is materialized.
-
-<div class="key-takeaway" markdown>
-<strong>Kubernetes không phải chuỗi script orchestration.</strong>
-
-Nhiều control loops độc lập cùng reconcile system state. Đây là concept phải hiểu trước khi học YAML sâu.
-</div>
+```text
+kubectl / controller
+→ API server
+→ desired object stored
+→ scheduler/controller observes
+→ node kubelet acts
+→ status reported
+→ reconciliation continues
+```
 
 → [Cluster Architecture & Reconciliation](cluster-architecture-and-reconciliation.md)
 
 ---
 
-# 3. Một Pod được tạo như thế nào?
-
-Mental flow:
-
-```text
-kubectl apply
-   ↓
-kube-apiserver
-   ↓ validates/auth/admission
-etcd stores desired object
-   ↓
-scheduler notices unscheduled Pod
-   ↓
-select Node + bind
-   ↓
-kubelet on Node observes assignment
-   ↓
-container runtime pulls image / starts containers
-   ↓
-kubelet reports status
-   ↓
-controllers keep reconciling
-```
-
-Đây là flow quan trọng hơn việc thuộc `kubectl run` syntax.
-
----
-
-# 4. Object model — học theo relationship
+# 4. Core object relationships
 
 ```text
 Deployment
-    ↓ owns
+   ↓ owns
 ReplicaSet
-    ↓ owns
+   ↓ owns
 Pods
-    ↓ contain
+   ↓ contain
 Containers
 ```
 
-Other workloads:
+Other workload controllers:
 
 ```text
-StatefulSet  → stable identity/storage-oriented workloads
-DaemonSet   → one/some Pods per eligible Node
-Job         → run-to-completion
-CronJob     → scheduled Jobs
+StatefulSet
+DaemonSet
+Job
+CronJob
 ```
 
 Networking:
 
 ```text
-Client
-  ↓
 Ingress / Gateway / LoadBalancer
-  ↓
+   ↓
 Service
-  ↓ selector / EndpointSlice
+   ↓ selector / EndpointSlice
 Pods
 ```
 
@@ -181,64 +165,74 @@ Configuration:
 
 ```text
 ConfigMap / Secret
-      ↓
-env / volume / projected config
-      ↓
-Pod
+→ env / files / projected volumes
+→ Pod
 ```
 
 Storage:
 
 ```text
 Pod
- ↓ PVC
-PersistentVolume
- ↓ CSI / storage provider
+→ PVC
+→ PV / StorageClass / CSI
 ```
 
 Security:
 
 ```text
 User / ServiceAccount
-→ authn
-→ RBAC authz
+→ authentication
+→ RBAC authorization
 → admission/policy
 → API object
 ```
 
 ---
 
-# 5. Learning path — từ beginner đến production/CKAD
+# 5. Prerequisites — đừng bắt đầu từ YAML
 
-## Phase 0 — Prerequisites
-
-Bạn cần biết:
+Trước Kubernetes cần vững:
 
 ```text
-Linux process
-TCP/DNS/HTTP
+Linux processes/signals
+DNS/TCP/HTTP/TLS
+Git
 Docker image/container
-container ports
-filesystem/volume
-CPU/memory limits
-Git/YAML basics
+container ports/networking
+volumes/filesystem
+CPU/memory behavior
+health endpoints
+basic YAML
 ```
 
-Nếu chưa vững Docker, quay lại [Module 12](../12-docker/README.md).
+Và để chạy production delivery cần thêm:
+
+```text
+CI/CD
+artifact registry
+IaC
+secrets/identity
+observability
+```
+
+→ [Module 12 — Docker](../12-docker/README.md)
+→ [Module 13 — DevOps & IaC](../13-devops-iac/README.md)
+
+---
+
+# 6. Learning path — Kubernetes core đến production
 
 ## Phase 1 — Foundation & kubectl
 
 Học:
 
 ```text
-cluster
-control plane / worker node
-API server / etcd / scheduler / controller / kubelet
-Pod
+cluster architecture
 Namespace
-kubectl get / describe / logs / exec
-YAML apiVersion/kind/metadata/spec/status
-labels / selectors
+Pod
+labels/selectors
+apiVersion/kind/metadata/spec/status
+kubectl get/describe/logs/exec/explain
 ```
 
 Evidence:
@@ -251,32 +245,25 @@ kubectl describe pod <pod>
 kubectl logs <pod>
 ```
 
-## Phase 2 — Application workloads
-
-Học:
+## Phase 2 — Workloads
 
 ```text
-Pod
 Deployment / ReplicaSet
 Job / CronJob
-multi-container Pods
+StatefulSet / DaemonSet concepts
 init containers
 sidecars
-rollout / rollback
 probes
-resources
+rollout / rollback
 ```
 
 → [Workloads, Networking & Storage](workloads-networking-and-storage.md)
 
 ## Phase 3 — Configuration & Scheduling
 
-Học:
-
 ```text
-ConfigMap
-Secret
-env / command / args
+ConfigMap / Secret
+command / args / env
 requests / limits
 ResourceQuota / LimitRange
 nodeSelector
@@ -290,83 +277,79 @@ ServiceAccount / securityContext
 
 ## Phase 4 — Networking & Storage
 
-Học:
-
 ```text
-Pod network
-Service ClusterIP/NodePort/LoadBalancer
+Service
 DNS
 EndpointSlice
 Ingress / Gateway API concept
 NetworkPolicy
-emptyDir
-PVC / PV / StorageClass
-CSI
-StatefulSet storage identity
+PVC / PV / StorageClass / CSI
 ```
 
-→ [Workloads, Networking & Storage](workloads-networking-and-storage.md)
-
-## Phase 5 — Security, Operations & Observability
-
-Học:
+## Phase 5 — Security & Operations
 
 ```text
 RBAC
-ServiceAccount
-securityContext
-Pod Security Standards
+Pod Security
 NetworkPolicy
-secrets boundary
+resource policies
 metrics/logs/events
-rollout safety
 PDB
 autoscaling
-backup/restore boundary
-cluster/workload upgrades
+upgrades
+backup/recovery boundaries
 ```
 
 → [Security, Observability & Operations](kubernetes-security-observability-and-operations.md)
 
-## Phase 6 — Troubleshooting + CKAD practice
-
-Học theo failure:
+## Phase 6 — Debugging / CKAD
 
 ```text
 Pending
 ImagePullBackOff
 CrashLoopBackOff
 OOMKilled
-Running but NotReady
-Service has no endpoints
+NotReady
+no endpoints
 DNS failure
 NetworkPolicy deny
 PVC Pending
 bad rollout
-resource pressure
+RBAC forbidden
 ```
 
-→ [kubectl Troubleshooting & CKAD Practice](kubectl-debugging-and-ckad-practice.md)
+→ [kubectl Debugging & CKAD Practice](kubectl-debugging-and-ckad-practice.md)
 
-## Phase 7 — Managed Kubernetes / AKS
-
-Sau khi core Kubernetes rõ mới học cloud mapping:
+## Phase 7 — Delivery integration
 
 ```text
-Kubernetes core objects
-       ↓
-AKS managed control plane
-       ↓
-Azure node pools / networking / identity / ACR / Monitor
+CI image build
+registry
+Kubernetes config
+Helm / Kustomize
+push CD or GitOps
+rollout gates
+observability
+recovery
 ```
 
-→ [AKS on Azure — Production Mapping](aks-on-azure-production-architecture.md)
+→ [DevOps → Kubernetes Production Delivery](../13-devops-iac/devops-kubernetes-production-delivery.md)
+
+## Phase 8 — Managed provider mapping
+
+Core concepts first, cloud-specific mapping later.
+
+```text
+Kubernetes core
+   ↓
+AKS / EKS / GKE / on-prem implementation choices
+```
+
+→ [AKS on Azure](aks-on-azure-production-architecture.md)
 
 ---
 
-# 6. First application lab
-
-Use a simple .NET API/container.
+# 7. First workload lab
 
 ```yaml
 apiVersion: apps/v1
@@ -405,7 +388,7 @@ spec:
               port: http
 ```
 
-Apply + observe:
+Observe objects, not only apply result:
 
 ```bash
 kubectl apply -f deployment.yaml
@@ -415,33 +398,105 @@ kubectl get pods -o wide
 kubectl logs deployment/demo-api
 ```
 
-Add Service:
-
-```yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: demo-api
-spec:
-  selector:
-    app: demo-api
-  ports:
-    - name: http
-      port: 80
-      targetPort: http
-```
-
-Check:
+Add Service and inspect endpoints:
 
 ```bash
 kubectl get svc,endpointslices
 ```
 
-Don't stop at `kubectl apply` success. Inspect the objects the controllers created.
+---
+
+# 8. CI should deliver immutable images
+
+Kubernetes should receive an image identity created earlier in CI.
+
+Prefer:
+
+```text
+commit abc123
+→ registry.example/demo-api@sha256:xyz
+→ Deployment references digest
+```
+
+Avoid relying on mutable production tags such as `latest` without strong controls.
+
+Traceability:
+
+```text
+Git SHA
+→ CI run
+→ image digest
+→ deployment revision
+→ running Pod imageID
+```
+
+This is where Module 13 and Module 15 connect directly.
 
 ---
 
-# 7. Requests/limits — scheduling trước performance
+# 9. Helm / Kustomize are delivery tools, not replacements for Kubernetes knowledge
+
+Raw YAML helps learn the API.
+
+Production config may use:
+
+```text
+Kustomize
+→ base + overlays/patches
+
+Helm
+→ chart + values → rendered Kubernetes resources
+```
+
+Always be able to inspect rendered resources.
+
+Useful checks:
+
+```bash
+helm template ...
+kubectl diff -f ...
+kubectl apply --dry-run=server -f ...
+```
+
+Helm docs: <https://helm.sh/docs/>
+
+---
+
+# 10. GitOps integration
+
+A common DevOps + Kubernetes production model:
+
+```text
+CI
+→ build/test image
+→ push registry
+→ update deployment config in Git
+
+Git
+→ Argo CD / Flux
+→ Kubernetes API
+→ reconcile desired state
+```
+
+Argo CD and Flux are GitOps/CD implementations, not Kubernetes core requirements.
+
+Choose them when you value:
+
+```text
+declarative desired deployment state
+auditability
+drift reconciliation
+separation of build from deploy credentials
+multi-cluster/environment consistency
+```
+
+Do not add GitOps if a simpler pipeline already meets the requirements.
+
+---
+
+# 11. Requests/limits and autoscaling
+
+Requests matter for scheduling and resource-utilization autoscaling.
 
 ```yaml
 resources:
@@ -452,101 +507,97 @@ resources:
     memory: 512Mi
 ```
 
-Mental model:
-
-```text
-requests
-→ scheduler capacity signal
-
-limits
-→ runtime resource bound according to resource semantics
-```
-
-Do not copy tutorial numbers into production.
-
-Measure:
+Measure before choosing values:
 
 ```text
 normal/peak CPU
 memory working set
-.NET GC behavior
-OOM events
+GC behavior
 P95/P99 latency
+OOM events
 node allocatable
-rollout surge capacity
+rollout surge
 ```
+
+Kubernetes HPA can update replica counts based on configured metrics. That feedback loop only works well when requests, metrics and capacity bounds make sense.
+
+Official HPA: <https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/>
 
 ---
 
-# 8. Probe semantics
+# 12. Probe semantics matter to CD
 
 Readiness:
 
 ```text
-Should this Pod receive new traffic?
+Should this Pod receive traffic?
 ```
 
 Liveness:
 
 ```text
-Is restart useful because process is irrecoverably stuck?
+Is restarting this process useful?
 ```
 
 Startup:
 
 ```text
-Does app need more startup time before liveness begins?
+Does this app need a longer startup window?
 ```
 
-Bad:
+A rollout gate relying on bad readiness semantics gives false confidence.
+
+Bad example:
 
 ```text
-liveness checks database
+liveness → database health
 DB outage
-→ all Pods restart
-→ more churn
-→ DB still outage
+→ all Pods restart repeatedly
 ```
-
-Health endpoint semantics are application architecture.
 
 ---
 
-# 9. Rollout & database compatibility
-
-```bash
-kubectl set image deployment/demo-api api=registry.example/demo-api@sha256:new
-kubectl rollout status deployment/demo-api
-kubectl rollout history deployment/demo-api
-kubectl rollout undo deployment/demo-api
-```
-
-But:
+# 13. Rollout ≠ safe release automatically
 
 ```text
-kubectl rollout undo
-!= database rollback
+new image
+→ new Pods
+→ readiness
+→ traffic shifts
+→ old Pods terminate
 ```
 
-Use expand/contract migrations when old/new versions can coexist.
+Still need:
+
+```text
+database compatibility
+config compatibility
+capacity for surge
+external dependency compatibility
+business SLO checks
+rollback/roll-forward strategy
+```
+
+`kubectl rollout undo` cannot reverse destructive data migrations.
 
 ---
 
-# 10. Debugging order
+# 14. Debug from pipeline to Pod
 
-Use a repeatable flow:
+When deployment fails:
 
 ```text
-1. What object is failing?
-2. Desired state?
-3. Current status?
-4. Events?
-5. Logs/current + previous?
-6. Scheduling/resource issue?
-7. Networking/DNS/endpoints?
-8. Config/Secret/identity?
-9. Storage?
-10. Recent rollout/change?
+1. Did CI create the expected image?
+2. Is digest/tag in registry?
+3. Did deployment config change correctly?
+4. Did CD/GitOps sync?
+5. Did API accept resources?
+6. Can scheduler place Pods?
+7. Can image be pulled?
+8. Does process start?
+9. Do probes pass?
+10. Does Service have endpoints?
+11. Are DNS/network/storage/identity correct?
 ```
 
 Commands:
@@ -557,7 +608,6 @@ kubectl describe <resource>
 kubectl get events --sort-by=.lastTimestamp
 kubectl logs <pod>
 kubectl logs <pod> --previous
-kubectl exec -it <pod> -- sh
 kubectl get endpointslices
 kubectl auth can-i ...
 kubectl top pod
@@ -568,142 +618,86 @@ kubectl top node
 
 ---
 
-# 11. CKAD-oriented path
+# 15. CKAD-oriented skills
 
-CKAD is application-developer focused, not full cluster-admin certification.
+CKAD focuses on application-developer tasks around design/build, deployment, observability/maintenance, configuration/security, services/networking.
 
-Current CNCF domains:
+Official certification source: <https://www.cncf.io/training/certification/ckad/>
 
-| Domain | Weight |
-|---|---:|
-| Application Design and Build | 20% |
-| Application Deployment | 20% |
-| Application Observability and Maintenance | 15% |
-| Application Environment, Configuration and Security | 25% |
-| Services and Networking | 20% |
-
-Official: <https://www.cncf.io/training/certification/ckad/>
-
-Module 15 covers CKAD-relevant skills but **không biến toàn bộ Kubernetes curriculum thành exam tricks**. Production reasoning vẫn ưu tiên correctness, failure, capacity và security.
+This module uses CKAD tasks to strengthen hands-on fluency, but production reasoning remains broader than exam tasks.
 
 ---
 
-# 12. Khi nào KHÔNG nên dùng Kubernetes
+# 16. When NOT to use Kubernetes
 
-Don't use Kubernetes because:
+Don't choose Kubernetes because:
 
 ```text
-"production = K8s"
-"microservices = K8s"
-"we need containers"
-"team wants Kubernetes on CV"
+production = K8s
+microservices = K8s
+containers = K8s
+DevOps = K8s
 ```
 
-Simpler managed platforms can be better if:
+A simpler platform may be better when:
 
 ```text
 few services
-simple deployment requirements
 small team
-no cluster-level scheduling/policy needs
-low operational maturity
-PaaS already meets NFR
+simple networking/security
+low deployment complexity
+PaaS meets NFR
+cluster operations add more toil than value
 ```
 
-Kubernetes pays off when orchestration/platform control value exceeds platform toil.
+DevOps maturity is not measured by Kubernetes adoption.
 
 ---
 
-# 13. Failure experiments
-
-Minimum lab set:
-
-## Delete Pod
-
-```bash
-kubectl delete pod <pod>
-```
-
-Observe ReplicaSet/Deployment reconciliation.
-
-## Wrong image
-
-Observe:
-
-```text
-ImagePullBackOff
-Events
-rollout stall
-```
-
-## Crash app
-
-Observe:
-
-```text
-restart count
-CrashLoopBackOff
-previous logs
-```
-
-## OOM
-
-Set too-low memory limit and observe `OOMKilled` evidence.
-
-## Break readiness
-
-Pod may be Running but removed from Service endpoints.
-
-## Wrong Service selector
-
-Service DNS exists but EndpointSlice has no matching backend.
-
-## PVC failure
-
-Observe Pending reason / storage provisioning events.
-
----
-
-# 14. Module map
+# 17. Module map
 
 | Guide | Focus |
 |---|---|
-| [Cluster Architecture & Reconciliation](cluster-architecture-and-reconciliation.md) | control plane, node components, desired/observed state |
-| [Workloads, Networking & Storage](workloads-networking-and-storage.md) | workloads, Service, probes, PVC, network/storage basics |
-| [Application Configuration & Scheduling](application-configuration-and-scheduling.md) | ConfigMap/Secret, env, resources, affinity, taints, ServiceAccount/security context |
-| [Security, Observability & Operations](kubernetes-security-observability-and-operations.md) | RBAC, NetworkPolicy, telemetry, rollout, incident/runbook |
-| [kubectl Debugging & CKAD Practice](kubectl-debugging-and-ckad-practice.md) | hands-on commands, failure states, exam-oriented application tasks |
-| [AKS on Azure](aks-on-azure-production-architecture.md) | map Kubernetes onto Azure after fundamentals |
-| [References](references.md) | official + Vietnamese supplementary resources |
+| [Architecture & Reconciliation](cluster-architecture-and-reconciliation.md) | control plane, nodes, desired/observed state |
+| [Workloads, Networking & Storage](workloads-networking-and-storage.md) | controllers, Service, probes, network/storage basics |
+| [Application Configuration & Scheduling](application-configuration-and-scheduling.md) | config, resources, scheduling, ServiceAccount/securityContext |
+| [Security, Observability & Operations](kubernetes-security-observability-and-operations.md) | RBAC, NetworkPolicy, telemetry, reliability operations |
+| [kubectl Debugging & CKAD Practice](kubectl-debugging-and-ckad-practice.md) | failure states, troubleshooting, application tasks |
+| [AKS on Azure](aks-on-azure-production-architecture.md) | provider-specific production mapping |
+| [References](references.md) | official and supplementary resources |
+
+Cross-module guide:
+
+→ [DevOps → Kubernetes Production Delivery](../13-devops-iac/devops-kubernetes-production-delivery.md)
 
 ---
 
-# 15. Exit criteria
+# 18. Exit criteria
 
 Bạn hoàn thành Kubernetes core khi có thể:
 
 - explain control plane vs worker node;
-- explain Pod creation flow;
-- reason desired/observed/reconciliation;
-- create/debug Pod, Deployment, Job/CronJob;
-- use ConfigMap/Secret/env/command/args;
-- explain Deployment → ReplicaSet → Pod;
-- expose workload with Service and debug EndpointSlice;
+- reason desired state and reconciliation;
+- create/debug Pods, Deployments, Jobs/CronJobs;
+- use ConfigMap/Secret/resources/scheduling controls;
+- expose workloads with Service and debug endpoints/DNS;
+- reason PVC/StorageClass at application level;
+- use RBAC/ServiceAccount/securityContext fundamentals;
+- apply NetworkPolicy basics;
 - use probes correctly;
-- size requests/limits from measurement;
-- reason scheduling constraints;
-- use PVC/StorageClass at application level;
-- apply RBAC/ServiceAccount/securityContext fundamentals;
-- use NetworkPolicy basics;
-- debug Pending/CrashLoop/ImagePull/NotReady/OOM/PVC/network issues;
-- rollout and rollback application safely;
-- explain when **not** to use Kubernetes;
-- then map Kubernetes to AKS without confusing Azure constructs with Kubernetes constructs.
+- reason HPA/resources/capacity;
+- debug Pending/CrashLoop/ImagePull/NotReady/OOM/network/PVC/RBAC failures;
+- rollout and rollback application revisions safely;
+- connect CI artifact identity to Kubernetes deployment revision;
+- explain Helm/Kustomize/GitOps roles;
+- explain when Kubernetes is unnecessary;
+- map Kubernetes to AKS without confusing provider features with Kubernetes core.
+
+## Source policy
+
+Kubernetes official docs are canonical. roadmap.sh and Vietnamese community materials are supplementary for coverage, learning order and explanation.
 
 ## Verification metadata
 
 - Verified: 2026-08-28.
-- Kubernetes official docs are canonical.
-- Vietnamese sources supplied by the learner are supplementary mental-model/lab resources.
-- CKAD domain weights checked against current CNCF certification page on 2026-08-28.
-- Version-sensitive syntax/API must be checked against the active Kubernetes release used by the lab/exam environment.
+- Updated to explicitly connect Kubernetes with DevOps delivery while keeping Kubernetes as a distinct technical module.
