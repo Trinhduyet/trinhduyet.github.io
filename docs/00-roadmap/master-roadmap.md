@@ -1,377 +1,471 @@
-# Master Roadmap — Build Systems → Software Architect → Production AI Engineer
+# Master Roadmap — Build Systems → Design Systems → Production AI
 
-> Nếu trang này dài, đọc [Human Learning Mode](human-learning-mode.md) và [Example-First Learning Path](example-first-learning-path.md) trước. Không cần học tuần tự mọi module.
+> Nếu trang này dài, dùng [Role-based Learning Paths](role-based-learning-paths.md) trước. Đây là landscape/dependency map, không phải syllabus bắt buộc học tuần tự.
 
 ## Đích nghề nghiệp
-
-Mục tiêu không phải “biết nhiều công nghệ”. Mục tiêu là build được một hệ thống thật:
 
 ```text
 Business problem
   ↓
-Backend
+working software
   ↓
-Database
+correct data/API boundaries
   ↓
-API
+secure + measurable production behavior
   ↓
-Cloud / Infrastructure
+repeatable delivery/platform
   ↓
-Deployment / Operations
+failure/recovery reasoning
   ↓
-Distributed Systems
+system/architecture decisions
   ↓
-System Design
+AI as an optional production capability
   ↓
-Software Architecture
-  ↓
-AI as a production capability
-  ↓
-Project evidence
+evidence
 ```
 
-<div class="key-takeaway" markdown>
-<strong>AI Engineer trong thực tế</strong>
+Mục tiêu không phải “biết nhiều công nghệ”. Mục tiêu là **build, operate, debug và review một hệ thống thật**.
 
-Không chỉ là người “biết AI”. Một Production AI Engineer phải đủ software/backend engineering để đưa model, RAG và tools vào **một sản phẩm có auth, data, API, cloud, deployment, observability, evaluation và recovery**.
-</div>
+---
 
-## 1. Roadmap trong một hình
+# 1. Roadmap trong một hình
 
 ```text
 FOUNDATIONS
-Computer Science
-Linux / Git / Networking
+01 Computer Science
+02 Linux / Git / Networking
         ↓
 BACKEND CORE
-C# / .NET
-Backend Engineering
-SQL
-API Design
-ASP.NET Core
+03 C# / .NET Runtime
+04 Backend Engineering
+05 SQL
+06 API Design
+07 ASP.NET Core
         ↓
 PRODUCTION ENGINEERING
-Testing / Security / Performance
-Redis
-Docker
-DevOps / IaC
+08 Testing / Code Review
+09 Security / DevSecOps
+10 Performance
+11 Redis / Caching when justified
+12 Docker
         ↓
-PLATFORM
-Cloud & Microsoft Azure
-Kubernetes
-Observability
+DELIVERY / PLATFORM
+13 DevOps / IaC
+14 Azure
+15 Kubernetes when justified
         ↓
-DISTRIBUTED SYSTEMS
-Partial Failure
-Messaging
-Idempotency
-Consistency
-Microservices
+DISTRIBUTED
+17 Distributed Systems
+18 Microservices when justified
         ↓
 DESIGN
-System Design
-Software Architecture
+24 System Design
+25 Software Architecture
         ↓
 AI SYSTEMS
-AI Engineering
-RAG
-Agents / MCP
-AI Security / GenAIOps
+19 AI Engineering
+21 AI Coding Agents
         ↓
 EVIDENCE
-Deploy
-Load Test
-Failure Drill
-Recovery
+runnable code
+load/failure tests
+telemetry
+recovery
 ADR
-Portfolio Project
+cost
 ```
 
-## 2. Priority
+Module numbers reflect repository history, **not mandatory sequence**.
+
+---
+
+# 2. Priority model
 
 | Priority | Nghĩa |
 |---|---|
-| **P0 — Core** | phải implement, debug, operate và design/review được |
-| **P1 — Important** | phải dùng hoặc review tự tin |
-| **P2 — Selective** | học đủ để ra quyết định; deep dive khi project cần |
-| **P3 — Awareness** | biết use case, risk và nơi tra cứu |
+| **P0 — Core** | phải implement/debug/operate hoặc design được cho target role |
+| **P1 — Important** | phải dùng/review tự tin khi project cần |
+| **P2 — Selective** | học đủ để quyết định và deep dive on demand |
+| **P3 — Awareness** | biết problem/risk và nơi tra cứu |
 
-## 3. Module map
+Target level phụ thuộc role. Kubernetes có thể P1 cho Backend Engineer nhưng P0 cho Platform Engineer.
 
-| Module | Trọng tâm | Priority | Status |
-|---|---|---:|---|
-| 00 Roadmap | learning mode, dependency, source policy | P0 | Active |
-| 01 Computer Science | complexity, OS, memory, concurrency | P0/P2 | Active |
-| 02 Linux/Git/Networking | process, DNS/TCP/TLS/HTTP, troubleshooting | P0 | Active |
-| 03 .NET | C#, async, GC, ThreadPool, diagnostics | P0 | Active |
-| 04 Backend | request lifecycle, auth, jobs/webhooks | P0 | Active |
-| 05 SQL | transactions, indexes, plans, EF→SQL | P0 | Deep content |
-| 06 API Design | contracts, OAuth/CORS, OpenAPI, resilience, REST/gRPC/realtime | P0 | Deep content |
-| 07 ASP.NET Core | pipeline, resilience, deployment/OTel | P0 | Deep content |
-| 08 Testing/Review | tests, contracts, load, code review | P0 | Active |
-| 09 Security/DevSecOps | identity, threat model, supply chain | P0/P1 | Active |
-| 10 Performance | measurement, profiling, capacity | P0 | Active |
-| 11 Redis/Caching | cache, consistency, operations | P1 | Active |
-| 12 Docker | builds, runtime, network/storage/security | P0 | Deep content |
-| 13 DevOps/IaC | CI/CD, Terraform, safe delivery | P1 | Active |
-| **14 Cloud & Azure** | **landing zones, identity/network, compute/data/messaging, reliability/cost, .NET reference architecture** | **P0/P1** | **Expanded 2026-08-19** |
-| 15 Kubernetes | reconciliation, workloads/network/storage/security | P1 | Deep content |
-| 16 Observability | logs, metrics, traces, OTel, SLI/SLO | P0/P1 | Integrated / dedicated expansion planned |
-| 17 Distributed Systems | partial failure, messaging, consistency, reconciliation | P0 | Deep content |
-| 18 Microservices Architecture | boundaries, ownership, Saga, migration | P0/P1 | Deep content |
-| **19 AI Engineering** | **engineering foundation + models/RAG/tools/eval/production operations** | **P0** | **Expanded system-builder track** |
-| 20 RAG | ingestion/retrieval, ACL, deletion/versioning | P0 | foundation integrated in 19 |
-| 21 AI Coding Agents | repo context, MCP, safe edit/build/test/PR | P0/P1 | Active |
-| 22 AI Security | injection, exfiltration, tool abuse | P0/P1 | Planned expansion |
-| 23 GenAIOps/MLOps | prompt/model/index lifecycle, eval gates, rollout | P0/P1/P2 | Planned expansion |
-| **24 System Design** | **36 concepts, capacity, traffic, data, async, reliability, cases, production projects** | **P0** | **Expanded 2026-08-19** |
-| **25 Software Architecture** | **quality attributes, styles, DDD, modularity, CQRS/EDA, ADR, evolution, review** | **P0** | **Active 2026-08-19** |
-| 26 Architecture Docs | C4, ADR, RFC, threat/failure/runbook | P1 | partially integrated in 25 |
-| 27 Data Engineering | ingestion, CDC, batch/stream, lineage | P2 | selective/planned |
+→ [Skills Matrix](skills-matrix.md)
 
-## 4. Core path — học để build được
+---
+
+# 3. Existing module map — chỉ các module thực sự tồn tại
+
+| Module | Focus | Maturity | Runnable dedicated lab |
+|---|---|---|---:|
+| 00 Roadmap | learning mode, dependency, quality/source/version policy | Deep | — |
+| 01 Computer Science | complexity, OS, memory, concurrency | Deep | **Yes** |
+| 02 Linux/Git/Networking | process, DNS/TCP/TLS/HTTP, Git, troubleshooting | Deep | **Yes** |
+| 03 .NET | C#, async, GC, ThreadPool, diagnostics | Deep | **Yes** |
+| 04 Backend | request lifecycle, auth, jobs/webhooks | Deep | **Yes** |
+| 05 SQL | schema, transactions, indexes/plans, EF→SQL | Deep/Guided | No |
+| 06 API Design | HTTP contracts, auth, evolution, traffic, REST/gRPC/events | Deep/Guided | No |
+| 07 ASP.NET Core | pipeline, resilience, deployment/operations | Deep/Guided | No |
+| 08 Testing/Review | boundary tests, contract/load tests, quality gates | Deep/Guided | No |
+| 09 Security/DevSecOps | trust boundary, identity/secrets, supply chain | Deep/Guided | No |
+| 10 Performance | measurement, bottleneck, capacity, regression | Deep/Guided | No |
+| 11 Redis/Caching | consistency, TTL, stampede, HA/operations | Deep/Guided | No |
+| 12 Docker | build/runtime/network/storage/resources/security | Deep/Guided | No |
+| 13 DevOps/IaC | CI/CD, artifact promotion, Terraform, recovery | Deep/Guided | No |
+| 14 Azure | service selection/config/cost/reliability/.NET architecture | Deep handbook | No |
+| 15 Kubernetes | reconciliation, workloads/network/storage/security/debugging/AKS | Deep/Guided | No |
+| 17 Distributed Systems | partial failure, idempotency, messaging, outbox/saga/backpressure | Deep/Guided | No |
+| 18 Microservices Architecture | boundaries, data ownership, saga, deployment/migration | Deep/Guided | No |
+| 19 AI Engineering | models/tools/RAG/eval/security/operations | Deep/Guided | No |
+| 21 AI Coding Agents | repo context, permissions, tests, review | Deep/Guided | No |
+| 24 System Design | requirements/capacity/data/failure/security/cost/cases | Deep | No direct lab |
+| 25 Software Architecture | quality attributes, boundaries/styles, DDD, evolution/ADR | Deep | No direct lab |
+
+**Maturity != lab coverage.** Xem [Learning Quality Standard](learning-quality-standard.md).
+
+---
+
+# 4. Core Backend path
 
 ```text
-C# / .NET
-→ Backend
-→ SQL
-→ API Design
-→ ASP.NET Core
-→ Testing / Security / Performance
-→ Docker
-→ DevOps / IaC
-→ Cloud & Azure
-→ Kubernetes (when needed)
-→ Distributed Systems
-→ Microservices (when justified)
-→ System Design
-→ Software Architecture
+03 .NET
+→ 04 Backend
+→ 05 SQL
+→ 06 API Design
+→ 07 ASP.NET Core
+→ 08 Testing
+→ 09 Security
+→ 10 Performance
+→ 12 Docker
 ```
 
-Đây là foundation trước khi tự nhận mình “AI Engineer production”.
+Module 01/02 là prerequisite foundations; Module 11 Redis là conditional optimization/data-structure tool, không phải mặc định cho mọi app.
 
-## 5. AI Engineer path — AI nằm trên engineering foundation
-
-### Phase A — Build normal systems first
-
-Bạn phải làm được:
+Backend foundation phải chứng minh được:
 
 ```text
-API endpoint
-DB schema/index/transaction
+request lifecycle
+data invariant
+transaction behavior
+API contract
 AuthN/AuthZ
-background job
-cache
-queue
-Docker
-CI/CD
-cloud deployment
-logs/metrics/traces
+integration tests
+performance baseline
+container runtime behavior
 ```
 
-### Phase B — Add AI capability
+---
+
+# 5. DevOps / Platform path
 
 ```text
-model abstraction
-structured output
-retrieval / RAG
-tool calling
-evaluation
-AI security
-cost / latency
+02 Linux/Git/Networking
+→ 08 quality gates
+→ 09 supply-chain/security
+→ 12 Docker
+→ 13 DevOps/IaC
+→ 14 Azure
+→ 15 Kubernetes when orchestration justified
 ```
 
-### Phase C — Operate AI product
+Kubernetes không thay CI/CD/IaC.
 
 ```text
-provider timeout/outage
-fallback/degradation
-prompt/model/index versioning
-ACL-aware retrieval
-PII-safe telemetry
-evaluation gate
-rollback
+CI
+= prove + package
+
+IaC
+= provision/configure platform infrastructure
+
+Kubernetes
+= reconcile containerized application runtime
+
+GitOps
+= one CD operating model for desired cluster state
 ```
 
-→ [Module 19 — AI Engineering](../19-ai-engineering/README.md)
+→ [DevOps → Kubernetes Production Delivery](../13-devops-iac/devops-kubernetes-production-delivery.md)
 
-## 6. Azure track — cloud generic → Azure production architecture
+---
+
+# 6. Azure path
 
 ```text
-Cloud primitives
-→ Resource hierarchy / Landing Zones
-→ Entra / RBAC / Managed Identity
-→ VNet / Private Link / Edge / APIM
-→ App Service / Functions / Container Apps / AKS
-→ Azure SQL / Cosmos / Blob / Managed Redis
-→ Service Bus / Event Grid / Event Hubs
-→ Zones / Regions / DR
-→ Azure Monitor / Cost / Governance
+cloud primitives
+→ resource hierarchy / landing zones
+→ identity / network
+→ compute selection
+→ data/storage/cache
+→ messaging
+→ edge/API/network security
+→ observability/deployment
+→ HA/backup/DR
+→ cost/governance
 → .NET reference architecture
 ```
 
-→ [Module 14 — Cloud & Azure](../14-cloud/README.md)
+System Design should determine capability need first; Azure module maps that need to provider services.
 
-## 7. System Design — module expanded
-
-Start:
-
-1. [System Design Overview](../24-system-design/README.md)
-2. [36 Concepts & Trade-offs](../24-system-design/concepts-and-tradeoffs.md)
-3. [Requirements, NFR & Capacity](../24-system-design/requirements-nfr-and-capacity-estimation.md)
-4. [Traffic, LB, CDN & Cache](../24-system-design/traffic-load-balancing-cdn-and-cache.md)
-5. [Data, Replication, Partitioning & Consistency](../24-system-design/data-partitioning-replication-and-consistency.md)
-6. [Async, Queue, Backpressure & Reliability](../24-system-design/async-queues-backpressure-and-reliability.md)
-7. [Availability, Multi-region, DR, Security & Cost](../24-system-design/availability-multiregion-dr-security-and-cost.md)
-8. [Case Studies](../24-system-design/case-studies-and-design-review.md)
-9. [Production Projects & Evidence](../24-system-design/production-projects-and-evidence.md)
-
-Mental model:
+Bad:
 
 ```text
-Requirements
-+ NFR / SLO
-+ Capacity
-+ Data / Consistency
-+ Failure Model
-+ Security / Cost
-        ↓
-Architecture Options
-        ↓
-Trade-offs
-        ↓
-Evidence
+We have Service Bus → design around it.
 ```
 
-## 8. Software Architecture — module active
-
-System Design trả lời “system chịu workload/failure thế nào”. Software Architecture đi sâu “code/domain/team/data/deployment boundaries được cấu trúc và evolve thế nào”.
-
-Start:
-
-1. [Software Architecture Overview](../25-software-architecture/README.md)
-2. [Quality Attributes, Boundaries & Styles](../25-software-architecture/quality-attributes-boundaries-and-styles.md)
-3. [DDD, Modular Monolith & Microservices](../25-software-architecture/ddd-modular-monolith-and-microservices.md)
-4. [Clean, Hexagonal & Vertical Slice](../25-software-architecture/clean-hexagonal-and-vertical-slice.md)
-5. [Event-Driven, CQRS & Integration](../25-software-architecture/event-driven-cqrs-and-integration.md)
-6. [Decisions, Fitness Functions & Evolution](../25-software-architecture/architecture-decisions-evolution-and-fitness-functions.md)
-7. [Architecture Review Playbook](../25-software-architecture/architecture-review-playbook.md)
-
-## 9. Distributed Systems vs Microservices vs System Design vs Architecture
-
-### Distributed Systems — mechanics
+Better:
 
 ```text
-partial failure
-retry/idempotency
+Need durable work queue + DLQ + duplicate handling
+→ evaluate Service Bus against requirements/limits/cost.
+```
+
+---
+
+# 7. Kubernetes path
+
+Prerequisite mental model:
+
+```text
+process + signal
+DNS/TCP
+container image/runtime
+CPU/memory
+health endpoint
+artifact/deployment lifecycle
+```
+
+Then:
+
+```text
+Cluster / Control Plane / Worker
+→ API objects + reconciliation
+→ Deployment / ReplicaSet / Pod
+→ Service / DNS / selectors
+→ ConfigMap / Secret
+→ resources / scheduling
+→ probes
+→ storage
+→ RBAC/security
+→ rollout/autoscaling
+→ kubectl debugging
+→ AKS mapping
+```
+
+Core flow:
+
+```text
+Deployment → ReplicaSet → Pod → Container
+Client → DNS → Service → selector → Ready Pods
+```
+
+→ [Module 15](../15-kubernetes/README.md)
+
+---
+
+# 8. Distributed Systems → Microservices
+
+Distributed Systems first:
+
+```text
+timeout / unknown outcome
+retry / duplicate
+idempotency
 messaging
-ordering
-consistency
 outbox/inbox
+ordering
 backpressure
 reconciliation
+saga/compensation
 ```
 
-### Microservices — autonomy boundaries
+Then Microservices only when business/ownership/deployment boundary pressure exists:
 
 ```text
-service boundaries
-data ownership
-team ownership
-contracts
-deployment lifecycle
-migration
+business capability
+→ bounded context
+→ data ownership
+→ explicit contract
+→ independent lifecycle
 ```
 
-### System Design — workload composition
+Kubernetes does not solve distributed correctness.
+
+→ [Distributed Systems](../17-distributed-systems/README.md) · [Microservices](../18-microservices-architecture/README.md)
+
+---
+
+# 9. System Design → Software Architecture
+
+## System Design
+
+Answers:
 
 ```text
 requirements
 capacity
 traffic
-storage
-cache/CDN
-partitioning
+data/consistency
+failure
 availability
 security
 cost
 ```
 
-### Software Architecture — structure/evolution
+## Software Architecture
+
+Answers:
 
 ```text
 quality attributes
-coupling
-DDD/bounded contexts
-architecture styles
-sync/async integration
-ADRs
-fitness functions
-migration/evolution
+boundaries/ownership
+styles/coupling
+integration/data ownership
+team/deployment structure
+evolution/governance
 ```
 
-## 10. Project spine — evidence thay vì “đã đọc”
-
-| Project | Trọng tâm | Evidence |
-|---|---|---|
-| 01 Async File Processor | I/O, Channels, cancellation | failure tests + resource measurement |
-| 02 Order Management | ASP.NET Core, SQL, API/security | contract + data model + tests |
-| 03 Production Backend | Redis, Docker, workers, observability | SLO + load report + runbook |
-| 04 Distributed Checkout / Notifications | broker, outbox, dedup, Saga | outage/replay/reconciliation drills |
-| 05 Azure .NET Platform | identity/network/data/messaging/deploy | IaC + traces + DR/cost review |
-| 06 Enterprise RAG | ingestion, ACL, retrieval, eval | lineage + eval + threat model |
-| 07 Production AI Assistant | tools, AuthZ, RAG, eval, cloud | deployed demo + failure/cost/eval evidence |
-| 08 High-scale System Design | multi-region/data/failure | capacity + ADR + DR + load/failure drills |
-
-→ [Production System Design Projects](../24-system-design/production-projects-and-evidence.md)
-
-## 11. Definition of Done
-
-Không phải:
+Sequence:
 
 ```text
-read article
-watch video
-memorize pattern
+24 System Design
+→ 25 Software Architecture
 ```
 
-Evidence tốt:
+not because architecture always happens later, but because this learning order helps ground architecture choices in workload/evidence rather than pattern fashion.
+
+---
+
+# 10. Production AI path
+
+AI sits on software engineering foundation:
+
+```text
+Backend/API/Data/Security
+→ Cloud/Delivery
+→ Distributed failure reasoning
+→ 19 AI Engineering
+→ 21 Coding Agents when relevant
+→ 24/25 system/architecture review
+```
+
+AI-specific capabilities:
+
+```text
+model/provider
+structured output
+tool calling
+retrieval/RAG
+evaluation
+AI authorization/security
+latency/cost
+prompt/model/index lifecycle
+fallback/degradation
+```
+
+Do not create dedicated complexity before project pressure exists.
+
+---
+
+# 11. Integrated/future capability backlog — không giả làm module đang tồn tại
+
+Một số topics chưa có dedicated directory nhưng đã được tích hợp hoặc là future expansion.
+
+| Capability | Current coverage | Dedicated module? | Decision |
+|---|---|---:|---|
+| Observability / OTel / SLO | 07, 10, 14, 15, 17, 19 | No | expand only if navigation/reuse justify |
+| RAG | 19 | No | keep production RAG inside AI Engineering until depth demands split |
+| AI Security | 19 + 21 | No | dedicated red-team/security track is future candidate |
+| GenAIOps/MLOps | 19 | No | future when executable eval/release pipeline exists |
+| Architecture Docs | 24 + 25 | No | add reusable ADR/C4/runbook examples before new numeric module |
+| Data Engineering | selective references only | No | future P2 track |
+
+Repository không reserve fake module numbers trong navigation cho các capability này.
+
+---
+
+# 12. Project/evidence spine — distinguish spec vs executable
+
+## Executable labs currently committed
+
+```text
+labs/01-computer-science
+labs/02-linux-git-networking
+labs/03-dotnet
+labs/04-backend
+```
+
+## Documented project/evidence targets
+
+Các module sau mô tả project/failure drills nhưng chưa phải tất cả đều có runnable artifact committed:
+
+| Target | Modules connected | Desired evidence |
+|---|---|---|
+| Production Backend | 05–08 | schema/tests/OpenAPI/query plan |
+| Production Delivery | 09–13 | security/load/cache/Docker/CI evidence |
+| Kubernetes App | 15 | manifests + failures + rollout/debug |
+| Distributed Checkout | 17–18 | outbox/dedup/UNKNOWN/reconciliation |
+| Azure .NET Platform | 14 | IaC + network/identity/cost/DR |
+| Enterprise AI Assistant | 19 | AuthZ/RAG/tools/eval/telemetry |
+| Design Dossier | 24–25 | capacity/failure/ADR/evolution |
+
+Do not label these “runnable project” until artifact exists.
+
+---
+
+# 13. Definition of Done
+
+Learning evidence, increasing strength:
+
+```text
+Can define
+→ Can explain failure/trade-off
+→ Can implement
+→ Can test
+→ Can break/debug
+→ Can deploy/operate/recover
+→ Can design/review from evidence/cost
+```
+
+Strong evidence:
 
 ```text
 runnable code
-schema + constraints
-OpenAPI / contract
-Docker / IaC
-deployment
-load test
+schema/constraints
+OpenAPI
+unit/integration/contract tests
+Docker/IaC/manifests
+load result
 trace/dashboard
 failure injection
 restore/reconcile
-security test
+security negative tests
 ADR
 cost note
-migration trigger
 ```
 
-## 12. Architect quality gate
+---
 
-Một design/review tốt phải trả lời:
+# 14. Architect quality gate
 
-1. Business outcome là gì?
-2. Invariants nào không được vi phạm?
-3. Source of truth/data ownership ở đâu?
-4. Capacity/NFR có số chưa?
-5. Failure nào quan trọng nhất?
-6. Timeout có nghĩa business gì?
-7. Duplicate/retry xử lý thế nào?
-8. Security/trust boundary ở đâu?
-9. Deploy/rollback/recovery ra sao?
-10. Cost driver là gì?
-11. Tại sao không dùng solution đơn giản hơn?
-12. Khi nào architecture cần evolve?
+A serious design/review should answer:
 
-<div class="architect-note" markdown>
-<strong>Đích cuối</strong>
+1. Business outcome?
+2. Invariants?
+3. Source of truth/data ownership?
+4. Workload/capacity/SLO?
+5. Critical failure modes?
+6. Timeout/unknown outcome semantics?
+7. Duplicate/retry semantics?
+8. Security/trust boundary?
+9. Deploy/rollback/recovery?
+10. Cost drivers?
+11. Why not a simpler solution?
+12. Revisit/migration trigger?
 
-Senior/Architect/AI Engineer giỏi không được đo bằng số pattern nhớ được. Được đo bằng khả năng **build một hệ thống đúng, deploy được, quan sát được, chịu failure, recover được và giải thích trade-off bằng evidence**.
-</div>
+## Use next
+
+- [Role-based Learning Paths](role-based-learning-paths.md)
+- [Skills Matrix](skills-matrix.md)
+- [Learning Quality Standard](learning-quality-standard.md)
+- [Repository Quality Review](repository-quality-review-2026-08-28.md)
+- [Technology Baseline](technology-baseline.md)
