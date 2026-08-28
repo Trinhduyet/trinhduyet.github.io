@@ -1,4 +1,4 @@
-# References — Module 08 Testing và Code Review
+# References — Module 08 Testing & Code Review
 
 > [← Module overview](README.md)
 
@@ -7,31 +7,44 @@
 - [Unit testing .NET](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-dotnet-test)
 - [Integration tests ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-10.0)
 - [Test ASP.NET Core apps](https://learn.microsoft.com/en-us/aspnet/core/test/overview?view=aspnetcore-10.0)
-- [Continuous testing](https://learn.microsoft.com/en-us/azure/well-architected/operational-excellence/continuous-testing)
+- [Azure Well-Architected — Continuous testing](https://learn.microsoft.com/en-us/azure/well-architected/operational-excellence/continuous-testing)
+- [GitHub Actions](https://docs.github.com/en/actions)
 
-## Roadmap and repository
+## Downstream delivery context
 
-- [Master roadmap](../00-roadmap/master-roadmap.md)
-- [Knowledge dependency graph](../00-roadmap/prerequisites.md)
-- [Technology baseline](../00-roadmap/technology-baseline.md)
-- [Source policy](../00-roadmap/source-policy.md)
+Testing and review evidence becomes CI/CD quality gates before artifacts are promoted to runtime platforms.
+
+- [DevOps Roadmap — roadmap.sh](https://roadmap.sh/devops)
+- [Kubernetes Roadmap — roadmap.sh](https://roadmap.sh/kubernetes)
+- [DevOps → Kubernetes Production Delivery](../13-devops-iac/devops-kubernetes-production-delivery.md)
+
+The roadmaps are used for learning-path coverage; testing/framework behavior remains grounded in official documentation and local evidence.
+
+## Repository path
+
+```text
+Testing & Code Review
+→ Security / Performance
+→ Docker
+→ DevOps & IaC
+→ Kubernetes when justified
+```
+
+Related:
+
+- [DevOps & IaC](../13-devops-iac/README.md)
+- [Kubernetes](../15-kubernetes/README.md)
 
 ## Source decisions
 
 | Decision | Source class | Rule |
-| --- | --- | --- |
-| Core behavior/protocol | Official documentation/specification | Prefer normative/current source |
-| Production trade-off | Official architecture guidance + measured evidence | Do not promote a blog benchmark to a guarantee |
-| Version-sensitive API | Current versioned docs | Record version and refresh before deployment |
-| Security/operations | Official security/ops guidance + threat model | Validate configuration and failure path |
-
-## Vietnamese Resources
-
-Community Vietnamese material may aid reading, but English official documentation remains canonical for behavior, version and security claims.
+|---|---|---|
+| framework/test behavior | official docs | prefer normative/current source |
+| production trade-off | official guidance + measured evidence | don't promote a tutorial result to guarantee |
+| quality gate | risk/contract + reproducible test | gate must protect a known failure class |
+| deployment compatibility | test + runtime evidence | include old/new version and schema/config compatibility where relevant |
 
 ## Verification metadata
 
-- Verified: 2026-08-11.
-- Technology target: Testing và Code Review content v1.
-- Context7 queries used: none; callable tool unavailable in this run.
-- Notes: links are source-of-truth candidates; learner evidence must be produced locally.
+- Verified: 2026-08-28.
+- Updated to connect test/review evidence with DevOps/Kubernetes delivery gates.
