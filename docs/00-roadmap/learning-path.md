@@ -12,7 +12,7 @@ Không skip vì “đã từng dùng”. Skip khi có evidence cho exit outcome.
 | 2 — .NET Runtime | 03 | async/cancellation/resources/ThreadPool/GC behavior | runnable lab 03 |
 | 3 — Backend Core | 04–07 | request → contract → SQL → ASP.NET path có correctness evidence | runnable lab 04 + guided 05–07 |
 | 4 — Production Engineering | 08–12 | tests/security/performance/cache decision/container behavior | guided content; integrated lab backlog |
-| 5 — Delivery & Platform | 13–15 | artifact/IaC/cloud/Kubernetes deployment reasoning | guided deep content; lab backlog |
+| 5 — Delivery & Platform | 13–15 | artifact/IaC/cloud/Kubernetes deployment reasoning | guided deep content + runnable Kubernetes core lab |
 | 6 — Distributed & Services | 17–18 | timeout/duplicate/message/reconciliation + justified service boundary | guided deep content |
 | 7 — Design | 24–25 | requirements/capacity/failure → architecture decisions/evolution | design dossiers |
 | 8 — AI capability | 19 + 21 | production AI/tool/RAG/eval + governed coding-agent workflow | guided deep content; runnable AI lab backlog |
@@ -93,6 +93,10 @@ Kubernetes flow phải explain được:
 Deployment → ReplicaSet → Pod → Container
 Client → DNS → Service → selector → Ready Pods
 ```
+
+Runnable core evidence:
+
+→ [`labs/15-kubernetes`](https://github.com/Trinhduyet/trinhduyet.github.io/tree/main/labs/15-kubernetes)
 
 Azure and Kubernetes are related but independent learning dimensions:
 
@@ -233,7 +237,7 @@ no default production merge/deploy authority
 
 # Evidence reality check
 
-Dedicated executable lab directories currently cover Modules **01–04**. Later phases contain deep guided exercises but are not all runnable artifacts yet.
+Dedicated executable lab directories currently cover Modules **01–04 plus Kubernetes core (15)**. Other later phases contain deep guided exercises but are not all runnable artifacts yet.
 
 Use this distinction:
 
@@ -248,11 +252,11 @@ The highest-leverage backlog is to build integrated labs for:
 ```text
 05–08 Production Backend
 09–13 Production Delivery
-15 Kubernetes
 17 Distributed Reliability
 18 Checkout Saga
 14 Azure IaC
 19 Production AI
+15 Kubernetes extensions: ConfigMap/Secret, RBAC, PVC, NetworkPolicy, HPA
 ```
 
 → [Repository Quality Review](repository-quality-review-2026-08-28.md)
@@ -279,5 +283,6 @@ If you cannot name the evidence you will produce in the next 60–120 minutes, s
 
 - Rebuilt: 2026-08-28.
 - Uses only modules that actually exist in the repository.
+- Runnable evidence reflects committed labs including Kubernetes core.
 - Removed stale references to phantom Module 20 and hypothetical numbered phases/projects.
 - Technology versions: [Technology Baseline](technology-baseline.md).
