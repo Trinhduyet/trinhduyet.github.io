@@ -6,7 +6,7 @@
   <span><strong>Priority</strong>&nbsp;P0</span>
   <span><strong>Foundation</strong>&nbsp;Software Engineering first</span>
   <span><strong>Mode</strong>&nbsp;mental model → code → eval → failure → operations</span>
-  <span><strong>Target</strong>&nbsp;Production AI Engineer</span>
+  <span><strong>Evidence</strong>&nbsp;runnable lab + self-test</span>
 </div>
 
 <div class="key-takeaway" markdown>
@@ -26,7 +26,7 @@ User
 → Text
 ```
 
-Nó thường gần với:
+Nó gần với:
 
 ```text
 Authenticated User
@@ -37,12 +37,12 @@ Application Contract
       ↓
 AI Orchestration / Harness
  ├─ instructions + messages
- ├─ context management
- ├─ provider/model selection
+ ├─ context selection
+ ├─ provider/model
  ├─ structured output
  ├─ retrieval
  ├─ tools + permissions
- ├─ workflow / agent loop
+ ├─ workflow / bounded agent loop
  └─ timeout / budget / fallback
       ↓
 Business APIs / SQL / Search / Storage
@@ -58,92 +58,107 @@ AI chỉ là một capability trong system.
 
 ---
 
-# 1. AI Engineer thực sự làm gì?
+# 1. Learning path — học đúng dependency
 
-AI Engineer tập trung vào **application layer của AI**.
-
-Một useful distinction:
-
-| Role | Primary responsibility |
-|---|---|
-| ML researcher | algorithms/models/training research |
-| ML engineer | training/inference/data/model platform lifecycle |
-| **AI engineer** | **build product/application around modern models/APIs** |
-| AI-assisted developer | dùng coding agents/copilots để build software nhanh hơn |
-
-Một người có thể làm nhiều role, nhưng skill boundary khác nhau.
-
-Production AI Engineer cần:
+Đừng bắt đầu bằng RAG hay agent framework.
 
 ```text
-Software Engineering
-+ Backend/API
-+ Data/Search
-+ Security/AuthZ
-+ Distributed Systems
-+ Cloud/Deployment
-+ Observability
-+ LLM Runtime/Context
-+ Tools/RAG/Agents
-+ Evaluation
-```
-
-AI Hero nhấn mạnh đúng một điểm quan trọng: strong software-engineering fundamentals là lợi thế lớn của AI Engineer; role này không đồng nghĩa phải tự train foundation model. Xem [References](references.md).
-
----
-
-# 2. Learning path mới — học đúng dependency
-
-Module này không bắt đầu bằng RAG hay agent.
-
-```text
-Layer 1 — Role + vocabulary
-        ↓
-Layer 2 — LLM runtime / messages / context / tokens
-        ↓
-Layer 3 — Structured output + tool calling
-        ↓
-Layer 4 — Retrieval / RAG
-        ↓
-Layer 5 — Evaluation / observability / safety
-        ↓
-Layer 6 — Production architecture / deployment / lifecycle
+Role + vocabulary
+      ↓
+LLM runtime / messages / context / tokens
+      ↓
+Structured output + tool calling
+      ↓
+Retrieval / RAG
+      ↓
+Evaluation / observability / safety
+      ↓
+Runnable evidence
+      ↓
+Production architecture / lifecycle
 ```
 
 | Chapter | Mục tiêu |
 |---|---|
-| [AI Engineer Vocabulary & System Boundaries](ai-engineer-vocabulary-and-system-boundaries.md) | phân biệt model/provider/harness/agent/workflow/tool/memory/eval; chọn đúng abstraction |
-| [LLM Runtime — Messages, Context, Tokens & Reasoning](llm-runtime-messages-context-and-reasoning.md) | hiểu model request thực sự chứa gì, context budget, reasoning trade-off, session/turn/tool loop |
+| [AI Engineer Vocabulary & System Boundaries](ai-engineer-vocabulary-and-system-boundaries.md) | phân biệt model/provider/harness/agent/workflow/tool/memory/eval |
+| [LLM Runtime — Messages, Context, Tokens & Reasoning](llm-runtime-messages-context-and-reasoning.md) | hiểu provider request, context budget, reasoning trade-off, session/turn/tool loop |
 | [Structured Output & Tool Calling](structured-output-and-tool-calling.md) | biến model output thành contract và expose capability có authorization |
 | [RAG, Evaluation & Observability](rag-evaluation-and-observability.md) | retrieval lifecycle, ACL, eval regression, AI telemetry |
-| [References](references.md) | official/provider sources + supplementary AI Hero learning sources |
+| [Runnable AI Engineering Lab](https://github.com/Trinhduyet/trinhduyet.github.io/tree/main/labs/19-ai-engineering) | chạy orchestration/tool/eval/failure semantics không cần API key |
+| [References](references.md) | official/provider sources + supplementary learning sources |
 
-Sau Module 19, học [AI Coding Agents](../21-ai-coding-agents/README.md) để hiểu agent hoạt động trên repository/shell/CI với trust boundary khác.
+Sau Module 19, học [AI Coding Agents](../21-ai-coding-agents/README.md) để hiểu agent trên repository/shell/CI với trust boundary khác.
 
 ---
 
-# 3. Model ≠ Agent
+# 2. Sáu distinction phải thuộc
 
-Đây là distinction quan trọng nhất đang thiếu ở nhiều AI roadmap.
+```text
+Model != Agent
+```
+
+```text
+Tool request != Tool execution
+```
+
+```text
+System instruction != Authorization
+```
+
+```text
+Context window != Memory database
+```
+
+```text
+Structured output != Business correctness
+```
+
+```text
+Reasoning effort != Always better
+```
+
+Nếu chưa giải thích được sáu câu này bằng một system cụ thể, chưa nên deep dive agent framework.
+
+---
+
+# 3. Model, provider, harness và agent
 
 ## Model
 
 ```text
-parameters
-+ inference
+parameters + inference
 → output
 ```
 
-Model tự nó không có:
+Model tự nó không có filesystem, DB, shell, business AuthZ hay persistent memory.
+
+## Provider
+
+Provider chịu trách nhiệm host/inference/API surface:
 
 ```text
-filesystem
-database
-browser
-shell
-memory across sessions
-business authorization
-agent loop
+model selection
+request format
+usage
+rate limits
+availability
+provider-specific features
+```
+
+## Harness
+
+Harness/application quản lý:
+
+```text
+instructions
+messages/history
+context selection
+tool definitions
+tool execution
+permissions
+retry/timeout
+budgets
+telemetry
 ```
 
 ## Agent
@@ -157,33 +172,13 @@ Model
 = Agent
 ```
 
-## Harness
-
-Harness/application quản lý:
-
-```text
-system/developer instructions
-conversation state
-context selection
-tool definitions
-permission gates
-tool execution
-retry/timeout
-memory/compaction
-telemetry
-```
-
-Khi một coding agent “đọc file, chạy test, sửa code”, model không tự có những capability đó. Harness expose tools và environment cho model sử dụng.
-
-→ [AI Engineer Vocabulary & System Boundaries](ai-engineer-vocabulary-and-system-boundaries.md)
+Agent là một system behavior, không phải chỉ một model name.
 
 ---
 
 # 4. Messages và context là runtime input
 
-Model không “nhớ” conversation theo nghĩa application database.
-
-Conceptually mỗi provider request nhận một working set:
+Conceptually mỗi model request nhận một working set:
 
 ```text
 instructions
@@ -195,42 +190,70 @@ instructions
 → model
 ```
 
-Context window hữu hạn và có cost.
+Model không tự “nhớ” toàn session nếu application không đưa state/context trở lại request.
 
-Bad mental model:
-
-```text
-More context = more intelligence
-```
-
-Better:
+Rule:
 
 ```text
-Relevant, current, authorized context
+Relevant + current + authorized context
 > large noisy context
 ```
 
-Context quá lớn có thể làm tăng:
+Context nhiều hơn có thể tăng:
 
-- latency;
-- cost;
-- distraction;
-- stale-data risk;
-- prompt-injection surface.
-
-→ [LLM Runtime — Messages, Context, Tokens & Reasoning](llm-runtime-messages-context-and-reasoning.md)
+```text
+latency
+cost
+distraction
+stale-data risk
+prompt-injection surface
+```
 
 ---
 
-# 5. System prompt là instruction, không phải security boundary
+# 5. Parametric knowledge vs contextual knowledge
 
-System/developer instructions có thể nói:
+## Parametric knowledge
+
+Knowledge nằm trong model parameters từ training.
+
+```text
+may be stale
+may be incomplete
+not controlled by your application
+```
+
+## Contextual knowledge
+
+Knowledge application cung cấp ở runtime:
+
+```text
+current business data
+current repo code
+official docs
+retrieved policy
+tool result
+```
+
+Production rule:
+
+```text
+Current truth
+→ current source/context/tool
+```
+
+không dựa vào việc model “có vẻ nhớ”.
+
+---
+
+# 6. System prompt không phải security boundary
+
+Instruction có thể nói:
 
 ```text
 how to behave
-what style to use
 which workflow to follow
-when to call tools
+when to ask for tools
 ```
 
 Nhưng không thay được:
@@ -242,122 +265,31 @@ Business validation
 Rate limiting
 Idempotency
 Sandbox
-Network policy
 Human approval
 ```
 
-Sai:
+Correct direction:
 
 ```text
-System prompt:
-"Only admins may refund."
-→ model directly controls payment action
+Identity
+→ Application AuthZ
+→ Business rule
+→ Capability execution
 ```
 
-Đúng:
-
-```text
-User identity
-→ application AuthZ
-→ business rule
-→ approval/idempotency
-→ payment capability
-```
-
-Model có thể đề xuất action. Application quyết định authority.
+Model chỉ đề xuất action.
 
 ---
 
-# 6. Parametric knowledge vs contextual knowledge
-
-## Parametric
-
-Knowledge trong model parameters từ training.
-
-```text
-may be stale
-may be incomplete
-not under application control
-```
-
-## Contextual
-
-Knowledge application đưa vào current request:
-
-```text
-current repo code
-current API docs
-current business data
-current tool result
-retrieved policy
-```
-
-Production rule:
-
-```text
-Current truth comes from current source/context/tool,
-not from assuming model memory is current.
-```
-
-Ví dụ package/library mới release sau training cutoff: load official docs/source vào context thay vì để model đoán API.
-
----
-
-# 7. Tokens, reasoning và cost
-
-AI request cost/latency không chỉ tính “số câu”.
-
-```text
-Input tokens
-+ generated output tokens
-+ provider/model-specific reasoning compute/usage
-+ extra requests from tool loops
-= runtime cost surface
-```
-
-Một số reasoning-capable models có effort controls. Higher effort có thể giúp bài khó nhưng thường đổi lấy latency/cost.
-
-Không dùng:
-
-```text
-max reasoning everywhere
-```
-
-Dùng:
-
-```text
-representative eval set
-→ compare quality
-→ compare P95 latency
-→ compare cost
-→ choose config
-```
-
-Reasoning là một **quality/latency/cost knob**, không phải badge chất lượng.
-
----
-
-# 8. Business abstraction trước provider abstraction
+# 7. Business abstraction trước provider abstraction
 
 Provider abstraction hữu ích:
 
 ```text
-IChatClient
-→ provider adapter
+IChatClient / provider adapter
 ```
 
-Nhưng business code không nên lan đầy concept “chat”.
-
-Bad:
-
-```csharp
-public sealed class OrderService
-{
-    private readonly ChatClient _provider;
-}
-```
-
-Better:
+Nhưng business code nên phụ thuộc business capability:
 
 ```csharp
 public interface IOrderRiskClassifier
@@ -368,35 +300,27 @@ public interface IOrderRiskClassifier
 }
 ```
 
-Implementation AI đứng sau business port.
+Direction:
 
 ```text
 Order Application
 → IOrderRiskClassifier
 → AI implementation
-→ IChatClient/provider
+→ provider abstraction
 ```
 
 Lợi ích:
 
-- domain không biết model vendor;
-- deterministic fake/test dễ hơn;
-- model replacement không lan toàn codebase;
-- AI capability có thể fallback sang non-AI implementation khi phù hợp.
+- domain không biết vendor;
+- fake/test dễ;
+- fallback dễ hơn;
+- provider replacement không lan toàn codebase.
 
 ---
 
-# 9. Structured Output — model output phải vào contract
+# 8. Structured Output — schema là lớp đầu, không phải lớp cuối
 
-Business application không nên parse prose mơ hồ.
-
-Fragile:
-
-```csharp
-string level = response.Text.Split(':')[1];
-```
-
-Better contract:
+Model output nên vào typed contract khi business code cần structure.
 
 ```csharp
 public sealed record RiskDecision(
@@ -413,79 +337,58 @@ Schema-valid
 Business-valid
 ```
 
-Vẫn cần deterministic validation.
-
-Ví dụ:
+Pipeline đúng:
 
 ```text
-JSON schema says amount is decimal
-but business rule says refund <= remaining balance
+model output
+→ schema/type validation
+→ deterministic domain validation
+→ business action
 ```
-
-Business invariant phải enforce bằng application code.
-
-→ [Structured Output & Tool Calling](structured-output-and-tool-calling.md)
 
 ---
 
-# 10. Tool Calling — request ≠ execution
+# 9. Tool Calling — model không có authority
 
-Mental model:
+Flow:
 
 ```text
 Model
-→ structured tool request
+→ ToolRequest
 → Harness/Application
-→ validate + authorize
+→ allowlist
+→ input validation
+→ AuthZ
 → execute capability
-→ tool result
+→ ToolResult
 → next model request
 ```
 
-Tool request chỉ là output của model.
+Tool production phải trả lời:
 
-Một tool production phải trả lời:
+1. identity nào gọi;
+2. permission nào cần;
+3. side effect gì;
+4. retry có an toàn không;
+5. timeout là failed hay unknown outcome;
+6. audit log ở đâu;
+7. approval có cần không.
 
-1. identity nào đang gọi?
-2. permission nào cần?
-3. input validate thế nào?
-4. side effect gì?
-5. retry/idempotency ra sao?
-6. timeout = failed hay unknown outcome?
-7. audit log ở đâu?
-8. human approval có cần không?
-
-Tool tốt:
+Expose capability-oriented tools:
 
 ```text
 get_order_status(orderId)
-create_support_draft(ticketId)
 search_authorized_documents(query)
+create_support_draft(ticketId)
 ```
 
-Tool nguy hiểm nếu expose trực tiếp:
-
-```text
-execute_arbitrary_sql(sql)
-run_shell(command)
-```
+trước khi nghĩ tới generic `run_shell` hay `execute_sql`.
 
 ---
 
-# 11. Workflow vs Agent
+# 10. Workflow vs Agent
 
-Đừng biến mọi flow thành agent.
-
-## Workflow phù hợp khi
-
-```text
-steps known
-invariants strict
-same lifecycle repeats
-failure/recovery can be enumerated
-```
-
-Ví dụ:
+Dùng deterministic workflow khi steps đã biết:
 
 ```text
 validate
@@ -495,31 +398,24 @@ validate
 → save
 ```
 
-## Agent phù hợp hơn khi
-
-```text
-next step phụ thuộc semantic reasoning
-path khó enumerate
-multiple tools/resources may be explored
-```
-
-Ví dụ internal incident assistant:
+Dùng agent khi next step thực sự cần semantic action selection:
 
 ```text
 inspect alert
-→ choose relevant logs
-→ inspect deploy change
-→ inspect dependency health
+→ choose evidence source
+→ inspect deploy
+→ inspect dependency
 → formulate hypothesis
 ```
 
-Agent vẫn phải bounded bởi:
+Agent phải bounded:
 
 ```text
 max turns
-tool allowlist
-cost budget
+max tool calls
 time budget
+cost budget
+tool allowlist
 permissions
 approval
 cancellation
@@ -527,80 +423,60 @@ cancellation
 
 ---
 
-# 12. RAG là data system
+# 11. RAG là data system
 
-RAG không chỉ:
-
-```text
-PDF → embeddings → vector DB → model
-```
-
-Production pipeline:
+Production RAG:
 
 ```text
 Source of Truth
-  ↓
-Extract / Normalize
-  ↓
-Chunk + Metadata
-  ↓
-ACL / tenant boundary
-  ↓
-Embed / Index
-  ↓
-Retrieve / Filter / Rerank
-  ↓
-Context
-  ↓
-Generate
-  ↓
-Citation / Provenance
+→ extract/normalize
+→ chunk + metadata
+→ ACL/tenant filter
+→ embed/index
+→ retrieve/filter/rerank
+→ context
+→ generate
+→ citation/provenance
 ```
 
-Nó có distributed-data problems:
+Nó có lifecycle/failure riêng:
 
 ```text
 freshness
 deletion
 versioning
 index migration
-tenant isolation
 stale derived data
-replay/re-index
+tenant isolation
+re-index
 cost
 ```
 
-Nếu user không được xem document X, retrieval boundary phải loại X **trước khi model nhìn thấy**.
-
-→ [RAG, Evaluation & Observability](rag-evaluation-and-observability.md)
+ACL phải xảy ra **trước khi model nhìn thấy dữ liệu**.
 
 ---
 
-# 13. Evaluation là test system của AI behavior
+# 12. Evaluation là test system của AI behavior
 
-Không có eval thì thay đổi:
+Không có eval thì change này:
 
 ```text
 model
 prompt
-system instruction
 retrieval
 chunking
-reranker
 tool description
 reasoning effort
 ```
 
-chỉ được đánh giá bằng cảm giác.
+chỉ được review bằng cảm giác.
 
 Eval loop:
 
 ```text
 Representative dataset
       ↓
-Baseline configuration
-vs
-Candidate configuration
+Baseline vs Candidate
       ↓
 Quality + Safety
 + Latency + Cost
@@ -608,33 +484,45 @@ Quality + Safety
 Release decision
 ```
 
-Phân biệt:
-
-## Deterministic check
+Dùng deterministic checks cho invariant deterministic:
 
 ```text
 schema valid?
-AuthZ denied correctly?
+AuthZ denied?
 expected source retrieved?
-API contract valid?
+tool allowlist enforced?
 ```
 
-## Probabilistic/judgement eval
+Dùng judgement eval cho behavior như relevance/groundedness khi cần.
+
+---
+
+# 13. Reasoning là quality / latency / cost trade-off
+
+Không dùng:
 
 ```text
-answer relevance
-completeness
-groundedness
-helpfulness
+max reasoning everywhere
 ```
 
-Không dùng LLM judge cho invariant có thể kiểm chắc chắn bằng code.
+Dùng:
+
+```text
+eval set
+→ compare effort/configs
+→ quality
+→ P95 latency
+→ usage/cost
+→ choose
+```
+
+Provider-specific reasoning semantics thay đổi theo model/API, vì vậy official docs là canonical source.
 
 ---
 
 # 14. AI observability
 
-Normal backend vẫn cần:
+Backend telemetry vẫn cần:
 
 ```text
 logs
@@ -642,41 +530,27 @@ metrics
 traces
 ```
 
-AI thêm dimensions:
+AI thêm:
 
 ```text
 provider/model
-request count
-input/output usage
-reasoning configuration
 prompt/config version
 retrieval/index version
+input/output usage
+reasoning config
 tool-call count
 tool latency
 provider latency
-time-to-first-token
 fallback rate
 eval score
 cost/request
 ```
 
-Không log raw prompt/context/tool result mặc định nếu chứa:
-
-```text
-PII
-secrets
-internal documents
-credentials
-regulated data
-```
-
-Telemetry design phải follow data policy.
+Không log raw prompt/context/tool result mặc định nếu có PII, secrets hoặc internal data.
 
 ---
 
-# 15. Timeout, retry và unknown outcome vẫn là Distributed Systems
-
-AI/tool workflows không thoát khỏi distributed-systems rules.
+# 15. AI failure vẫn là Distributed Systems
 
 ```text
 provider timeout
@@ -684,14 +558,14 @@ provider timeout
 provider definitely did nothing
 ```
 
-Đặc biệt với write tool:
+Đặc biệt write tool:
 
 ```text
 tool timeout
-→ side effect may already have happened
+→ side effect may already exist
 ```
 
-Do đó áp dụng:
+Cần áp dụng:
 
 ```text
 idempotency
@@ -700,273 +574,178 @@ reconciliation
 bounded retry
 ```
 
-Không để agent retry blindly một financial/external side effect.
-
 → [Distributed Systems](../17-distributed-systems/README.md)
 
 ---
 
-# 16. Provider fallback không phải chỉ đổi model name
+# 16. Runnable Lab — executable evidence
 
-```text
-Provider A fails
-→ Provider B
+Module này có lab chạy được không cần API key:
+
+**[labs/19-ai-engineering](https://github.com/Trinhduyet/trinhduyet.github.io/tree/main/labs/19-ai-engineering)**
+
+Lab dùng deterministic fake model có chủ đích để orchestration semantics không phụ thuộc network/quota/model drift.
+
+Run:
+
+```bash
+dotnet run \
+  --project labs/19-ai-engineering/AiEngineeringLab.csproj \
+  -- demo
 ```
 
-nghe đơn giản nhưng có thể khác:
+Eval:
 
-- message/instruction semantics;
-- structured-output support;
-- tool behavior;
-- reasoning controls;
-- context window;
-- latency/cost;
-- safety behavior;
-- data residency/compliance.
+```bash
+dotnet run \
+  --project labs/19-ai-engineering/AiEngineeringLab.csproj \
+  -- eval
+```
 
-Fallback path phải có eval riêng.
+Self-test:
+
+```bash
+dotnet run \
+  --project labs/19-ai-engineering/AiEngineeringLab.csproj \
+  -- self-test
+```
+
+Lab chứng minh bằng executable checks:
 
 ```text
-Primary config
-vs
-Fallback config
-→ same acceptance suite
+Tenant-aware context selection
+Context budget
+Structured output validation
+Read-only tool execution
+Application-level authorization
+Prompt-injection text does not gain authority
+Bounded tool loop
+Reasoning/eval trade-off
+Usage telemetry shape
+```
+
+CI build và chạy `self-test` trên mỗi Pages deployment.
+
+---
+
+# 17. Tại sao lab mặc định không gọi provider thật?
+
+Một runnable learning artifact phải reproducible.
+
+Nếu baseline phụ thuộc:
+
+```text
+API key
+network
+quota
+model availability
+provider behavior drift
+```
+
+thì CI không còn deterministic.
+
+Vì vậy architecture của lab là:
+
+```text
+IAiModel
+├─ DeterministicModel   ← CI / learning baseline
+└─ RealProviderAdapter  ← extension exercise
+```
+
+Khi thay bằng provider thật, giữ nguyên:
+
+```text
+ToolHost/AuthZ
+Context boundary
+Structured validation
+Eval suite
+Failure drills
 ```
 
 ---
 
-# 17. Production architecture trên Azure
+# 18. Production project spine
 
-Một reference shape:
+Sau core lab, build **Enterprise Knowledge & Operations Assistant**.
 
-```text
-Front Door / APIM
-      ↓
-ASP.NET Core API
-(App Service / Container Apps / AKS when justified)
-      ↓
-AI Application Layer
- ├─ Azure OpenAI / provider
- ├─ Azure AI Search / retrieval
- ├─ Azure SQL / state
- ├─ Blob / source documents
- └─ Service Bus / async ingestion/jobs
-      ↓
-Managed Identity + Key Vault
-      ↓
-Azure Monitor / App Insights
-```
-
-Nhưng service names không phải architecture.
-
-Phải bắt đầu từ:
-
-```text
-requirements
-latency
-availability
-data boundary
-security
-cost
-```
-
-rồi mới map sang Azure.
-
-→ [Azure & Platform](../14-cloud/README.md)
-
----
-
-# 18. Project spine — Enterprise Knowledge & Operations Assistant
-
-Build một assistant có **read-only default**, có AuthZ và eval.
-
-## Functional
+Functional:
 
 ```text
 login
 ask question
 retrieve authorized docs
 generate cited answer
-read order/project status through tool
+read business status through tool
 return structured result
 ```
 
-## Engineering requirements
+Engineering requirements:
 
 - ASP.NET Core API;
 - business ports thay vì provider SDK trong domain;
-- SQL cho configuration/audit/workflow state;
-- authentication + authorization;
-- document ingestion/index lifecycle;
+- auth/AuthZ;
 - ACL-aware retrieval;
-- context budget;
+- prompt/context budget;
 - structured output;
-- read-only tools;
-- bounded agent/tool loop nếu cần;
+- read-only tools first;
+- bounded agent loop only when justified;
 - evaluation dataset;
 - model/prompt/retrieval versioning;
-- tracing + token/cost metrics;
-- Docker + Azure deployment;
+- tracing + usage/cost metrics;
+- Docker/Azure deployment;
 - CI/CD + rollback;
 - PII-safe logging.
 
-## Failure drills
+Failure drills:
 
 ```text
 model timeout
 large/noisy context
-stale model knowledge
+stale knowledge
 retrieval unavailable
-stale index after document deletion
-unauthorized document retrieval attempt
-prompt injection in retrieved content
+unauthorized retrieval
+direct/indirect prompt injection
 malformed structured output
 wrong tool selected
-tool API timeout
+tool timeout
 provider outage
-reasoning/cost spike
+cost spike
 runaway tool loop
 ```
 
-## Evidence
+Evidence:
 
 ```text
 architecture diagram
 trust-boundary diagram
 OpenAPI
-schema/index design
 AuthZ negative tests
-context/token budget report
-RAG eval report
-reasoning config comparison
+context/usage report
+eval report
 latency/cost dashboard
 failure drill report
-ADR: provider/search/hosting/agent-vs-workflow
+ADR: provider/search/agent-vs-workflow
 ```
 
 ---
 
-# 19. Learning priorities
-
-## P0 — foundation
-
-- AI Engineer role/system boundary;
-- model vs provider vs harness vs agent;
-- messages/context/tokens;
-- parametric vs contextual knowledge;
-- system prompt limitations;
-- structured output;
-- tool calling + AuthZ;
-- evaluation;
-- timeout/cost/observability;
-- deploy/operate.
-
-## P1 — production capability
-
-- embeddings/search/RAG lifecycle;
-- reranking;
-- context management/compaction;
-- agent loops and stopping conditions;
-- human-in-the-loop;
-- fallback/routing;
-- prompt/model/index versioning;
-- async AI jobs;
-- semantic caching where justified.
-
-## P2 — role/project dependent
-
-- fine-tuning;
-- custom model hosting;
-- training infrastructure;
-- advanced MLOps;
-- GPU capacity planning.
-
----
-
-# 20. Common mistakes
-
-## “Model = Agent”
-
-Sai boundary; model không tự có tools/memory/environment.
-
-## “System prompt = security”
-
-Instruction không enforce authorization.
-
-## “More context is always better”
-
-Noise, latency, cost và attack surface tăng.
-
-## “Agent for every workflow”
-
-Deterministic code thường tốt hơn khi steps đã biết.
-
-## “RAG = vector DB”
-
-Bỏ quên source lifecycle, ACL, deletion và eval.
-
-## “Structured output = correct output”
-
-Schema validation không enforce business invariant.
-
-## “Retry fixes timeout”
-
-Write side effect có thể bị duplicate/unknown outcome.
-
-## “Prompt tweak without eval”
-
-Không biết regression.
-
-## “Raw prompt logging”
-
-Có thể leak PII/secrets/internal data.
-
-## “Max reasoning by default”
-
-Đốt latency/cost mà không chứng minh quality gain.
-
----
-
-# 21. Production checklist
-
-- [ ] AI capability gắn với business outcome rõ;
-- [ ] business/application boundary không phụ thuộc trực tiếp provider SDK;
-- [ ] phân biệt model/provider/harness/agent/workflow;
-- [ ] messages/context construction rõ;
-- [ ] token/context budget có metric;
-- [ ] system prompt không dùng làm AuthZ boundary;
-- [ ] structured output + business validation;
-- [ ] tools capability-oriented, có AuthZ/idempotency;
-- [ ] agent loop bounded nếu dùng;
-- [ ] retrieval respects ACL/deletion/versioning;
-- [ ] representative eval suite tồn tại;
-- [ ] reasoning/model config được benchmark;
-- [ ] PII-safe telemetry;
-- [ ] latency/usage/cost/fallback metrics;
-- [ ] timeout/cancellation/reconciliation rõ;
-- [ ] provider fallback tested;
-- [ ] deployment + rollback;
-- [ ] failure drills documented;
-- [ ] project runnable/demoable.
-
----
-
-# 22. Exit Criteria
+# 19. Exit Criteria
 
 Bạn hoàn thành Module 19 khi có thể:
 
-1. giải thích model/provider/harness/agent bằng một architecture cụ thể;
-2. giải thích messages/context/session/turn/provider-request flow;
-3. phân biệt parametric và contextual knowledge;
-4. thiết kế token/context budget;
-5. chọn workflow vs agent và giải thích trade-off;
-6. implement structured output có deterministic validation;
-7. implement tool có AuthZ và idempotency phù hợp;
-8. thiết kế RAG có ACL/deletion/versioning;
-9. xây eval suite phân biệt deterministic checks và judgement metrics;
-10. đo quality/latency/cost giữa model/reasoning configs;
-11. xử lý provider/tool timeout theo distributed-systems semantics;
-12. deploy và observe AI feature như một production subsystem.
+- [ ] giải thích model/provider/harness/agent bằng một architecture cụ thể;
+- [ ] giải thích messages/context/session/turn/provider-request flow;
+- [ ] phân biệt parametric và contextual knowledge;
+- [ ] thiết kế context/usage budget;
+- [ ] chọn workflow vs agent và giải thích trade-off;
+- [ ] implement structured output + deterministic validation;
+- [ ] implement tool có AuthZ/idempotency phù hợp;
+- [ ] thiết kế RAG có ACL/deletion/versioning;
+- [ ] xây eval suite;
+- [ ] benchmark quality/latency/cost giữa configs;
+- [ ] xử lý provider/tool timeout theo distributed-systems semantics;
+- [ ] chạy `labs/19-ai-engineering` và có `SELF-TEST PASS`;
+- [ ] deploy/observe AI feature như production subsystem.
 
 ## Học tiếp
 
@@ -974,13 +753,16 @@ Bạn hoàn thành Module 19 khi có thể:
 2. [LLM Runtime — Messages, Context, Tokens & Reasoning](llm-runtime-messages-context-and-reasoning.md)
 3. [Structured Output & Tool Calling](structured-output-and-tool-calling.md)
 4. [RAG, Evaluation & Observability](rag-evaluation-and-observability.md)
-5. [AI Coding Agents](../21-ai-coding-agents/README.md)
-6. [System Design](../24-system-design/README.md)
-7. [Software Architecture](../25-software-architecture/README.md)
-8. [References](references.md)
+5. [Runnable AI Engineering Lab](https://github.com/Trinhduyet/trinhduyet.github.io/tree/main/labs/19-ai-engineering)
+6. [AI Coding Agents](../21-ai-coding-agents/README.md)
+7. [System Design](../24-system-design/README.md)
+8. [Software Architecture](../25-software-architecture/README.md)
+9. [References](references.md)
 
 ## Verification metadata
 
-- Rebuilt: 2026-09-03.
+- Rebuilt foundations: 2026-09-03.
+- Runnable lab added: 2026-09-03.
+- CI evidence: `.NET 10 build + self-test` runs in the Pages workflow.
 - Supplementary learning sources: AI Hero — AI Engineer Roadmap, AI Coding Dictionary, LLM Fundamentals.
 - Provider/version-specific semantics: current official docs are canonical; see [References](references.md) and [Technology Baseline](../00-roadmap/technology-baseline.md).
