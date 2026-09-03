@@ -158,13 +158,13 @@ Reference < Guided < Deep
 
 | Area | Capability | Priority | Typical target | Content | Runnable lab | Evidence path |
 |---|---|---:|---:|---|---:|---|
-| AI Engineering | model/provider abstraction + structured output | P0 | 4/5 | Deep/Guided | No | [AI Engineering](../19-ai-engineering/README.md) |
-| AI Tools | tool calling + application authorization | P0 | 5 | Deep/Guided | No | [Structured Output & Tools](../19-ai-engineering/structured-output-and-tool-calling.md) |
-| RAG | ingestion/retrieval/ACL/deletion/versioning | P0 | 4/5 | **Integrated in 19** | No | [RAG/Eval/Observability](../19-ai-engineering/rag-evaluation-and-observability.md) |
-| AI Evaluation | dataset/regression/latency/cost | P0 | 5 | **Integrated in 19** | No | [RAG/Eval/Observability](../19-ai-engineering/rag-evaluation-and-observability.md) |
-| AI Security | injection/tool abuse/data boundary | P0 | 4/5 | Integrated 19/21 | No | [AI Engineering](../19-ai-engineering/README.md) + [Coding Agents](../21-ai-coding-agents/README.md) |
-| Coding Agents | repo context/instructions/task scoping | P0/P1 | 4 | Deep/Guided | No | [Repository Context](../21-ai-coding-agents/repository-context-mcp-and-instructions.md) |
-| Coding Agents | permissions/sandbox/build-test-review workflow | P0/P1 | 4/5 | Deep/Guided | No | [Safe Agentic Workflow](../21-ai-coding-agents/safe-agentic-coding-workflow.md) |
+| AI Engineering | model/provider/harness/runtime + MEAI + structured output | P0 | 4/5 | **Deep/Runnable** | **Yes — core + MEAI** | [AI Engineering](../19-ai-engineering/README.md) + `labs/19-ai-engineering` |
+| AI Tools | tool calling + application authorization + bounded loop | P0 | 5 | **Deep/Runnable** | **Yes — core + MEAI** | [Structured Output & Tools](../19-ai-engineering/structured-output-and-tool-calling.md) + `labs/19-ai-engineering` |
+| RAG | ingestion/retrieval/ACL/deletion/versioning | P0 | 4/5 | **Integrated in 19** | **Yes — core/partial** | [RAG/Eval/Observability](../19-ai-engineering/rag-evaluation-and-observability.md) + tenant-aware retrieval lab |
+| AI Evaluation | dataset/regression/latency/cost/reasoning comparison | P0 | 5 | **Integrated/Runnable in 19** | **Yes — core** | [RAG/Eval/Observability](../19-ai-engineering/rag-evaluation-and-observability.md) + `labs/19-ai-engineering -- eval` |
+| AI Security | injection/tool abuse/data boundary | P0 | 4/5 | **Integrated 19/21** | **Yes — core failure drills** | [AI Engineering](../19-ai-engineering/README.md) + `labs/19-ai-engineering` |
+| Coding Agents | vocabulary/context/handoffs/repo instructions/task scoping | P0/P1 | 4 | **Deep/Guided** | No dedicated | [Coding Agent Vocabulary](../21-ai-coding-agents/ai-coding-agent-vocabulary-context-and-handoffs.md) |
+| Coding Agents | permissions/sandbox/build-test-review workflow | P0/P1 | 4/5 | **Deep/Guided** | No dedicated | [Safe Agentic Workflow](../21-ai-coding-agents/safe-agentic-coding-workflow.md) |
 
 ---
 
@@ -175,9 +175,9 @@ Không gán trạng thái `Planned` cho capability đã có content sâu ở mod
 | Capability | Current home | Status |
 |---|---|---|
 | Observability / OTel / SLO | 07, 10, 14, 15, 17, 19 | Integrated; dedicated module optional later |
-| RAG | 19 | Integrated |
-| AI Security | 19, 21 | Integrated foundation; dedicated red-team track future candidate |
-| GenAIOps | 19 | Integrated foundation; executable release/eval lab pending |
+| RAG | 19 | Integrated; core tenant-aware retrieval evidence exists; full vector/search production lab can expand |
+| AI Security | 19, 21 | Integrated foundation + Module 19 failure drills; dedicated red-team track optional later |
+| GenAIOps | 19 | Integrated foundation + executable eval/usage lab; full release/provider-matrix lab can expand |
 | Architecture documentation | 24, 25 | Integrated; reusable examples can expand |
 | Data Engineering | — | Selective/future P2 |
 
@@ -185,7 +185,7 @@ Không gán trạng thái `Planned` cho capability đã có content sâu ở mod
 
 # Repository evidence gap
 
-Dedicated runnable lab directories now cover Modules **01–04 plus Kubernetes core (15)**. The highest-leverage backlog is still **not adding more rows**; it is turning later deep content into executable integrated scenarios.
+Dedicated runnable lab directories now cover Modules **01–04, Kubernetes core (15), and Production AI core/MEAI (19)**. The highest-leverage backlog remains turning later deep content into executable integrated scenarios.
 
 Priority:
 
@@ -195,8 +195,9 @@ Priority:
 17 Distributed Reliability
 18 Checkout Saga
 14 Azure IaC
-19 Production AI
+21 Coding Agent sandbox/context/review lab
 15 Kubernetes RBAC/PVC/NetworkPolicy/HPA extensions
+19 full provider/RAG/evaluation release lab
 ```
 
 → [Repository Quality Review](repository-quality-review-2026-08-28.md)
@@ -226,8 +227,9 @@ design review
 
 ## Verification metadata
 
-- Rebuilt: 2026-08-28.
+- Rebuilt: 2026-08-28; AI evidence rows refreshed 2026-09-03.
 - Scope aligned with actual repository modules and runnable lab directories at review time.
 - Removed public user-specific assumed current levels.
 - Distributed Systems, System Design, Software Architecture and EF Core statuses corrected from stale `Planned` labels to current active/deep coverage.
 - Kubernetes core lab coverage added for reconciliation, Service/selectors, probes, resources, rollout and debugging.
+- Production AI evidence updated for `labs/19-ai-engineering`, including core self-test, Microsoft.Extensions.AI self-test, failure drills and eval usage comparison.
