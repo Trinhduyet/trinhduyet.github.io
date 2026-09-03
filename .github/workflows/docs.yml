@@ -46,6 +46,22 @@ jobs:
           cache: pip
           cache-dependency-path: requirements-docs.txt
 
+      - name: Set up .NET 10 for runnable learning labs
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Verify AI Engineering runnable lab
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet build labs/19-ai-engineering/AiEngineeringLab.csproj --configuration Release
+          dotnet run \
+            --project labs/19-ai-engineering/AiEngineeringLab.csproj \
+            --configuration Release \
+            --no-build \
+            -- self-test
+
       - name: Install documentation dependencies
         run: python -m pip install -r requirements-docs.txt
 
