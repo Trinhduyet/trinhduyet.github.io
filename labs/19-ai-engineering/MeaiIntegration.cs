@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using Microsoft.Extensions.AI;
 using OpenAI;
 
@@ -246,16 +245,13 @@ public sealed class DeterministicMeaiChatClient : IChatClient
     public async IAsyncEnumerable<ChatResponseUpdate> GetStreamingResponseAsync(
         IEnumerable<ChatMessage> messages,
         ChatOptions? options = null,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default)
     {
-        ChatResponse response = await GetResponseAsync(messages, options, cancellationToken);
+        _ = messages;
+        _ = options;
         cancellationToken.ThrowIfCancellationRequested();
-
-        yield return new ChatResponseUpdate
-        {
-            Role = ChatRole.Assistant,
-            Contents = [new TextContent(response.Text)]
-        };
+        await Task.Yield();
+        yield break;
     }
 
     public object? GetService(Type serviceType, object? serviceKey = null)
