@@ -15,9 +15,11 @@
 | Terraform | **1.16.x** for new docs; existing labs/config must be compatibility-tested before bump | stable `1.16.0` released 2026-08-26; 1.17 is prerelease | 2026-08-28 | [Terraform releases](https://github.com/hashicorp/terraform/releases) |
 | Redis Open Source | **8.10.x** | observed stable `8.10.0` | 2026-08-28 | [Redis releases](https://github.com/redis/redis/releases) · [Redis docs](https://redis.io/docs/latest/) |
 | OpenTelemetry .NET | **1.17.x** | `core-1.17.0` remains latest stable release signal | 2026-08-28 | [OpenTelemetry .NET releases](https://github.com/open-telemetry/opentelemetry-dotnet/releases) |
-| Microsoft.Extensions.AI | **10.8.x** | NuGet stable `10.8.3` | 2026-08-28 | [Microsoft.Extensions.AI](https://www.nuget.org/packages/Microsoft.Extensions.AI) · [.NET AI docs](https://learn.microsoft.com/en-us/dotnet/ai/) |
+| Microsoft.Extensions.AI | **10.9.x** | NuGet stable/current `10.9.0`; Module 19 lab pins `10.9.0` | 2026-09-03 | [Microsoft.Extensions.AI](https://www.nuget.org/packages/Microsoft.Extensions.AI) · [.NET AI docs](https://learn.microsoft.com/en-us/dotnet/ai/) |
 | Microsoft Agent Framework (.NET) | **1.17.x** | `dotnet-1.17.0` marked latest at review time | 2026-08-28 | [Agent Framework releases](https://github.com/microsoft/agent-framework/releases) |
 | OpenAI .NET | **2.12.x released line** | latest public release/package observed `2.12.0`; `main` version prefix is not treated as a released version | 2026-08-28 | [openai-dotnet releases](https://github.com/openai/openai-dotnet/releases) · [OpenAI NuGet](https://www.nuget.org/packages/OpenAI) |
+
+> Partial refresh: the `Microsoft.Extensions.AI` row was re-verified on **2026-09-03** while implementing the Module 19 runnable MEAI integration. Other rows retain their own verification dates.
 
 ---
 
@@ -119,6 +121,18 @@ Pin CLI/provider constraints for executable environments. A documentation baseli
 
 SDK and model/provider behavior evolve quickly. Pin exact packages in runnable projects and keep eval regression gate.
 
+For `Microsoft.Extensions.AI`, distinguish:
+
+```text
+MEAI abstraction/package version
+!=
+provider SDK version
+!=
+model/deployment version
+```
+
+A package upgrade still requires compile tests, behavior/eval regression and provider compatibility verification.
+
 ---
 
 # 4. Important corrections from previous snapshot
@@ -131,6 +145,7 @@ EF Core    10.0.10 → 10.0.11 stable
 SQL 2025   CU7      → CU8 listed by Microsoft
 Kubernetes 1.36.x   → upstream 1.37.0 current
 Terraform  1.15.x   → 1.16.0 stable
+MEAI       10.8.x   → 10.9.0 stable/current
 ```
 
 OpenAI .NET is deliberately recorded from **released package/release artifacts**. A version prefix on a development branch is not used as release evidence.
@@ -201,5 +216,6 @@ Roadmap sites/blogs can help audit breadth; they do not decide runtime/security/
 ## Verification metadata
 
 - Repository baseline review: **2026-08-28**, Asia/Bangkok.
+- Partial AI SDK refresh: **2026-09-03** for `Microsoft.Extensions.AI` 10.9.0.
 - Critical refreshes verified against official .NET, Microsoft, Docker, Kubernetes, HashiCorp, OpenTelemetry, Microsoft package/framework and OpenAI release/package sources.
 - Managed cloud versions are intentionally not inferred from upstream Kubernetes current release.

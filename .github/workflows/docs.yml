@@ -61,6 +61,11 @@ jobs:
             --configuration Release \
             --no-build \
             -- self-test
+          dotnet run \
+            --project labs/19-ai-engineering/AiEngineeringLab.csproj \
+            --configuration Release \
+            --no-build \
+            -- meai-self-test
 
       - name: Install documentation dependencies
         run: python -m pip install -r requirements-docs.txt

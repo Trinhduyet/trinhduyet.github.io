@@ -1,103 +1,427 @@
-# AI Engineer Vocabulary và System Boundaries
+# AI Engineering Vocabulary & System Boundaries
 
-> Mục tiêu: dùng đúng từ để design đúng system. Khi `model`, `agent`, `tool`, `context`, `memory`, `workflow`, `eval` bị trộn thành một chữ “AI”, architecture review rất dễ sai boundary.
+> Mục tiêu: có một vocabulary đủ rộng để đọc tài liệu AI hiện đại mà không trộn `model`, `provider`, `agent`, `context`, `memory`, `RAG`, `tool`, `eval` thành một box “AI”. Định nghĩa được ưu tiên theo **system boundary và production consequence**, không phải học thuộc buzzword.
 
-## 1. AI Engineer là ai?
+<div class="lesson-meta">
+  <span><strong>Priority</strong>&nbsp;P0</span>
+  <span><strong>Mode</strong>&nbsp;definition → boundary → production implication</span>
+  <span><strong>.NET mapping</strong>&nbsp;Microsoft.Extensions.AI</span>
+</div>
 
-AI Engineer là software engineer xây **application có AI capability**.
+## Hiểu trong 5 phút
 
-Không đồng nhất với:
-
-```text
-ML Researcher
-ML Engineer
-Data Scientist
-AI-assisted Developer
-Prompt-only specialist
-```
-
-Một AI Engineer production thường làm việc ở giao điểm:
+Một AI-powered application production:
 
 ```text
-Software Engineering
-+ Product/Application Engineering
-+ LLM/AI capabilities
-+ Data/Retrieval
-+ Evaluation
-+ Security/Operations
+Business capability
+      ↓
+Application / Harness
+ ├─ instructions
+ ├─ messages
+ ├─ context
+ ├─ retrieval
+ ├─ tools
+ ├─ permissions
+ ├─ workflow / agent loop
+ ├─ eval
+ └─ telemetry
+      ↓
+Provider
+      ↓
+Model
 ```
 
-Điểm quan trọng từ góc nhìn nghề nghiệp:
+Các khái niệm quan trọng nhất:
 
 ```text
-You do not need to train a foundation model
-but you do need to engineer the system around one.
+Model != Provider
+Model != Agent
+Context != Context Window
+Session != Memory
+Tool Call != Tool Execution
+System Prompt != Authorization
+RAG != Vector Database
+Structured Output != Business Correctness
+Eval != Unit Test only
+Reasoning Effort != Always Better
 ```
-
-Bạn cần đủ mạnh ở:
-
-- backend/API;
-- data/storage/search;
-- authentication/authorization;
-- distributed failure;
-- deployment/cloud;
-- observability;
-- evaluation;
-- AI-specific context/tool/retrieval behavior.
-
-AI Hero mô tả vai trò này như software developer xây application powered by AI và nhấn mạnh khác biệt với AI-assisted developer — người dùng AI để code nhanh hơn. Module này giữ distinction đó vì hai role có objective và risk khác nhau.
 
 ---
 
-# 2. Vocabulary map
+# 1. AI Engineer là ai?
+
+## AI Engineer
+
+Software engineer xây **application có AI capability**.
+
+Typical responsibilities:
+
+```text
+model/provider integration
+application architecture
+context engineering
+structured output
+tool calling
+RAG/data retrieval
+evaluation
+security/privacy
+latency/cost
+observability
+deployment/reliability
+```
+
+AI Engineer không nhất thiết train foundation model.
+
+## ML Engineer
+
+Tập trung nhiều hơn vào:
+
+```text
+training/fine-tuning pipelines
+features/data pipelines
+model serving
+model optimization
+ML infrastructure
+```
+
+Boundary hữu ích:
+
+```text
+ML Engineer
+→ builds/operates model-serving capability
+
+AI Engineer
+→ builds products using model capability
+```
+
+Thực tế organization có thể overlap, nhưng mental model này giúp chọn learning path.
+
+## AI-assisted Developer
+
+Developer dùng coding agents/assistants để build software nhanh hơn.
+
+```text
+AI Engineer
+→ builds AI-powered product
+
+AI-assisted Developer
+→ uses AI to build any product
+```
+
+Một người có thể là cả hai.
+
+## Prompt Engineering
+
+Thiết kế instructions/examples/input để influence model output.
+
+Đây là **một kỹ năng** trong AI Engineering, không phải toàn bộ discipline.
+
+Production AI còn cần:
+
+```text
+contracts
+data
+AuthZ
+evals
+failures
+observability
+operations
+```
+
+---
+
+# 2. Model fundamentals
 
 ## Model
 
-Parameters/weights thực hiện inference.
+Tập parameters/weights dùng để thực hiện inference.
 
 ```text
 input tokens
 → model
-→ next-token generation / structured output
+→ output token probabilities
+→ generated tokens
 ```
 
-Model không tự có filesystem, database, shell hay long-term memory.
-
-## Provider
-
-Service/runtime serve model.
-
-Provider-specific concerns:
+Model tự nó không có:
 
 ```text
-model availability
-rate limits
-context limit
-pricing
-data policy
-region
-API semantics
-tool/reasoning capability
+filesystem
+HTTP API access
+business database
+persistent memory
+agent loop
+authorization
 ```
 
-## Harness
+## Parameters / Weights
 
-Software biến model thành usable application actor:
+Các số được tối ưu trong training và giữ cố định trong inference thông thường.
+
+Parametric knowledge được encode trong parameters theo cách distributed, không phải một table facts đơn giản.
+
+## Training
+
+Quá trình điều chỉnh parameters bằng data/objective trước khi model được serve.
+
+```text
+training data
+→ optimization
+→ parameters
+```
+
+Một user conversation không tự update weights của model.
+
+## Pre-training
+
+Large-scale training tạo general language/world/code capability.
+
+## Post-training
+
+Các bước sau pre-training nhằm cải thiện behavior như instruction following, preference alignment, safety hoặc specialized behavior.
+
+Không cần deep ML math để trở thành AI Engineer, nhưng phải hiểu training != runtime context.
+
+## Inference
+
+Chạy trained model với input hiện tại để sinh output.
+
+```text
+parameters fixed
++ current context
+→ generated output
+```
+
+## Next-token prediction
+
+Core generation mechanism: dự đoán token tiếp theo dựa trên current sequence, append token, lặp lại.
+
+Production implication:
+
+```text
+plausible output
+!= guaranteed truth
+```
+
+## Token
+
+Atomic unit model đọc/ghi.
+
+Token không đồng nhất với word.
+
+Token count ảnh hưởng:
+
+```text
+context capacity
+latency
+usage/cost
+provider limits
+```
+
+## Tokenizer
+
+Rule/model-specific mechanism biến text ↔ token IDs.
+
+Không estimate chính xác cost bằng `word count` khi cần production accounting.
+
+## Non-determinism
+
+Same logical input có thể không luôn trả byte-identical output.
+
+Nguyên nhân có thể liên quan sampling/runtime/provider behavior.
+
+Engineering implication:
+
+```text
+assert invariant/contract
+not exact prose
+```
+
+trừ khi exact output thật sự là requirement.
+
+---
+
+# 3. Provider và model-serving runtime
+
+## Model Provider
+
+Service/runtime serve model inference.
+
+Examples conceptual:
+
+```text
+hosted provider
+cloud provider AI service
+local inference runtime
+```
+
+Provider concern:
+
+```text
+model IDs/deployments
+context limits
+pricing
+rate limits
+availability
+regions
+data retention
+API semantics
+reasoning/tool support
+```
+
+## Model Provider Request
+
+Một round-trip từ application/harness tới provider.
+
+```text
+context/options
+→ provider request
+→ provider response
+```
+
+Một user turn có thể cần nhiều provider requests nếu có tools/agent loop.
+
+## Input Tokens
+
+Tokens gửi vào provider request.
+
+Có thể gồm:
 
 ```text
 instructions
+history
+retrieved context
+tool definitions
+tool results
+current user message
+```
+
+## Output Tokens
+
+Tokens model sinh ra.
+
+Một số provider tính output/reasoning usage khác input.
+
+## Cached Input Tokens
+
+Provider có thể reuse/cache một prefix đã xử lý và report/bill riêng.
+
+Không assume mọi provider/model có cùng cache semantics.
+
+## Prefix Cache
+
+Provider-side optimization cho shared input prefix.
+
+Useful khi repeated requests share large stable prefix, nhưng architecture không nên phụ thuộc correctness vào cache hit.
+
+## Rate Limit
+
+Provider constraint trên request/token/concurrency/resource usage.
+
+Production cần:
+
+```text
+backpressure
+retry policy
+queueing
+fallback/degraded mode
+usage budget
+```
+
+---
+
+# 4. Reasoning concepts
+
+## Reasoning Effort / Effort
+
+Runtime configuration cho một số reasoning-capable models/providers, điều chỉnh amount of reasoning compute/usage.
+
+Mental model:
+
+```text
+more effort
+→ potentially higher quality on hard tasks
+→ usually more latency/usage/cost
+```
+
+Không phải mọi task cần high effort.
+
+## Reasoning Tokens / Reasoning Usage
+
+Provider có thể report token/usage liên quan reasoning separately.
+
+Không đồng nhất với visible explanation.
+
+```text
+hidden/internal reasoning work
+!=
+user-visible chain-of-thought
+```
+
+Application quan tâm observable contract:
+
+```text
+correctness
+structured output
+tool behavior
+latency
+usage/cost
+```
+
+## Reasoning Configuration
+
+Một release variable giống:
+
+```text
+model
+prompt
+retrieval
+chunking
+```
+
+nên phải eval trước khi rollout.
+
+---
+
+# 5. Harness, workflow và agent
+
+## Harness
+
+Software bao quanh model để tạo usable application behavior.
+
+Harness có thể quản lý:
+
+```text
+system/developer instructions
+message history
 context assembly
+retrieval
+tools
 tool execution
 permissions
-session state
-memory
 retry/timeout
+memory
+compaction
 telemetry
 ```
 
+## Workflow
+
+Application-controlled sequence của steps.
+
+```text
+validate
+→ retrieve
+→ classify
+→ validate output
+→ save
+```
+
+Nếu path known, workflow thường dễ test và govern hơn autonomous agent loop.
+
 ## Agent
 
-Một model được harness với context/tools/loop để thực hiện task qua nhiều bước.
+Model hoạt động trong harness với context/tools/control loop để chọn next action qua nhiều steps.
 
 ```text
 Agent
@@ -108,88 +432,687 @@ Agent
 + control loop
 ```
 
-Agent không phải “model mạnh hơn”. Nó là **runtime composition** khác.
+Agent là system behavior, không phải model tier.
 
-## Workflow
-
-Flow deterministic hoặc mostly deterministic do application điều khiển.
+## Agent Loop
 
 ```text
-step A
-→ step B
-→ step C
+goal
+→ model chooses action
+→ tool/request
+→ environment/result
+→ model updates plan
+→ repeat/finish
 ```
 
-Nếu sequence đã biết trước, workflow thường đơn giản, dễ test và an toàn hơn để model tự chọn mọi bước.
-
-## Tool
-
-Capability mà harness expose cho model/agent đề xuất sử dụng.
-
-Tool nên map tới business capability:
+Production loop phải bounded:
 
 ```text
-get_order_status
-create_support_draft
-search_architecture_docs
+max turns
+max tool calls
+max provider requests
+time budget
+cost budget
+allowed tools
+approval gates
 ```
 
-không phải unrestricted primitive:
+## Subagent
+
+Agent phụ chạy subtask trong context/session riêng rồi trả result về parent workflow/agent.
+
+Useful cho:
 
 ```text
-run_any_sql
-execute_shell_as_admin
+parallel research
+specialized review
+bounded investigation
 ```
 
-## Tool call
+Nhưng tăng:
 
-Structured request do model tạo ra.
+```text
+cost
+context-transfer loss
+permission complexity
+audit complexity
+```
 
-## Tool result
+---
 
-Kết quả application gửi lại cho model sau khi tool được execute.
+# 6. Message, instruction và conversation runtime
+
+## Message
+
+Typed item/conversation unit application gửi provider/model.
+
+Common roles/concepts có thể gồm:
+
+```text
+system/developer instruction
+user
+assistant
+function/tool call
+function/tool result
+```
+
+Exact role names/precedence là provider/API-specific.
+
+## System Prompt / System Instruction
+
+Standing behavior instructions đặt ở high-priority application layer theo provider semantics.
+
+Useful cho:
+
+```text
+role
+style
+workflow constraints
+output rules
+tool guidance
+```
+
+Không phải security boundary.
+
+## Developer Instruction
+
+Một số provider/API có explicit developer-level instruction role/surface.
+
+Mental model:
+
+```text
+application-owned behavior instruction
+```
+
+Exact precedence phải đọc current official provider docs.
+
+## User Message
+
+Current user intent/input.
+
+User-provided content là untrusted input đối với security boundaries.
+
+## Assistant Message
+
+Prior/current model-generated output đưa vào conversation state khi application/harness cần.
+
+---
+
+# 7. Context, context window, session và turn
 
 ## Context
 
-Information model nhìn thấy trong current request.
+Thông tin relevant model/agent có cho task hiện tại.
 
-## Context window
+Context quality là về relevance/correctness/currentness.
 
-Finite working set chứa messages, instructions, retrieved data, tool definitions/results và output budget theo provider/model semantics.
+## Context Window
 
-## Memory
+Literal finite token sequence model nhìn thấy trong **mỗi provider request**.
 
-Mechanism application dùng để persist/reload selected information across sessions.
+Có thể chứa:
 
-Không nên gọi transcript dài là “memory architecture” nếu không có lifecycle, selection, deletion và source-of-truth rules.
+```text
+instructions
+history
+retrieved docs
+tool schemas
+tool results
+examples
+current request
+```
 
-## RAG
+## Context Budget
 
-Retrieval-Augmented Generation:
+Application policy phân bổ finite context capacity cho từng category.
+
+Ví dụ:
+
+```text
+instructions        5%
+history            20%
+retrieval          50%
+tool definitions   10%
+output headroom    15%
+```
+
+Tỷ lệ thực tế phụ thuộc use case.
+
+## Session
+
+Bounded interaction state do application/harness quản lý qua nhiều turns.
+
+Session policy có thể gồm:
+
+```text
+retention
+expiry
+history selection
+compaction
+privacy/deletion
+```
+
+## Turn
+
+Một user input cộng toàn bộ system work trước khi yield response/control lại user.
+
+Một turn có thể chứa nhiều provider requests/tool calls.
+
+## Stateless
+
+Không carry information forward tự động.
+
+Model inference thường được mental-model như stateless across requests; harness/provider API có thể offer stateful convenience, nhưng application phải hiểu state ownership.
+
+## Stateful
+
+System giữ information qua requests/turns/sessions.
+
+Stateful agent behavior đến từ harness/provider state/memory, không phải weights tự thay đổi.
+
+---
+
+# 8. Context quality và attention degradation
+
+## Attention
+
+Mechanism giúp model relate tokens/context trong inference.
+
+AI Engineer không nhất thiết học toàn transformer math để ship app, nhưng phải hiểu practical consequence:
+
+```text
+more tokens
+!= unlimited focus
+```
+
+## Attention Degradation
+
+Long/noisy context có thể làm model sử dụng relevant information kém hơn trước khi hard context limit bị chạm.
+
+Symptoms:
+
+```text
+forgets earlier constraint
+confuses versions
+misses relevant retrieved chunk
+repeats stale plan
+```
+
+## Smart Zone / Dumb Zone
+
+AI Hero dùng mental model:
+
+```text
+early focused context
+→ smart zone
+
+long/noisy/degraded session
+→ dumb zone
+```
+
+Đây là explanatory metaphor, không phải formal provider metric.
+
+Mitigation:
+
+```text
+progressive disclosure
+context pruning
+fresh retrieval
+compaction
+handoff
+fresh session
+```
+
+---
+
+# 9. Knowledge vocabulary
+
+## Parametric Knowledge
+
+Knowledge encoded in model parameters từ training.
+
+Properties:
+
+```text
+frozen for deployed model
+may be stale
+not application-controlled
+```
+
+## Contextual Knowledge
+
+Knowledge application đặt trong current context:
+
+```text
+current policy
+current code
+DB/tool result
+retrieved docs
+current API docs
+```
+
+Đây là lever AI Engineer kiểm soát trực tiếp.
+
+## Knowledge Cutoff
+
+Temporal boundary của parametric knowledge.
+
+Current/recent truth phải đến từ contextual source/tool.
+
+## Primary Source
+
+Artifact gốc/authoritative:
+
+```text
+actual code
+current DB result
+official docs
+raw event
+system-of-record record
+```
+
+## Secondary Source
+
+Summary/account của primary source:
+
+```text
+summary
+handoff note
+compiled knowledge article
+```
+
+Secondary source tiết kiệm context nhưng lossy.
+
+Rule:
+
+```text
+navigate with secondary source
+verify critical truth with primary source
+```
+
+---
+
+# 10. Retrieval & RAG vocabulary
+
+## Retrieval
+
+Process tìm relevant source/data cho current query/task.
+
+Không nhất thiết dùng vector search; có thể là:
+
+```text
+SQL lookup
+keyword/BM25
+vector search
+hybrid search
+graph lookup
+API/tool call
+```
+
+## RAG — Retrieval-Augmented Generation
 
 ```text
 query
-→ retrieve relevant authorized data
-→ inject context
-→ generate
+→ retrieve authorized relevant data
+→ add to context
+→ generate answer/action
 ```
 
-RAG là data/retrieval system, không chỉ vector DB.
+RAG là data/retrieval lifecycle, không chỉ vector database.
+
+## Chunk
+
+Unit tài liệu được index/retrieved.
+
+Chunk design ảnh hưởng:
+
+```text
+retrieval precision
+context size
+citation granularity
+```
 
 ## Embedding
 
-Vector representation dùng cho similarity/search use cases. Không phải replacement cho relational data model hay authorization.
+Vector representation của input dùng cho similarity/retrieval.
 
-## Eval
+## Embedding Model
 
-Một cách đo AI behavior bằng dataset + metric/judgement + threshold.
+Model tạo embedding vectors.
+
+Change embedding model có thể yêu cầu:
 
 ```text
-change
-→ run eval
+re-embed
+index migration
+retrieval re-evaluation
+```
+
+## Vector Store / Vector Index
+
+Storage/index hỗ trợ nearest-neighbor/vector retrieval.
+
+Không thay:
+
+```text
+source of truth
+ACL
+metadata filtering
+freshness/deletion lifecycle
+```
+
+## Hybrid Search
+
+Kết hợp lexical + semantic/vector retrieval.
+
+## Reranking
+
+Scoring/reordering candidate results sau initial retrieval để chọn context tốt hơn.
+
+## Grounding
+
+Model answer dựa trên supplied/verified sources thay vì chỉ parametric recall.
+
+## Citation / Provenance
+
+Metadata cho biết statement/result dựa trên source nào.
+
+Citation không tự chứng minh source đúng; nó hỗ trợ traceability.
+
+---
+
+# 11. Tool vocabulary
+
+## Tool
+
+Capability harness expose cho model/agent.
+
+Examples:
+
+```text
+get_order_status
+search_authorized_documents
+create_support_draft
+```
+
+## Tool Schema
+
+Machine-readable contract cho:
+
+```text
+name
+description
+arguments/types
+```
+
+Schema tốt giúp model chọn/gọi tool đúng nhưng không enforce business authorization.
+
+## Tool Call
+
+Structured model output đề xuất gọi tool.
+
+```text
+tool name + arguments
+```
+
+## Tool Execution
+
+Application/harness thực sự invoke capability.
+
+Đây là side-effect/security boundary.
+
+## Tool Result
+
+Execution output đưa lại model/harness.
+
+Tool result là untrusted data nếu source không trusted.
+
+## Tool Host
+
+Application component quản lý:
+
+```text
+registry
+validation
+AuthZ
+execution
+logging
+budgets
+```
+
+## Read Tool
+
+Không intentional side effect ngoài observation.
+
+Vẫn có data-access/AuthZ risk.
+
+## Write Tool
+
+Có side effect:
+
+```text
+send email
+create ticket
+refund payment
+change config
+```
+
+Cần:
+
+```text
+idempotency
+approval
+audit
+unknown-outcome strategy
+```
+
+## MCP
+
+Protocol để AI application/harness kết nối external tool/data servers.
+
+MCP là integration protocol, không phải authorization/safety guarantee.
+
+---
+
+# 12. Structured output vocabulary
+
+## Structured Output
+
+Model response constrained/parsed vào defined data shape/schema.
+
+```text
+prose
+→ unreliable parsing
+
+schema/typed output
+→ stronger application contract
+```
+
+## Schema Validation
+
+Output đúng structural constraints.
+
+## Business Validation
+
+Output đúng domain invariants.
+
+```text
+schema valid
+!=
+business valid
+```
+
+## Function Calling / Tool Calling
+
+Provider/model mechanism để model emit structured tool requests thay vì trực tiếp execute external action.
+
+---
+
+# 13. Memory, clearing, compaction và handoff
+
+## Memory System
+
+Mechanism persist selected state/knowledge across sessions rồi reload when relevant.
+
+Memory cần lifecycle:
+
+```text
+selection
+source
+expiry
+update
+deletion
+privacy
+```
+
+## Conversation History
+
+Prior messages/tool results. History không tự là long-term memory architecture.
+
+## Clearing
+
+Start fresh session/context state.
+
+## Compaction
+
+Summarize old session/history để free context headroom.
+
+Compaction là lossy.
+
+## Autocompact
+
+Harness automatically triggers compaction near its context policy threshold.
+
+## Handoff
+
+Transfer task context sang session/agent khác.
+
+## Handoff Artifact
+
+Durable summary/spec/ticket dùng để carry task state.
+
+Critical facts nên link tới primary source.
+
+## Progressive Disclosure
+
+Load only context needed now; keep pointers to deeper detail.
+
+## Context Pointer
+
+Reference từ high-level context tới detail source/load-on-demand material.
+
+---
+
+# 14. Evaluation vocabulary
+
+## Eval / Evaluation
+
+System đo AI behavior trên representative dataset/tasks.
+
+```text
+input cases
+→ run candidate
+→ metrics/judgement
 → compare baseline
 → release decision
 ```
+
+## Eval Dataset
+
+Representative cases phản ánh production behavior/risk.
+
+## Baseline
+
+Current/reference system result để candidate so sánh.
+
+## Candidate
+
+New model/prompt/retrieval/tool/config cần evaluate.
+
+## Deterministic Check
+
+Pass/fail bằng code:
+
+```text
+schema valid
+AuthZ denied
+expected document retrieved
+tool not called
+```
+
+## LLM-as-Judge / AI Evaluator
+
+Model được dùng để judge semantic quality.
+
+Useful cho:
+
+```text
+relevance
+groundedness
+style/completeness
+```
+
+Nhưng probabilistic.
+
+Không dùng AI judge để thay deterministic check khi invariant có thể encode bằng code.
+
+## Human Evaluation
+
+Human judgement trên sample/behavior.
+
+## Regression Eval
+
+Eval suite chạy trước release/change để phát hiện quality/safety degradation.
+
+---
+
+# 15. Observability vocabulary
+
+## Trace
+
+Causal/request execution path qua application/provider/tools/retrieval.
+
+## Span
+
+Timed operation trong trace.
+
+## AI Telemetry
+
+Metadata mở rộng cho AI calls:
+
+```text
+provider/model
+prompt/config version
+input/output/reasoning usage
+retrieval/index version
+tool count/latency
+eval score
+cost
+```
+
+## Usage
+
+Provider/application counters như token counts/request counts.
+
+## Cost per Request / Task
+
+Economic metric cần theo dõi cùng quality/latency.
+
+## Prompt Version
+
+Identity/version của instruction template/system prompt để correlate behavior/regression.
+
+## Model Version / Deployment
+
+Identity của model/deployment config được release.
+
+## Retrieval Version
+
+Identity của index/chunking/embedding/reranking configuration.
+
+---
+
+# 16. Safety, security và governance vocabulary
 
 ## Guardrail
 
@@ -199,383 +1122,364 @@ Examples:
 
 ```text
 schema validation
-content filter
-authorization
+content filtering
+AuthZ
 tool allowlist
 rate limit
+sandbox
 human approval
 ```
 
-Không có “one guardrail solves AI safety”.
+Không có single universal guardrail.
+
+## Prompt Injection
+
+Untrusted content cố chuyển data thành instructions để steer model/harness.
+
+Mitigation không chỉ prompt wording; cần:
+
+```text
+authority separation
+AuthZ
+tool restrictions
+sandbox
+context policy
+```
+
+## Direct Prompt Injection
+
+Malicious instruction đến trực tiếp từ user input.
+
+## Indirect Prompt Injection
+
+Malicious instruction nằm trong retrieved/web/tool content mà model đọc.
+
+## Context Poisoning
+
+Bad/stale/malicious context làm behavior sai.
+
+## Least Privilege
+
+Mỗi tool/identity chỉ có permissions cần thiết.
+
+## Human Approval
+
+Human authorization step trước high-risk action.
+
+Approval không thay deterministic business rules.
+
+## Audit Log
+
+Record traceable về:
+
+```text
+who
+what request
+which model/tool
+what action
+what result
+when
+```
 
 ---
 
-# 3. Parametric vs contextual knowledge
-
-Đây là vocabulary cực quan trọng cho AI Engineer.
-
-```text
-Parametric knowledge
-= what model learned during training
-
-Contextual knowledge
-= what application puts in front of model now
-```
-
-Production implication:
-
-```text
-current repository/API/business state
-must come from current context/tool/source of truth
-not from model memory assumptions
-```
-
-Nếu model không biết internal SDK:
-
-```text
-read current SDK docs/code
-```
-
-không phải:
-
-```text
-hope the model recalls it correctly
-```
-
----
-
-# 4. Agent vs workflow — chọn đúng abstraction
-
-## Deterministic workflow phù hợp khi
-
-```text
-steps known
-business invariants strict
-failure handling explicit
-same inputs should produce controlled behavior
-```
-
-Ví dụ:
-
-```text
-validate request
-→ query order
-→ calculate eligibility
-→ persist decision
-```
-
-Không cần agent.
-
-## Agent phù hợp hơn khi
-
-```text
-task open-ended
-next action depends on semantic interpretation
-multiple tools may be needed
-path cannot be enumerated cheaply
-human-like investigation is useful
-```
-
-Ví dụ:
-
-```text
-investigate production incident
-→ inspect logs
-→ inspect deploy diff
-→ inspect metrics
-→ choose next diagnostic step
-```
-
-Ngay cả agent vẫn cần bounded tools, permissions và stopping criteria.
-
----
-
-# 5. Agent control loop
-
-Một tool-using loop:
-
-```text
-Goal
- ↓
-Model chooses next action
- ↓
-Tool request
- ↓
-Application validates/executes
- ↓
-Tool result
- ↓
-Model updates plan
- ↓
-repeat or finish
-```
-
-Production limits:
-
-```text
-max turns
-max tool calls
-max cost
-max wall-clock time
-allowed tools
-approval gates
-cancellation
-```
-
-Nếu không có bounds, một seemingly simple user request có thể tạo runaway cost/latency hoặc repeated side effects.
-
----
-
-# 6. Human-in-the-loop không chỉ là nút Approve
-
-Có nhiều mức human involvement:
-
-```text
-review before execution
-approve sensitive tool
-review generated artifact
-resolve ambiguity
-review low-confidence result
-manual reconciliation after unknown outcome
-```
-
-Human review phù hợp khi judgement/value at risk cao.
-
-Nhưng đừng dùng human approval để che một architecture thiếu deterministic validation.
-
-Ví dụ amount limit vẫn phải enforce bằng code dù có human review.
-
----
-
-# 7. Automated check vs AI review
-
-Hai loại evidence khác nhau.
-
-## Automated check
-
-Deterministic:
-
-```text
-unit tests
-schema validation
-compiler
-lint
-policy check
-AuthZ test
-```
-
-## AI/LLM review
-
-Probabilistic judgement:
-
-```text
-answer quality
-style
-semantic relevance
-architecture critique
-```
-
-AI Engineer cần ưu tiên deterministic check cho invariant có thể encode.
-
-Không dùng LLM judge để kiểm thứ mà code/test có thể xác định chắc chắn.
-
----
-
-# 8. AI Engineer vs AI-assisted Developer
-
-## AI Engineer
-
-Builds:
-
-```text
-AI-powered product capability
-model integration
-RAG
-tools/agents
-evals
-AI operations
-```
-
-## AI-assisted Developer
-
-Uses:
-
-```text
-Codex
-Claude Code
-Copilot
-Cursor
-other coding agents
-```
-
-để build software nhanh hơn.
-
-Một người có thể là cả hai, nhưng competency khác nhau.
-
-```text
-AI Engineer risk
-→ model behavior, retrieval, tool authority, eval, cost
-
-AI-assisted developer risk
-→ wrong code, repo permissions, shell/secrets, CI/supply chain
-```
-
-Module 21 tập trung vế thứ hai.
-
----
-
-# 9. Failure vocabulary
+# 17. Failure modes
 
 ## Hallucination
 
-Output tự tin nhưng sai/không grounded.
+Confidently wrong/unfounded output.
 
-## Non-determinism
-
-Same logical input có thể không luôn sinh byte-identical output.
-
-Implication:
+Useful split:
 
 ```text
-assert contract/invariant
-not exact prose unless required
+factual hallucination
+→ invented fact/API
+
+faithfulness failure
+→ contradicts supplied context/source
 ```
-
-## Knowledge cutoff / stale knowledge
-
-Model parametric knowledge có temporal boundary.
-
-## Prompt injection
-
-Untrusted content cố tác động model thành instruction.
-
-## Context poisoning
-
-Bad/stale/malicious context làm decision degrade.
-
-## Tool misuse
-
-Model chọn đúng schema nhưng action không phù hợp business/security.
 
 ## Sycophancy
 
-Model đồng ý với assumption thay vì challenge evidence.
+Model agrees with user assumption despite contrary evidence.
 
-## Runaway loop
+## Stale Knowledge
 
-Agent tiếp tục tool/reasoning iterations không tạo progress tương xứng.
+Parametric knowledge outdated relative to current world/system.
+
+## Attention Degradation
+
+Long/noisy context reduces effective use of relevant information.
+
+## Tool Misuse
+
+Model chooses/calls a tool inappropriately.
+
+Even schema-valid call can violate business intent.
+
+## Runaway Loop
+
+Repeated reasoning/tool calls without proportional progress.
+
+## Unknown Outcome
+
+Timeout/disconnect xảy ra nhưng side effect có thể đã happened.
+
+Common với write tools/external APIs.
+
+Mitigation:
+
+```text
+idempotency
+status query
+reconciliation
+```
+
+## Provider Failure
+
+```text
+timeout
+rate limit
+service unavailable
+invalid response
+capability mismatch
+```
+
+Need classified retry/fallback/degraded behavior.
 
 ---
 
-# 10. AX — Agent Experience
+# 18. Prompt and context patterns
 
-AI coding dictionary dùng khái niệm Agent Experience để nói về environment giúp agent làm việc tốt.
+## Few-shot Example
 
-Đây là một insight hữu ích hơn “prompt dài hơn”.
+Example input/output included in context để steer behavior.
 
-Một codebase có AX tốt thường có:
+## Zero-shot
 
-```text
-fast tests
-clear errors
-small modules
-repository instructions
-reproducible commands
-searchable docs
-explicit architecture constraints
-safe sandbox
-small diffs
-```
+Task instruction không có explicit examples.
 
-Những thứ này đồng thời làm **DX cho human engineer tốt hơn**.
+## Prompt Template
 
-Rule:
+Parameterized instruction/messages built by application.
+
+## Context Engineering
+
+Discipline chọn, structure, order và manage runtime information cho model/agent.
+
+Includes:
 
 ```text
-Better engineering environment
-→ better human output
-→ better agent output
+instructions
+retrieval
+history
+examples
+tool schemas
+summaries
+context budget
 ```
+
+Context engineering thường có leverage lớn hơn việc chỉ “viết prompt dài hơn”.
 
 ---
 
-# 11. Progressive disclosure
+# 19. Production patterns
 
-Không load toàn bộ knowledge vào context ngay từ đầu.
+## Fallback
 
-Better:
+Alternative path khi primary provider/model/tool unavailable hoặc quality threshold fail.
 
-```text
-small standing instructions
-+ pointers/index
-+ retrieve detail only when needed
-```
-
-Ví dụ repo agent:
+Could be:
 
 ```text
-AGENTS.md
-→ points to architecture.md
-→ points to service-specific runbook
-→ only relevant files loaded for task
+secondary model
+simpler deterministic workflow
+human escalation
+cached safe answer
 ```
 
-Tương tự RAG:
+## Degraded Mode
 
-```text
-query intent
-→ narrow candidate corpus
-→ retrieve relevant chunks
-→ model
-```
+Reduced capability nhưng system vẫn usable/safe.
 
-Progressive disclosure giúp giảm noise, cost và stale-context risk.
+## Human-in-the-loop
+
+Human participates in decision/review/approval loop.
+
+## Idempotency
+
+Repeated same logical write request does not create duplicate effect.
+
+## Reconciliation
+
+Later process checks actual state và repairs/settles unknown/inconsistent outcome.
+
+## Backpressure
+
+System limits/adapts incoming work khi downstream/provider capacity saturated.
 
 ---
 
-# 12. Vocabulary review exercise
+# 20. .NET mapping — Microsoft.Extensions.AI
 
-Cho architecture:
+Trong .NET track:
+
+| Concept | Microsoft.Extensions.AI mapping |
+|---|---|
+| provider-neutral chat client | `IChatClient` |
+| messages | `ChatMessage` |
+| request options | `ChatOptions` |
+| response | `ChatResponse` |
+| typed output | `ChatResponse<T>` helpers |
+| tool/function | `AIFunction` |
+| function creation | `AIFunctionFactory` |
+| tool loop | function-invocation client/pipeline |
+| client composition | `ChatClientBuilder` |
+| usage | `UsageDetails` |
+| reasoning config | `ReasoningOptions` |
+| embeddings | `IEmbeddingGenerator<...>` |
+| eval integration | `Microsoft.Extensions.AI.Evaluation` packages |
+
+MEAI là **technical integration abstraction**, không phải:
+
+```text
+business domain interface
+provider itself
+security boundary
+agent framework by default
+```
+
+→ [Microsoft.Extensions.AI — .NET Integration Guide](microsoft-extensions-ai-dotnet-integration.md)
+
+---
+
+# 21. Một architecture được label đúng
 
 ```text
 Customer Support Assistant
 ```
 
-Hãy label chính xác:
+Map:
 
 ```text
-Model        = hosted LLM
-Provider     = inference service
-Harness      = ASP.NET AI orchestration service
-Context      = system rules + conversation + retrieved policy
-Tool         = get_order_status
-Tool call    = model requests get_order_status(orderId)
-Tool result  = authorized order DTO
-RAG          = retrieve policy docs by tenant/ACL
-Memory       = selected persisted user preference/history
-Eval         = support QA dataset + metrics
-Workflow     = deterministic escalation path
-Agent        = optional open-ended diagnostic/tool loop
+Business Port
+= ICustomerSupportAssistant
+
+Harness
+= ASP.NET Core orchestration/application service
+
+Technical AI abstraction
+= Microsoft.Extensions.AI IChatClient
+
+Provider
+= Azure OpenAI / OpenAI / other provider
+
+Model
+= selected model deployment
+
+Context
+= system instructions + current user message + authorized policy docs
+
+RAG
+= policy retrieval pipeline
+
+Tool
+= get_order_status
+
+Tool Call
+= model requests get_order_status(orderId)
+
+Tool Execution
+= backend validates AuthZ and calls order service
+
+Tool Result
+= authorized order status DTO/text
+
+Memory
+= selected durable user preference/session summary if needed
+
+Eval
+= support QA dataset + groundedness/accuracy/safety metrics
+
+Workflow
+= deterministic escalation path
+
+Agent
+= optional bounded open-ended tool loop
 ```
 
-Nếu diagram chỉ có một box “AI”, rewrite diagram.
+Nếu diagram chỉ có một box `AI`, chưa đủ architecture detail.
 
 ---
 
-# 13. Architecture quality gate
+# 22. Vocabulary ownership giữa Module 19 và 21
 
-Một AI design phải trả lời được:
+## Module 19 owns
 
-1. model nào chỉ là implementation detail và business port nào stable?
-2. context được lấy từ đâu và ai được phép nhìn?
-3. session state khác durable business state thế nào?
-4. agent có thực sự cần thiết hay workflow đủ?
-5. tool nào read, tool nào write?
-6. authorization diễn ra trước side effect ở đâu?
-7. eval nào chứng minh release tốt hơn?
-8. context/token/tool-loop cost được bound thế nào?
-9. failure nào degrade gracefully?
-10. human review nằm ở judgement boundary nào?
+```text
+AI Engineer role
+model/provider/runtime
+messages/context/tokens/reasoning
+Microsoft.Extensions.AI
+structured output/tools
+RAG/embeddings
+evals/observability
+business AI security/reliability
+```
+
+## Module 21 owns
+
+```text
+coding-agent environment
+filesystem/shell/Git tools
+permission/agent modes
+sandbox
+repository instructions
+progressive disclosure
+handoffs/compaction
+skills/subagents
+coding-agent verification/review
+AX/DX
+```
+
+→ [AI Coding Agents](../21-ai-coding-agents/README.md)
+
+---
+
+# 23. Quick definition table
+
+| Term | Short definition |
+|---|---|
+| AI Engineer | software engineer building AI-powered applications |
+| Model | trained parameters performing inference |
+| Provider | service/runtime serving model |
+| Inference | running model on current input |
+| Token | atomic model input/output unit |
+| Harness | software around model managing context/tools/policy |
+| Agent | model + harness + tools + loop |
+| Workflow | application-controlled sequence of steps |
+| Context | relevant information available now |
+| Context window | literal finite tokens model sees per request |
+| Session | bounded interaction state |
+| Turn | one user interaction including multiple model/tool steps |
+| System prompt | high-priority behavioral instruction, not AuthZ |
+| Parametric knowledge | knowledge encoded in model weights |
+| Contextual knowledge | knowledge supplied at runtime |
+| RAG | retrieve authorized data then generate with it |
+| Embedding | vector representation for similarity/search |
+| Tool | capability exposed to model/agent |
+| Tool call | model proposal to invoke tool |
+| Tool result | execution result returned into context |
+| Structured output | model output constrained/parsed to schema/type |
+| Memory | persisted selected state across sessions |
+| Eval | dataset + metrics/judgement + threshold/release decision |
+| Guardrail | control reducing risk at one boundary |
+| Hallucination | confidently wrong/unfounded output |
+| Sycophancy | unjustified agreement with user assumption |
+| Prompt injection | untrusted content trying to become instruction |
+| Context poisoning | harmful/stale/noisy context degrading behavior |
+| Compaction | lossy history summary to free context capacity |
+| Handoff | transfer task context to another session/agent |
 
 ---
 
@@ -583,20 +1487,27 @@ Một AI design phải trả lời được:
 
 Bạn đạt chapter này khi có thể:
 
-- [ ] dùng đúng model/provider/harness/agent/workflow/tool terminology;
-- [ ] phân biệt AI Engineer với AI-assisted Developer;
-- [ ] phân biệt parametric/contextual knowledge;
-- [ ] chọn agent vs deterministic workflow bằng requirement;
-- [ ] thiết kế bounded agent loop;
-- [ ] phân biệt deterministic check và LLM review;
-- [ ] giải thích AX/progressive disclosure;
-- [ ] vẽ AI architecture mà không dùng một box “AI” mơ hồ.
+- [ ] phân biệt AI Engineer / ML Engineer / AI-assisted Developer;
+- [ ] giải thích parameters/training/inference/next-token prediction;
+- [ ] phân biệt provider/model/provider request;
+- [ ] giải thích input/output/cached tokens và reasoning usage;
+- [ ] phân biệt harness/workflow/agent/subagent;
+- [ ] phân biệt message/system instruction/context/context window/session/turn;
+- [ ] phân biệt parametric/contextual knowledge + knowledge cutoff;
+- [ ] giải thích RAG/retrieval/embedding/vector index/reranking;
+- [ ] phân biệt tool/tool call/tool execution/tool result/MCP;
+- [ ] phân biệt structured/schema/business validation;
+- [ ] giải thích memory/compaction/handoff/progressive disclosure;
+- [ ] thiết kế eval với deterministic checks + semantic evaluation;
+- [ ] nhận diện hallucination/sycophancy/prompt injection/context poisoning/unknown outcome;
+- [ ] map concepts sang `Microsoft.Extensions.AI`;
+- [ ] vẽ architecture mà không dùng một box “AI” mơ hồ.
 
 ## Sources
 
-Xem [References](references.md). AI Hero dictionary được dùng để cải thiện vocabulary/mental model; terminology provider-specific vẫn phải đối chiếu official docs.
+Xem [References](references.md). AI Hero được dùng như supplementary vocabulary/mental-model source; official Microsoft/provider documentation quyết định version-sensitive runtime/API semantics.
 
 ## Verification metadata
 
-- Verified: 2026-09-03.
-- Focus: vocabulary as architecture boundary, not terminology memorization.
+- Expanded: 2026-09-03.
+- Vocabulary split intentionally between Module 19 (AI application engineering) and Module 21 (coding-agent operating environment).

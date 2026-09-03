@@ -1,371 +1,1207 @@
 # Module 21 — AI Coding Agents
 
-> AI Coding Agent là agent chuyên làm software engineering trên codebase: đọc repository, lập kế hoạch, sửa code, chạy command/tests và chuẩn bị thay đổi để con người review.
+> Mục tiêu: hiểu và vận hành coding agent như một **privileged software-engineering automation system có LLM planner**, không phải một chatbot viết code.
+
+<div class="lesson-meta">
+  <span><strong>Priority</strong>&nbsp;P0/P1</span>
+  <span><strong>Prerequisite</strong>&nbsp;Module 19 foundations</span>
+  <span><strong>Mode</strong>&nbsp;model → harness → context → tools → permissions → evidence</span>
+  <span><strong>Outcome</strong>&nbsp;safe, verifiable coding workflow</span>
+</div>
+
+<div class="key-takeaway" markdown>
+<strong>Coding agent không phải model có quyền developer.</strong>
+
+Một coding agent là model được harness với repository context, filesystem/shell/Git tools, permissions, sandbox, session state và verification loop. Chất lượng cuối cùng phụ thuộc rất mạnh vào **context, environment, tests, permissions và review**, không chỉ model name.
+</div>
 
 ## Hiểu trong 5 phút
 
-Phân biệt ba mức:
-
 ```text
-Code Completion
-  IDE gợi ý vài dòng code
-
-Coding Assistant
-  chat + hỏi đáp + đề xuất edit
-
-AI Coding Agent
-  inspect repo
-    ↓
-  plan
-    ↓
-  edit nhiều file
-    ↓
-  run commands/tests
-    ↓
-  inspect failures
-    ↓
-  iterate
-    ↓
-  produce diff / PR
+User task
+   ↓
+Coding Agent Harness
+ ├─ system/repository instructions
+ ├─ session + context-window management
+ ├─ Read / Search / Edit / Shell / Git tools
+ ├─ MCP / external tools
+ ├─ permissions / approval mode
+ ├─ sandbox / worktree
+ ├─ hooks / policies
+ └─ compaction / handoff / subagents
+   ↓
+Model Provider
+   ↓
+Model
+   ↓
+tool call / answer
+   ↓
+Harness validates permission and executes
+   ↓
+tool result
+   ↓
+Model continues
+   ↓
+Build / Test / Diff / Review evidence
 ```
 
-Coding agent **không phải developer có toàn quyền**. Nó là một execution actor cần sandbox, permissions, test gates và review.
-
-## Coding Agent khác Business Agent thế nào?
-
-| Business AI Agent | AI Coding Agent |
-| --- | --- |
-| tool là business capability | tool là filesystem, shell, Git, CI, GitHub |
-| state có thể là conversation/business workflow | state thường là repo/worktree/task/PR |
-| output có thể là business action | output chủ yếu là code/diff/tests/PR |
-| risk: data/tool abuse | risk: arbitrary code, secrets, supply chain, CI permissions |
-
-Hai loại cùng dùng agent concepts nhưng trust boundary khác nhau.
-
-## Landscape hiện tại
-
-Các ví dụ phổ biến hiện nay:
-
-- **OpenAI Codex** — coding agent chạy trong ChatGPT/editor/terminal/cloud workflows;
-- **GitHub Copilot cloud agent / Copilot CLI** — agentic coding gắn với GitHub workflow;
-- **Anthropic Claude Code** — terminal-native coding agent;
-- GitHub cũng hỗ trợ third-party coding agents trong workflow GitHub, hiện bao gồm Codex và Claude ở các surface được hỗ trợ.
-
-Tên sản phẩm thay đổi nhanh. Roadmap tập trung vào **agent loop + context + permissions + tests + review**, không phụ thuộc một vendor.
-
-## Mental model
-
-![Vòng lặp AI Coding Agent: context, edit, executable evidence và human review](../assets/diagrams/21-ai-coding-agents-readme-1.svg)
-
-Agent tốt không chỉ "generate code". Nó có **feedback loop với executable evidence**.
+Một agent coding tốt không chỉ generate code. Nó phải có **closed feedback loop với executable evidence**.
 
 ---
 
-# 1. Task nào hợp với coding agent?
+# 1. Phân biệt ba mức
 
-Good candidates:
-
-```text
-- fix scoped bug có reproduction
-- thêm test cho behavior rõ
-- refactor có test coverage
-- upgrade dependency với acceptance criteria
-- tạo API endpoint theo contract rõ
-- migrate repetitive code
-- update docs synchronized với code
-```
-
-Risky/poorly scoped:
+## Code Completion
 
 ```text
-- "rewrite architecture to microservices"
-- "improve security everywhere"
-- "make it fast"
-- production database migration không có rollback
-- rotate secrets / modify IAM với full privilege
+cursor position
+→ predict next code fragment
 ```
 
-Task càng mơ hồ, agent càng dễ tối ưu sai objective.
+Scope nhỏ, thường không tự inspect repository/tool loop.
 
-## Prompt tốt cho coding agent
+## Coding Assistant
+
+```text
+chat
+→ answer/explain
+→ suggest edit
+```
+
+Có thể hiểu code context nhưng user vẫn điều khiển hầu hết action.
+
+## AI Coding Agent
+
+```text
+inspect repository
+→ plan
+→ read/search
+→ edit
+→ run commands/tests
+→ inspect failures
+→ iterate
+→ produce diff/PR/evidence
+```
+
+Agent có **environment + tools + loop**, vì vậy risk và governance khác assistant thông thường.
+
+---
+
+# 2. Learning path
+
+Học theo dependency:
+
+```text
+1. Model / provider / harness / agent
+        ↓
+2. Session / turn / context / context window
+        ↓
+3. Filesystem / tools / environment / MCP
+        ↓
+4. Permission mode / agent mode / sandbox
+        ↓
+5. Repository instructions / progressive disclosure
+        ↓
+6. Handoff / compaction / memory / subagents
+        ↓
+7. Task specification / planning
+        ↓
+8. Build / tests / automated checks
+        ↓
+9. Automated review / human review
+        ↓
+10. CI / PR / delivery governance
+```
+
+| Chapter | Mục tiêu |
+|---|---|
+| [AI Coding Agent Vocabulary, Context & Handoffs](ai-coding-agent-vocabulary-context-and-handoffs.md) | định nghĩa đầy đủ model/harness/session/context/tools/permissions/handoff/memory/AX |
+| [Repository Context, Instructions & MCP](repository-context-mcp-and-instructions.md) | context discovery, `AGENTS.md`, MCP, filesystem/network/tool boundaries |
+| [Safe Agentic Coding Workflow](safe-agentic-coding-workflow.md) | task → discovery → test → edit → CI → PR → human review |
+| [References](references.md) | official agent/MCP/security sources + supplementary AI Hero vocabulary |
+
+Prerequisite concepts: [Module 19 — Production AI Engineering](../19-ai-engineering/README.md).
+
+---
+
+# 3. Core vocabulary phải thuộc
+
+| Term | Ý nghĩa |
+|---|---|
+| Model | parameters chạy inference; không tự có filesystem/tools |
+| Provider | runtime/API serve model |
+| Harness | software bọc model bằng context/tools/policy/session |
+| Agent | model-in-harness hoạt động qua turns/tool loop |
+| Provider request | một round-trip harness ↔ provider |
+| Session | bounded interaction state |
+| Turn | một user message + toàn bộ agent work trước khi yield |
+| Context | information task-relevant agent có |
+| Context window | literal token sequence model nhìn thấy mỗi request |
+| Environment | world bên ngoài model: repo/shell/Git/network/CI |
+| Tool | function harness expose để agent quan sát/thay đổi environment |
+| Tool call | structured proposal do model tạo |
+| Tool result | execution result đưa lại model |
+| Permission mode | auto/ask/block policy cho tool calls |
+| Agent mode | permission policy + behavioral steering preset |
+| Sandbox | isolation giảm blast radius |
+| Memory | selected state persisted/reloaded across sessions |
+| Handoff | chuyển task context sang session khác |
+| Compaction | lossy summary để lấy context headroom |
+| Automated check | deterministic pass/fail evidence |
+| Automated review | probabilistic agent judgement |
+| Human review | human judgement trên artifact/diff |
+| AX | Agent Experience — environment quality cho agent |
+
+Đọc định nghĩa sâu: [AI Coding Agent Vocabulary, Context & Handoffs](ai-coding-agent-vocabulary-context-and-handoffs.md).
+
+---
+
+# 4. Coding Agent khác Business AI Agent
+
+| Business AI Agent | AI Coding Agent |
+|---|---|
+| tools là business capabilities | tools là filesystem/shell/Git/CI/GitHub/browser |
+| state là business/conversation workflow | state thường là repo/worktree/task/PR/session |
+| output có thể là business action | output chủ yếu code/diff/tests/PR |
+| risk: data/tool abuse | risk: arbitrary code, secrets, supply chain, CI/IAM |
+| tool AuthZ theo business resource | tool permission theo filesystem/network/repo/CI |
+| eval tập trung product behavior | eval tập trung task success + regressions + scope |
+
+Hai loại dùng chung agent concepts nhưng **trust boundary khác nhau**.
+
+---
+
+# 5. Model != Agent
+
+Model chỉ nhận tokens và sinh output.
+
+```text
+Model
+!=
+Read repo
+Run test
+Commit code
+Browse docs
+Remember last week
+```
+
+Những capability này đến từ harness/tools/environment.
+
+```text
+Model
++ Harness
++ Context
++ Tools
++ Permissions
++ Control loop
+= Coding Agent
+```
+
+Điều này rất quan trọng khi debug:
+
+```text
+bad answer
+? model capability
+? missing context
+? stale context
+? wrong tool
+? tool error
+? permission block
+? bad harness instruction
+? attention degradation
+```
+
+Không đổ mọi failure cho model.
+
+---
+
+# 6. Session, turn và provider request
+
+Một user message có thể tạo nhiều provider requests:
+
+```text
+User: fix failing test
+  ↓
+request #1
+→ model asks Search
+  ↓
+Search result
+  ↓
+request #2
+→ model asks Read
+  ↓
+Read result
+  ↓
+request #3
+→ model asks Edit
+  ↓
+Edit result
+  ↓
+request #4
+→ model asks Test
+  ↓
+Test output
+  ↓
+request #5
+→ final response
+```
+
+Đây là **một turn**, nhưng có 5 provider requests.
+
+Session chứa nhiều turns và history/tool outputs có thể accumulate.
+
+Cost/latency của coding agent vì vậy thường đến từ **tool loop + repeated context**, không chỉ final answer tokens.
+
+---
+
+# 7. Context != Context Window
+
+## Context
+
+Relevant information cho task:
+
+```text
+issue
+relevant implementation
+matching test
+current package version
+architecture constraint
+current error
+```
+
+## Context window
+
+Tất cả tokens model thấy trong một request:
+
+```text
+system prompt
+history
+AGENTS.md
+file contents
+tool schemas
+tool results
+current task
+```
+
+Rule:
+
+```text
+large context window
+!=
+good context
+```
+
+Context quality cao khi:
+
+```text
+relevant
+current
+primary-source-backed
+minimal noise
+correct authority
+```
+
+→ [Repository Context, Instructions & MCP](repository-context-mcp-and-instructions.md)
+
+---
+
+# 8. Parametric vs contextual knowledge
+
+## Parametric knowledge
+
+Model nhớ từ training.
+
+Risk:
+
+```text
+stale SDK
+invented API
+old framework behavior
+wrong repository assumption
+```
+
+## Contextual knowledge
+
+Model đọc trực tiếp từ current context:
+
+```text
+actual csproj
+current source
+actual compiler error
+current official docs
+```
+
+Coding rule:
+
+```text
+Current primary source
+> parametric memory
+```
+
+Khi API/version-sensitive, agent phải inspect project version + current docs trước khi edit.
+
+---
+
+# 9. Tools và environment
+
+Coding-agent environment có thể gồm:
+
+```text
+filesystem
+shell
+Git
+compiler/test runner
+package manager
+network
+browser
+GitHub/CI
+cloud CLI
+MCP servers
+```
+
+Tools là cách agent perceive/act:
+
+```text
+Read
+Search
+Edit/Write
+Bash/Shell
+Git
+Browser
+MCP calls
+```
+
+Critical distinction:
+
+```text
+Tool call
+= model output/proposal
+
+Tool execution
+= harness/application side effect
+```
+
+Tool call không tự có authority.
+
+---
+
+# 10. Permission mode, agent mode và sandbox
+
+## Permission mode
+
+Quyết định action:
+
+```text
+auto-run
+ask user
+block
+```
+
+## Agent mode
+
+Thường bundle:
+
+```text
+permission policy
++
+behavioral instructions
+```
+
+Ví dụ:
+
+```text
+Plan mode
+→ research/read instructions
+→ write blocked
+
+Scoped edit mode
+→ writes in repo allowed
+→ network/secret/merge blocked
+```
+
+## Sandbox
+
+Giảm blast radius nếu command/edit sai.
+
+```text
+container
+VM
+isolated worktree
+restricted shell
+network-limited runner
+```
+
+Rule:
+
+```text
+broader autonomy
+requires
+stronger isolation + better automated verification
+```
+
+---
+
+# 11. Permission ladder cho repository work
+
+```text
+Read source                     low
+Search source                   low
+Write working tree              medium
+Run compiler/tests              medium
+Install dependency              medium/high
+Network access                  high
+Read secrets                    very high
+Push branch                     high
+Modify CI permissions           very high
+Merge PR                        very high
+Production deploy               critical
+```
+
+Default production posture:
+
+| Action | Agent default | Human/pipeline |
+|---|---|---|
+| read/search repo | allow | — |
+| edit scoped branch/worktree | allow/controlled | review |
+| run unit/build tests | allow | — |
+| add dependency | propose/verify | review when material |
+| arbitrary network | deny/allowlist | policy |
+| read secrets | deny | narrow mechanism only |
+| push branch | explicit | policy |
+| create PR | controlled | review |
+| merge | no default | reviewer/branch protection |
+| deploy prod | no default | delivery pipeline |
+
+---
+
+# 12. Repository instructions
+
+Coding agent cần standing brief ngắn, executable.
+
+`AGENTS.md`/equivalent nên chứa:
+
+```text
+build command
+test command
+docs command
+architecture constraints
+security constraints
+git permissions
+definition of done
+```
+
+Không nên chứa:
+
+```text
+huge tutorial
+duplicated domain docs
+stale package docs
+secrets
+```
+
+Dùng progressive disclosure:
+
+```text
+AGENTS.md
+→ architecture pointer
+→ module-specific docs
+→ load only when needed
+```
+
+---
+
+# 13. Progressive disclosure, skills và context pointers
+
+Repo lớn không nên preload toàn bộ knowledge.
+
+```text
+small standing instructions
++ context pointers
++ task-specific skills/docs
++ primary source reads
+```
+
+Example:
+
+```text
+AGENTS.md
+→ "Database migration rules: docs/db-migrations.md"
+→ agent only loads file when task touches migrations
+```
+
+Một `skill`/playbook tốt bundle procedure cụ thể và chỉ load khi relevant.
+
+Benefits:
+
+```text
+less context noise
+less token cost
+less stale information
+better attention
+```
+
+---
+
+# 14. Context degradation
+
+Long session có thể tệ dần dù chưa chạm hard context limit.
+
+Symptoms:
+
+```text
+forgets constraints
+repeats work
+changes settled design
+mixes old/new file state
+scope drifts
+```
+
+Mitigation:
+
+```text
+smaller task
+fresh primary-source reads
+clear stale tool output
+compact
+fresh session
+handoff artifact
+```
+
+AI Hero gọi giai đoạn early focused là “smart zone” và long/noisy region là “dumb zone”; dùng như mental model, không phải formal provider metric.
+
+---
+
+# 15. Handoff, compaction và memory
+
+## Handoff
+
+Chuyển work sang session mới.
+
+Good handoff artifact:
+
+```text
+goal
+constraints
+current state
+decisions
+changed files
+test evidence
+known failures
+next step
+links to primary sources
+```
+
+## Compaction
+
+Summarize previous history để lấy context headroom.
+
+Compaction **lossy**.
+
+Critical decisions phải persist ở:
+
+```text
+code/tests
+ADR
+spec
+issue
+PR
+```
+
+## Memory
+
+Cross-session persisted information.
+
+Không dùng memory làm source of truth cho:
+
+```text
+current branch
+current source
+current CI
+current package version
+```
+
+Agent phải re-read environment.
+
+---
+
+# 16. Spec, ticket và multi-session work
+
+Task lớn hơn một useful session cần durable planning artifact.
+
+## Spec
+
+```text
+outcome
+requirements
+constraints
+architecture decisions
+acceptance criteria
+tickets/status
+```
+
+## Ticket
+
+Một bounded chunk đủ nhỏ cho một session/agent.
+
+Good ticket:
+
+```text
+one outcome
+known scope
+explicit constraints
+verification
+```
 
 Bad:
 
 ```text
-Fix notifications.
+"modernize architecture"
+```
+
+Good:
+
+```text
+"Add idempotent persistence for duplicate webhook event IDs, with concurrent regression test; preserve public API."
+```
+
+---
+
+# 17. Task contract trước khi agent edit
+
+Một coding task production nên có:
+
+```markdown
+## Problem
+What is wrong?
+
+## Expected behavior
+What must become true?
+
+## Constraints
+What must not change?
+
+## Acceptance criteria
+What executable evidence proves success?
+
+## Permissions
+What may the agent read/write/run/push?
+```
+
+Nếu objective mơ hồ, agent có thể optimize nhầm thứ.
+
+---
+
+# 18. Good task vs poor task
+
+Good:
+
+```text
+fix scoped bug có reproduction
+add regression test
+upgrade dependency với acceptance criteria
+refactor có strong test suite
+implement endpoint theo contract
+migrate repetitive code
+sync docs with code
+```
+
+Poor/risky:
+
+```text
+rewrite everything
+improve security everywhere
+make it faster
+change production IAM freely
+run production migrations without rollback
+```
+
+Agent autonomy phải tỷ lệ nghịch với ambiguity + blast radius.
+
+---
+
+# 19. Discovery before edit
+
+Agent nên bắt đầu read-only:
+
+```text
+repo status
+branch/worktree
+project structure
+relevant symbols
+tests
+CI/build commands
+architecture constraints
+```
+
+Questions cần answer trước edit:
+
+```text
+Where is behavior owned?
+What proves current bug?
+Which public contract must remain?
+Which layer owns invariant?
+What files should not change?
+```
+
+Không bắt đầu bằng “create 12 files” khi chưa inspect code.
+
+---
+
+# 20. Plan phải map sang evidence
+
+Bad:
+
+```text
+1. Analyze
+2. Implement
+3. Test
 ```
 
 Better:
 
 ```text
-Problem:
-Notifications can be sent twice when the webhook handler retries.
-
-Expected behavior:
-The same event ID must produce at most one persisted notification intent.
-
-Constraints:
-- .NET 10
-- SQL Server
-- do not add a new database
-- preserve public API
-- existing tests must pass
-
-Required work:
-1. inspect current flow and tests;
-2. explain root cause;
-3. implement smallest safe fix;
-4. add regression test for duplicate event ID;
-5. run dotnet test;
-6. show changed files and remaining risks.
-
-Do not commit or push unless explicitly authorized.
+1. Reproduce duplicate behavior.
+   Evidence: failing regression test.
+2. Locate persistence invariant.
+   Evidence: schema/model inspection.
+3. Implement smallest concurrency-safe fix.
+   Evidence: focused diff.
+4. Run targeted tests.
+5. Run project/full tests.
+6. Inspect diff scope.
 ```
 
-Prompt này cho agent:
+Plan tốt làm verification path rõ từ đầu.
+
+---
+
+# 21. Verification ladder
+
+Coding agent không được tự xác nhận bằng prose.
 
 ```text
-problem + expected behavior + constraints + evidence + permission boundary
+Static/type/compiler check
+      ↓
+Targeted regression test
+      ↓
+Relevant project tests
+      ↓
+Solution build
+      ↓
+Full test suite
+      ↓
+Integration/security checks
+      ↓
+Diff inspection
+      ↓
+Human review
+```
+
+Tùy task không phải lúc nào cũng cần mọi tầng, nhưng evidence phải tương xứng risk.
+
+---
+
+# 22. Automated check vs automated review vs human review
+
+## Automated check
+
+Deterministic:
+
+```text
+build
+unit test
+type check
+lint
+policy scan
+```
+
+## Automated review
+
+Agent/model thứ hai đưa judgement:
+
+```text
+architecture critique
+security review
+scope check
+```
+
+Useful nhưng probabilistic.
+
+## Human review
+
+Human đọc artifact/diff và quyết định.
+
+```text
+Reading agent summary
+!=
+reviewing the diff
+```
+
+đặc biệt với security/data/infra changes.
+
+---
+
+# 23. Human-in-the-loop và AFK work
+
+## Human-in-the-loop
+
+Human tham gia để:
+
+```text
+clarify requirement
+approve risky action
+review diff
+resolve ambiguity
+change direction
+```
+
+## AFK / unattended
+
+Agent chạy khi user không theo dõi.
+
+Chỉ nên khi:
+
+```text
+task bounded
+sandbox strong
+permissions limited
+checks automated
+stop criteria explicit
+```
+
+Không AFK với full prod credentials.
+
+---
+
+# 24. Shell, network và secrets là trust boundaries
+
+Shell mở ra:
+
+```text
+arbitrary process execution
+package install
+filesystem mutation
+cloud CLI
+Git commands
+```
+
+Network thêm:
+
+```text
+external downloads
+package registries
+arbitrary URLs
+internal endpoints
+data exfiltration path
+```
+
+Secrets thêm authority.
+
+Rule:
+
+```text
+agent reads untrusted content
++
+has network/secrets/write capability
+=
+high prompt-injection blast radius
+```
+
+Use:
+
+```text
+sandbox
+network allowlist
+secret minimization
+short-lived credentials
+path scope
+tool allowlist
+audit logs
 ```
 
 ---
 
-# 2. Context hierarchy
-
-Coding agent cần context theo thứ tự:
+# 25. MCP là integration protocol, không phải safety system
 
 ```text
-Task
- ↓
-Repository instructions
- ↓
-Relevant code
- ↓
-Tests
- ↓
-Build/CI configuration
- ↓
-External official docs
+Agent Harness
+→ MCP Client
+→ MCP Server
+→ External Tool/Data
 ```
 
-Không nên dump toàn monorepo vào prompt.
+MCP server có thể expose:
 
-Ưu tiên context **relevant + executable**.
-
-## Repository instructions
-
-Một `AGENTS.md`/agent instruction file nên nói rõ:
-
-```markdown
-# Repository instructions
-
-## Build
-`dotnet build Dev.sln`
-
-## Test
-`dotnet test Dev.sln --no-build`
-
-## Architecture constraints
-- ASP.NET Core services target .NET 10.
-- SQL Server is the primary relational database.
-- Do not introduce a new database without an ADR.
-- Prefer simple application services before adding CQRS/MediatR.
-
-## Safety
-- Never commit secrets.
-- Do not change GitHub Actions permissions without explicit approval.
-- Do not run destructive database commands.
-
-## Definition of done
-- code builds;
-- tests pass;
-- behavior has regression coverage;
-- important trade-offs are documented.
+```text
+GitHub
+issue tracker
+browser/docs
+DB metadata
+internal systems
 ```
 
-OpenAI Codex chính thức hỗ trợ repository guidance qua `AGENTS.md`; các coding agent khác có instruction mechanisms tương tự nhưng tên/file có thể khác.
+Mỗi server cần review:
+
+```text
+identity
+permissions
+data exposed
+write capability
+network path
+audit
+prompt-injection surface
+```
+
+Protocol không tự làm tool safe.
 
 ---
 
-# 3. Agent loop phải có tests
+# 26. Coding-agent failure modes
 
-Một implementation loop tốt:
+## Hallucination
+
+Invented API/file/fact.
+
+Fix: primary source + compiler/test + current docs.
+
+## Faithfulness failure
+
+Source đã load nhưng output drift khỏi source.
+
+Fix: smaller/focused context + explicit verification.
+
+## Sycophancy
+
+Agent tin assumption của user thay vì evidence.
+
+Fix: require verification/counterevidence.
+
+## Attention degradation
+
+Long session quên constraints.
+
+Fix: compact/handoff/fresh session.
+
+## Context poisoning / prompt injection
+
+Repo/web/tool result chứa malicious instruction.
+
+Fix: authority hierarchy + sandbox + permission gate.
+
+## Scope drift
+
+Sửa unrelated files.
+
+Fix: task/file allowlist + diff audit.
+
+## Verification gaming
+
+Agent làm CI xanh bằng:
 
 ```text
-Read code
-  ↓
-Find behavior
-  ↓
-Write/confirm failing test
-  ↓
-Minimal change
-  ↓
-Build
-  ↓
-Test
-  ↓
-Inspect diff
+weaken test
+disable analyzer
+skip failure
+broaden ignore
 ```
 
-Không nên:
+Fix: review test changes + preserve behavior contract.
 
-```text
-Generate 20 files
-  ↓
-"Looks good"
-```
+## Runaway loop
 
-Ví dụ regression test:
+Repeated tools without progress.
 
-```csharp
-[Fact]
-public async Task Duplicate_event_id_creates_one_notification_intent()
-{
-    var eventId = "evt-123";
-
-    await sut.HandleAsync(new SourceEvent(eventId));
-    await sut.HandleAsync(new SourceEvent(eventId));
-
-    int count = await db.NotificationIntents
-        .CountAsync(x => x.SourceEventId == eventId);
-
-    Assert.Equal(1, count);
-}
-```
-
-Acceptance criteria giờ trở thành executable evidence.
+Fix: iteration/time/cost budgets.
 
 ---
 
-# 4. Permissions model
+# 27. Vibe coding vs engineering with agents
 
-Agent capability nên chia lớp:
+Vibe coding:
 
 ```text
-Read repo                     low risk
-Write working tree            medium
-Run build/test                 medium
-Network access                 higher
-Read secrets                   high
-Push branch                    high
-Create PR                      controlled write
-Merge PR                       very high
-Production deploy              very high
+agent writes
+→ user accepts without understanding/review
 ```
 
-Default nên là least privilege.
+Production agentic engineering:
 
-Ví dụ policy:
+```text
+clear task
+→ scoped permissions
+→ agent work
+→ executable checks
+→ diff review
+→ CI
+→ controlled merge/deploy
+```
 
-| Action | Agent | Human |
-| --- | --- | --- |
-| read source | auto | — |
-| edit feature branch | auto/approved scope | review |
-| run unit tests | auto | — |
-| install new dependency | propose | approve if material |
-| push branch | explicit permission | approve |
-| merge PR | no default | approve |
-| production deploy | no default | controlled pipeline |
+Agent throughput không thay accountability.
 
 ---
 
-# 5. Shell execution là trust boundary
+# 28. DX và AX
 
-Agent có shell gần tương đương một automation runner.
+## DX
 
-Nguy hiểm:
-
-```bash
-curl ... | bash
-rm -rf ...
-terraform apply
-kubectl delete ...
-dotnet ef database update --connection "$PROD"
-```
-
-Coding agent có thể đọc malicious instruction từ:
-
-- issue body;
-- README;
-- dependency docs;
-- fetched web page;
-- test fixture;
-- generated file.
-
-Đây là prompt injection/supply-chain concern trong coding workflow.
-
-Do đó cần sandbox/network/credential policy.
-
----
-
-# 6. Human review vẫn bắt buộc
-
-PR do agent tạo phải review như code người viết, thậm chí kỹ hơn ở:
+Developer Experience:
 
 ```text
-Correctness
-Security
-AuthZ
-Concurrency
-Transactions
-Migration
-Performance
-Dependency changes
-CI permissions
-Secrets
-Generated-code noise
+fast feedback
+clear docs
+good errors
+simple build/test
+reproducible environment
 ```
 
-Checklist review:
+## AX
+
+Agent Experience:
 
 ```text
-- Diff có đúng scope task không?
-- Agent có sửa file không liên quan không?
-- Test mới có thật sự fail trước fix không?
-- Có xóa/skip test để làm CI xanh không?
-- Có thêm dependency không cần thiết không?
-- Có broaden permission không?
-- Có hard-code secret/config không?
+clear instructions
+searchable architecture
+small modules
+fast tests
+machine-readable errors
+safe tooling
+context headroom
+```
+
+Một repo có AX tốt thường cũng tốt hơn cho human developers.
+
+```text
+Better engineering environment
+→ better human work
+→ better agent work
 ```
 
 ---
 
-# 7. Production workflow đề xuất
+# 29. Coding-agent evaluation
 
-![Governed AI Coding Agent workflow: branch, tests, security, PR và CI/CD](../assets/diagrams/21-ai-coding-agents-readme-2.svg)
+Không chỉ benchmark model chung. Eval theo repo tasks.
 
-Agent không bypass delivery pipeline hiện có.
+Measure:
+
+```text
+task completion rate
+build pass rate
+test pass rate
+regression rate
+scope violation rate
+security finding rate
+human rework time
+time-to-PR
+provider requests/tokens/cost
+```
+
+Dataset nên chứa:
+
+```text
+task
+expected behavior
+required checks
+forbidden changes
+permission expectations
+```
+
+Agent mới/model mới/harness mới phải chạy cùng eval set trước rollout rộng.
 
 ---
 
-# 8. Exit Criteria
+# 30. Safe production workflow
 
-Bạn đạt module này khi có thể:
+```text
+Issue / Task Contract
+      ↓
+Read-only Discovery
+      ↓
+Plan + Evidence Map
+      ↓
+Scoped Worktree / Sandbox
+      ↓
+Targeted Edit
+      ↓
+Targeted Tests
+      ↓
+Build / Full Tests
+      ↓
+Diff / Dependency / Security Review
+      ↓
+Draft PR
+      ↓
+CI with Least Privilege
+      ↓
+Human Review
+      ↓
+Normal Merge / Deploy Pipeline
+```
 
-- [ ] phân biệt completion/assistant/coding agent;
-- [ ] viết task spec có acceptance criteria;
-- [ ] tạo repository instructions;
-- [ ] giới hạn agent permissions;
-- [ ] bắt agent chạy build/test và show diff;
-- [ ] thiết kế human review gate;
-- [ ] giải thích prompt injection qua repository content;
-- [ ] không cho agent tự merge/deploy production theo mặc định.
+Agent không bypass software delivery system hiện có.
+
+→ [Safe Agentic Coding Workflow](safe-agentic-coding-workflow.md)
+
+---
+
+# 31. Architecture checklist
+
+Một coding-agent setup tốt phải trả lời được:
+
+1. model/provider nào đang dùng và vì sao;
+2. harness load context/instructions thế nào;
+3. session/compaction/handoff policy ra sao;
+4. tools nào có read/write/network capability;
+5. permission mode/approval policy là gì;
+6. sandbox boundary ở đâu;
+7. repo path/network/secrets scope thế nào;
+8. MCP servers nào được trust;
+9. task acceptance criteria có executable không;
+10. automated checks nào bắt buộc;
+11. agent-generated test changes được review thế nào;
+12. human review/merge/deploy gate nằm ở đâu;
+13. audit trail chứa session/task/tool/commit evidence gì;
+14. agent eval đo task success và scope/security ra sao.
+
+---
+
+# 32. Exit Criteria
+
+Bạn hoàn thành Module 21 khi có thể:
+
+- [ ] phân biệt model/provider/harness/agent;
+- [ ] phân biệt session/turn/provider request;
+- [ ] phân biệt context/context window/memory;
+- [ ] giải thích primary vs secondary source;
+- [ ] giải thích tool/tool call/tool result/environment;
+- [ ] thiết kế permission mode + sandbox;
+- [ ] viết repository instructions có progressive disclosure;
+- [ ] giải thích handoff/compaction/subagent;
+- [ ] viết task spec có problem/constraints/acceptance/permissions;
+- [ ] discovery trước edit;
+- [ ] plan map sang executable evidence;
+- [ ] bắt agent chạy targeted/full verification;
+- [ ] phân biệt automated check/review/human review;
+- [ ] nhận diện hallucination/sycophancy/context poisoning/scope drift/verification gaming;
+- [ ] thiết kế CI least privilege;
+- [ ] review agent-generated PR như untrusted change;
+- [ ] xây coding-agent eval dataset;
+- [ ] giải thích AX và cải thiện repo cho cả human lẫn agent;
+- [ ] không cho coding agent merge/deploy production theo mặc định.
 
 ## Học tiếp
 
-1. [Repository Context, Instructions và MCP](repository-context-mcp-and-instructions.md)
-2. [Safe Agentic Coding Workflow](safe-agentic-coding-workflow.md)
-
-## Official English Sources
-
-- GitHub Docs — Copilot agents: https://docs.github.com/en/copilot/concepts/agents
-- GitHub Docs — third-party coding agents: https://docs.github.com/en/copilot/concepts/agents/about-third-party-coding-agents
-- OpenAI Codex: https://openai.com/codex/
-- OpenAI — running Codex safely: https://openai.com/index/running-codex-safely/
-- Anthropic Claude Code docs: https://docs.anthropic.com/en/docs/claude-code/getting-started
-- roadmap.sh AI Agents: https://roadmap.sh/ai-agents
+1. [AI Coding Agent Vocabulary, Context & Handoffs](ai-coding-agent-vocabulary-context-and-handoffs.md)
+2. [Repository Context, Instructions & MCP](repository-context-mcp-and-instructions.md)
+3. [Safe Agentic Coding Workflow](safe-agentic-coding-workflow.md)
+4. [Production AI Engineering](../19-ai-engineering/README.md)
+5. [Testing & Code Review](../08-testing-code-review/README.md)
+6. [Security & DevSecOps](../09-security-devsecops/README.md)
+7. [DevOps & Delivery](../13-devops-iac/README.md)
+8. [References](references.md)
 
 ## Verification metadata
 
-- Verified: 2026-08-12
-- Product-specific capabilities are time-sensitive; verify official docs before relying on exact UI/model/permission behavior.
+- Rebuilt: 2026-09-03.
+- AI Hero AI Coding Dictionary is used as supplementary vocabulary/mental-model input, not a normative product specification.
+- Product-specific permissions, agent modes, context handling and capabilities must be checked against current official documentation.
