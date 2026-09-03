@@ -206,7 +206,7 @@ public sealed class DeterministicMeaiChatClient : IChatClient
                     new FunctionCallContent(
                         "call-order-100",
                         "get_order_status",
-                        new Dictionary<string, object>
+                        new Dictionary<string, object?>
                         {
                             ["orderId"] = "100"
                         })
