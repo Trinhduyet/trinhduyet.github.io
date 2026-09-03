@@ -247,13 +247,20 @@ nav:
       - References: 25-software-architecture/references.md
 
   - AI Engineering:
-      - AI Engineering Overview: 19-ai-engineering/README.md
-      - Structured Output & Tool Calling: 19-ai-engineering/structured-output-and-tool-calling.md
-      - RAG, Evaluation & Observability: 19-ai-engineering/rag-evaluation-and-observability.md
+      - Production AI Engineering:
+          - Overview & Learning Path: 19-ai-engineering/README.md
+          - Vocabulary & System Boundaries: 19-ai-engineering/ai-engineer-vocabulary-and-system-boundaries.md
+          - LLM Runtime, Context & Reasoning: 19-ai-engineering/llm-runtime-messages-context-and-reasoning.md
+          - Microsoft.Extensions.AI: 19-ai-engineering/microsoft-extensions-ai-dotnet-integration.md
+          - Structured Output & Tool Calling: 19-ai-engineering/structured-output-and-tool-calling.md
+          - RAG, Evaluation & Observability: 19-ai-engineering/rag-evaluation-and-observability.md
+          - References: 19-ai-engineering/references.md
       - AI Coding Agents:
-          - Overview: 21-ai-coding-agents/README.md
-          - Context, Instructions & MCP: 21-ai-coding-agents/repository-context-mcp-and-instructions.md
+          - Overview & Learning Path: 21-ai-coding-agents/README.md
+          - Vocabulary, Context & Handoffs: 21-ai-coding-agents/ai-coding-agent-vocabulary-context-and-handoffs.md
+          - Repository Context, Instructions & MCP: 21-ai-coding-agents/repository-context-mcp-and-instructions.md
           - Safe Agentic Coding Workflow: 21-ai-coding-agents/safe-agentic-coding-workflow.md
+          - References: 21-ai-coding-agents/references.md
 
   - Resources:
       - Roadmap Overview: 00-roadmap/README.md
