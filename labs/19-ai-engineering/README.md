@@ -1,23 +1,26 @@
-# Module 19 Runnable Lab — AI Engineering without Magic
+# Module 19 Runnable Lab — Core AI + Microsoft.Extensions.AI
 
-Lab này biến các mental model của Module 19 thành **executable evidence** mà không cần API key, quota hay network.
+Lab này có hai mục tiêu:
 
-Nó cố ý dùng một `DeterministicModel` thay vì provider thật để bạn quan sát rõ:
+1. học **AI application semantics** mà không phụ thuộc provider;
+2. chạy **Microsoft.Extensions.AI integration thật** trên .NET 10.
+
+Không cần API key cho hai self-test chính.
 
 ```text
-Application / Harness
-├─ messages + system instruction
-├─ authorized context
-├─ model request
-├─ structured output
-├─ tool request
-├─ application AuthZ
-├─ bounded tool loop
-├─ usage telemetry
-└─ eval gate
+Lane A — Core architecture
+IAiModel
+→ deterministic harness
+→ context / tools / AuthZ / eval
+
+Lane B — .NET integration
+IChatClient
+→ ChatClientBuilder
+→ structured output / AIFunction
+→ function invocation pipeline
 ```
 
-Sau khi hiểu loop này, bạn có thể thay `IAiModel` bằng OpenAI/Azure OpenAI/`IChatClient` adapter mà không đổi business boundary.
+Provider thật là optional.
 
 ---
 
@@ -25,424 +28,408 @@ Sau khi hiểu loop này, bạn có thể thay `IAiModel` bằng OpenAI/Azure Op
 
 - .NET 10 SDK.
 
-Check:
-
 ```bash
 dotnet --version
 ```
 
+Packages được pin trong project:
+
+```text
+Microsoft.Extensions.AI          10.9.0
+Microsoft.Extensions.AI.OpenAI   10.9.0
+```
+
+Không dùng floating `latest` trong executable evidence.
+
 ---
 
-## Run
-
-Từ repository root:
+# 1. Core demo
 
 ```bash
-dotnet run --project labs/19-ai-engineering/AiEngineeringLab.csproj -- demo
+dotnet run \
+  --project labs/19-ai-engineering/AiEngineeringLab.csproj \
+  -- demo
 ```
 
-Expected shape:
+Bạn sẽ thấy:
 
 ```text
-== Authorized RAG-style answer ==
-Refund period is 30 days.
-...
-
-== Read-only tool call ==
-Order 100 status: Shipped.
-...
-
-== Structured output + deterministic validation ==
-{
-  "Level": "HIGH",
-  ...
-}
+authorized RAG-style context
+read-only tool call
+structured output
+usage estimate
 ```
+
+Core lane cố ý dùng `DeterministicModel` để failure semantics không drift theo provider/model.
 
 ---
 
-# 1. Model != Agent
-
-Lab expose một interface rất nhỏ:
-
-```csharp
-public interface IAiModel
-{
-    Task<ModelResponse> CompleteAsync(
-        ModelRequest request,
-        CancellationToken cancellationToken);
-}
-```
-
-Model nhận messages và trả một trong các dạng:
-
-```text
-text
-structured JSON
-tool request
-```
-
-Nó **không** trực tiếp:
-
-```text
-query database
-read another tenant
-execute arbitrary action
-control loop forever
-```
-
-Các capability đó nằm ở application/harness.
-
----
-
-# 2. Context được chọn trước khi model nhìn thấy
-
-`KnowledgeRetriever` filter theo tenant trước:
-
-```text
-UserContext.TenantId
-      ↓
-filter documents
-      ↓
-rank/select
-      ↓
-ContextBuilder budget
-      ↓
-model
-```
-
-Không làm:
-
-```text
-retrieve all tenants
-→ model sees everything
-→ filter answer later
-```
-
-Lab còn có context budget để chứng minh:
-
-```text
-context window != database
-more context != automatically better
-```
-
-Run failure drill:
+# 2. Core self-test
 
 ```bash
-dotnet run --project labs/19-ai-engineering/AiEngineeringLab.csproj -- failure-noisy-context
-```
-
-Một retrieved document chứa prompt-injection text. Expected:
-
-```text
-malicious text stays data
-no tool authority is granted
-context budget is respected
-```
-
----
-
-# 3. Tool request != tool execution
-
-Khi model muốn đọc order:
-
-```text
-Model
-→ ToolRequest(get_order_status, orderId=100)
-→ ToolHost
-→ allowlist
-→ tenant authorization
-→ execute
-→ tool result
-→ model
-```
-
-Tool host mới là nơi enforce authority.
-
-Run:
-
-```bash
-dotnet run --project labs/19-ai-engineering/AiEngineeringLab.csproj -- failure-unauthorized-tool
+dotnet run \
+  --project labs/19-ai-engineering/AiEngineeringLab.csproj \
+  -- self-test
 ```
 
 Expected:
-
-```text
-EXPECTED DENY: Tenant 'tenant-b' cannot read order '100'.
-```
-
-Điểm cần nhớ:
-
-```text
-system prompt says "do not leak data"
-!=
-application authorization
-```
-
----
-
-# 4. Structured output != business correctness
-
-`ClassifyRiskAsync` yêu cầu structured JSON rồi deserialize thành:
-
-```csharp
-public sealed record RiskDecision(
-    string Level,
-    string Reason,
-    bool RequiresHumanReview);
-```
-
-Sau đó application vẫn validate allowed domain values.
-
-Mental model:
-
-```text
-Model output
-→ schema/type parsing
-→ deterministic business validation
-→ business flow
-```
-
-Không parse prose kiểu:
-
-```text
-"Risk: HIGH"
-```
-
-bằng `Split(':')` rồi coi đó là contract.
-
----
-
-# 5. Reasoning effort phải đi qua eval
-
-Run:
-
-```bash
-dotnet run --project labs/19-ai-engineering/AiEngineeringLab.csproj -- eval
-```
-
-Lab cố ý làm một case khó fail ở `Low` nhưng pass ở `High`.
-
-Bạn sẽ thấy cùng lúc:
-
-```text
-quality score
-input usage
-output usage
-reasoning usage
-```
-
-Đây là mental model cần giữ khi dùng provider thật:
-
-```text
-representative eval set
-→ compare configs
-→ quality
-→ latency
-→ cost
-→ release decision
-```
-
-Các token numbers trong fake model chỉ là **deterministic simulation để học telemetry shape**. Không coi `characters / 4` là tokenizer production. Với provider thật, dùng usage do provider/SDK report.
-
----
-
-# 6. Agent/tool loop phải bounded
-
-Run:
-
-```bash
-dotnet run --project labs/19-ai-engineering/AiEngineeringLab.csproj -- failure-runaway-loop
-```
-
-Fake model cố request cùng tool mãi.
-
-Harness chặn bằng:
-
-```text
-maxToolCalls = 2
-```
-
-Expected:
-
-```text
-EXPECTED STOP: Tool loop exceeded maxToolCalls=2.
-```
-
-Production agent nên có nhiều budget hơn một counter đơn:
-
-```text
-max turns
-max tool calls
-time budget
-cost budget
-permission boundary
-human approval where required
-cancellation
-```
-
----
-
-# 7. Self-test — executable evidence
-
-Run toàn bộ deterministic acceptance checks:
-
-```bash
-dotnet run --project labs/19-ai-engineering/AiEngineeringLab.csproj -- self-test
-```
-
-Self-test kiểm:
-
-```text
-[ ] tenant-aware retrieval
-[ ] context budget
-[ ] read-only tool execution
-[ ] unauthorized tool denial
-[ ] structured output validation
-[ ] prompt-injection text does not gain authority
-[ ] runaway tool loop is stopped
-[ ] high-effort eval beats low-effort eval on the hard case
-[ ] usage trade-off is observable
-```
-
-Expected final line:
 
 ```text
 SELF-TEST PASS
 ```
 
----
-
-# 8. Files
+Self-test chứng minh:
 
 ```text
-labs/19-ai-engineering/
-├── AiEngineeringLab.csproj
-├── Program.cs
-├── LabRuntime.cs
-└── README.md
+tenant-aware retrieval
+context budget
+structured output validation
+read-only tool execution
+application AuthZ
+prompt-injection text remains untrusted
+bounded tool loop
+reasoning/eval trade-off
 ```
-
-`Program.cs` chỉ là CLI entry point.
-
-`LabRuntime.cs` chứa intentionally-small abstractions để flow đọc được trong một file:
-
-```text
-IAiModel
-DeterministicModel
-KnowledgeRetriever
-ContextBuilder
-ToolHost
-KnowledgeAssistant
-EvalRunner
-LabCli
-```
-
-Không thêm framework trước khi abstraction thật sự cần.
 
 ---
 
-# 9. Thay fake model bằng provider thật
+# 3. Microsoft.Extensions.AI demo
 
-Extension exercise:
-
-```text
-IAiModel
-  ↓
-OpenAI/Azure OpenAI/Microsoft.Extensions.AI adapter
+```bash
+dotnet run \
+  --project labs/19-ai-engineering/AiEngineeringLab.csproj \
+  -- meai-demo
 ```
 
-Giữ nguyên các boundary khác:
+Lane này dùng trực tiếp:
 
 ```text
-KnowledgeRetriever
-ToolHost/AuthZ
-RiskDecision validation
-EvalRunner
+IChatClient
+ChatMessage
+ChatOptions
+ChatResponse
+ChatResponse<T>
+ChatClientBuilder
+AIFunction
+AIFunctionFactory
+UseFunctionInvocation
+FunctionCallContent
+FunctionResultContent
+UsageDetails
+ReasoningOptions
+```
+
+Deterministic `IChatClient` đóng vai provider để test abstraction/pipeline mà không gọi network.
+
+---
+
+# 4. Microsoft.Extensions.AI self-test
+
+```bash
+dotnet run \
+  --project labs/19-ai-engineering/AiEngineeringLab.csproj \
+  -- meai-self-test
+```
+
+Expected:
+
+```text
+MEAI SELF-TEST PASS
+```
+
+Nó verify ba behavior quan trọng.
+
+## Typed structured output
+
+```text
+IChatClient
+→ GetResponseAsync<RiskDecision>
+→ JSON/schema conversion
+→ RiskDecision
+```
+
+Application vẫn phải validate domain invariant sau đó.
+
+## Automatic function invocation
+
+```text
+User message
+→ deterministic IChatClient
+→ FunctionCallContent(get_order_status)
+→ FunctionInvokingChatClient
+→ AIFunction executes
+→ FunctionResultContent
+→ provider client again
+→ final ChatResponse
+```
+
+Đây là executable proof cho distinction:
+
+```text
+Tool request
+!=
+Tool implementation
+```
+
+Trong production, tool implementation phải tự enforce AuthZ/business rules.
+
+## Reasoning usage shape
+
+Self-test gửi `ReasoningOptions` ở low/high effort và chứng minh usage shape khác nhau.
+
+Mục tiêu không phải mô phỏng provider hoàn hảo, mà verify application hiểu reasoning như một configurable trade-off.
+
+---
+
+# 5. Optional live OpenAI adapter
+
+Chỉ chạy khi bạn chủ động cấu hình credentials.
+
+```bash
+export OPENAI_API_KEY='...'
+export OPENAI_MODEL='...'
+
+dotnet run \
+  --project labs/19-ai-engineering/AiEngineeringLab.csproj \
+  -- meai-live
+```
+
+Code path:
+
+```text
+OpenAIClient
+→ GetChatClient(model)
+→ AsIChatClient()
+→ ChatClientBuilder
+→ UseFunctionInvocation()
+→ application
+```
+
+`OPENAI_MODEL` không được hard-code vào lab vì model availability/lifecycle thay đổi nhanh.
+
+Không commit API key.
+
+---
+
+# 6. Azure OpenAI extension exercise
+
+Thay composition root bằng Azure OpenAI provider, còn application layer giữ `IChatClient`.
+
+Conceptual mapping:
+
+```text
+AzureOpenAIClient
+→ GetChatClient(deploymentName)
+→ AsIChatClient()
+→ same MEAI pipeline
+```
+
+Production ưu tiên Microsoft Entra/workload identity khi phù hợp.
+
+Không đổi:
+
+```text
+business ports
+AuthZ
+eval dataset
+context boundary
 failure drills
 ```
 
-Provider adapter phải map:
+---
+
+# 7. Vì sao vẫn giữ `IAiModel` khi đã có `IChatClient`?
+
+Hai abstraction có scope khác nhau.
 
 ```text
-AiMessage
-→ provider message format
+IAiModel
+= teaching/application harness boundary của lab
 
-ToolRequest
-← provider tool/function request
-
-AiUsage
-← provider-reported usage
+IChatClient
+= .NET ecosystem technical integration abstraction
 ```
 
-Không để provider SDK lan vào domain/application code chỉ vì demo nhanh hơn.
+Trong production business code, tốt hơn nữa là capability-specific port:
+
+```text
+IOrderRiskClassifier
+IKnowledgeAssistant
+IIncidentSummarizer
+```
+
+Direction tốt:
+
+```text
+Business Port
+→ AI Implementation
+→ IChatClient
+→ provider adapter
+```
+
+Không dùng `IChatClient` như domain language ở mọi nơi.
 
 ---
 
-# 10. Bài tập mở rộng
+# 8. Failure drills — core lane
 
-## A — real provider adapter
-
-Thêm một adapter thật và giữ `DeterministicModel` cho CI/self-test.
-
-## B — persistence
-
-Lưu:
-
-```text
-prompt/config version
-request id
-provider/model
-usage
-latency
-result status
-```
-
-không lưu raw sensitive context mặc định.
-
-## C — eval regression
-
-Thêm candidate config rồi fail process nếu score thấp hơn threshold.
-
-## D — write tool
-
-Thêm một low-risk write tool và bắt buộc:
-
-```text
-AuthZ
-idempotency key
-approval policy
-unknown-outcome handling
-```
-
-## E — real retrieval
-
-Thay in-memory documents bằng SQL/Search/vector backend nhưng giữ rule:
-
-```text
-ACL before model
-```
-
----
-
-# Definition of Done
-
-Lab hoàn thành khi bạn có thể giải thích bằng code:
-
-```text
-Model != Agent
-Tool request != execution
-System instruction != authorization
-Context quality > context quantity
-Structured output != business correctness
-Reasoning config requires eval
-Agent loop requires budgets
-AI failures still follow distributed-systems rules
-```
-
-Và chạy được:
+## Unauthorized tool
 
 ```bash
-dotnet build labs/19-ai-engineering/AiEngineeringLab.csproj -c Release
-dotnet run --project labs/19-ai-engineering/AiEngineeringLab.csproj -c Release --no-build -- self-test
+dotnet run \
+  --project labs/19-ai-engineering/AiEngineeringLab.csproj \
+  -- failure-unauthorized-tool
 ```
+
+Expected:
+
+```text
+EXPECTED DENY
+```
+
+## Runaway loop
+
+```bash
+dotnet run \
+  --project labs/19-ai-engineering/AiEngineeringLab.csproj \
+  -- failure-runaway-loop
+```
+
+Expected:
+
+```text
+EXPECTED STOP
+```
+
+## Noisy/malicious context
+
+```bash
+dotnet run \
+  --project labs/19-ai-engineering/AiEngineeringLab.csproj \
+  -- failure-noisy-context
+```
+
+Expected:
+
+```text
+malicious retrieved text stays data
+no tool authority is gained
+```
+
+---
+
+# 9. Eval
+
+```bash
+dotnet run \
+  --project labs/19-ai-engineering/AiEngineeringLab.csproj \
+  -- eval
+```
+
+Lab cố ý tạo một hard case để minh họa:
+
+```text
+Low effort
+→ lower synthetic reasoning usage
+→ one eval miss
+
+High effort
+→ higher synthetic reasoning usage
+→ eval passes
+```
+
+Không suy ra rằng production luôn nên dùng high reasoning.
+
+Production phải đo:
+
+```text
+quality
+latency
+real provider usage/cost
+```
+
+---
+
+# 10. CI evidence
+
+GitHub Pages workflow chạy:
+
+```text
+restore/build .NET 10 lab
+↓
+core self-test
+↓
+MEAI self-test
+↓
+learning quality audit
+↓
+MkDocs strict build
+↓
+Pages deploy
+```
+
+Do đó `Runnable` ở Module 19 có nghĩa code thực sự compile và assertions chạy trong CI.
+
+---
+
+# 11. Files
+
+```text
+AiEngineeringLab.csproj
+├─ exact MEAI package pins
+
+Program.cs
+├─ routes core vs meai commands
+
+LabRuntime.cs
+├─ IAiModel
+├─ DeterministicModel
+├─ retrieval/context
+├─ ToolHost/AuthZ
+├─ eval
+└─ core failure drills
+
+MeaiIntegration.cs
+├─ deterministic IChatClient
+├─ ChatClientBuilder
+├─ typed structured output
+├─ AIFunction/function invocation
+├─ reasoning/usage check
+└─ optional OpenAI adapter
+```
+
+---
+
+# 12. Production extension order
+
+Không nhảy thẳng sang autonomous agent.
+
+```text
+1. Replace deterministic provider with real IChatClient adapter
+2. Keep business port
+3. Add real AuthN/AuthZ
+4. Add real RAG/search
+5. Add OpenTelemetry
+6. Add Microsoft.Extensions.AI.Evaluation
+7. Add provider/model eval matrix
+8. Add timeout/fallback/degraded mode
+9. Add write tool only with idempotency/approval
+10. Add agent loop only when deterministic workflow is insufficient
+```
+
+---
+
+# Exit Criteria
+
+- [ ] `self-test` pass;
+- [ ] `meai-self-test` pass;
+- [ ] giải thích `IAiModel` vs `IChatClient`;
+- [ ] giải thích `ChatClientBuilder` pipeline;
+- [ ] đọc được `ChatMessage`, `ChatOptions`, `ChatResponse`;
+- [ ] implement typed structured output;
+- [ ] hiểu `FunctionCallContent → AIFunction → FunctionResultContent`;
+- [ ] biết automatic function invocation không thay AuthZ;
+- [ ] biết optional provider adapter nằm ở composition root;
+- [ ] biết provider/model drift không được làm CI baseline mất reproducibility.
+
+Đọc cùng [Microsoft.Extensions.AI — .NET Integration Guide](../../docs/19-ai-engineering/microsoft-extensions-ai-dotnet-integration.md).
