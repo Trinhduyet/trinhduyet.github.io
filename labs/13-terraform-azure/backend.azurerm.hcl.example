@@ -1,0 +1,7 @@
+# Example only. Do not put secrets here.
+# Supply these values through your controlled bootstrap/environment.
+resource_group_name  = "rg-tfstate-prod"
+storage_account_name = "sttfstateexample"
+container_name        = "tfstate"
+key                   = "orders/prod.tfstate"
+use_azuread_auth      = true
