@@ -11,12 +11,14 @@ LABS = ROOT / "labs"
 MKDOCS = ROOT / "mkdocs.yml"
 
 HIGH_LEVEL_STATUS = [
+    ROOT / "README.md",
     DOCS / "index.md",
     DOCS / "00-roadmap" / "master-roadmap.md",
     DOCS / "00-roadmap" / "repository-health.md",
 ]
 
 CURRENT_ENTRY_PAGES = [
+    ROOT / "README.md",
     DOCS / "index.md",
     DOCS / "00-roadmap" / "master-roadmap.md",
 ]
