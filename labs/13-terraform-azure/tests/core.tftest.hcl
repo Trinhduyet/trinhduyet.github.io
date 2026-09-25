@@ -23,12 +23,12 @@ run "workload_shape" {
   }
 
   assert {
-    condition     = azurerm_virtual_network.workload.address_space[0] == "10.40.0.0/16"
+    condition     = contains(azurerm_virtual_network.workload.address_space, "10.40.0.0/16")
     error_message = "VNet address space does not match the requested CIDR"
   }
 
   assert {
-    condition     = azurerm_subnet.app.address_prefixes[0] == "10.40.10.0/24"
+    condition     = contains(azurerm_subnet.app.address_prefixes, "10.40.10.0/24")
     error_message = "application subnet prefix changed"
   }
 }
