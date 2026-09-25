@@ -137,6 +137,8 @@ Kubernetes is one possible deployment/runtime platform
 |---|---:|---|
 | [CI/CD, Artifacts & Promotion](ci-cd-artifacts-and-promotion.md) | P0 | build once, immutable artifact, environment promotion |
 | [Terraform State, Modules & Drift](terraform-state-modules-and-drift.md) | P0 | HCL, graph, state, backends, modules, import/moved, drift, testing |
+| [Terraform Language, Lifecycle & Validation](terraform-language-lifecycle-and-validation.md) | P0 | expressions, unknown values, types, pre/postconditions, checks, lifecycle, provider aliases, ephemeral data |
+| [Terraform Team Workflow & State Recovery](terraform-team-workflows-and-state-recovery.md) | P0 | environment/state boundaries, locking, PR plan/apply, import/move, drift, partial apply, state recovery |
 | [Terraform on Azure](terraform-on-azure-production.md) | P0 | AzureRM/AzAPI/AVM, Blob state, OIDC, subscriptions, Policy/RBAC, CI/CD |
 | [Safe Delivery, Drift & Recovery](safe-delivery-drift-and-recovery.md) | P0 | safe rollout, rollback/forward, operational recovery |
 | [DevOps → Kubernetes Production Delivery](devops-kubernetes-production-delivery.md) | P0 | end-to-end pipeline from PR to Pods and recovery |
@@ -470,6 +472,8 @@ Terraform language / graph
 ~~~
 
 → [Terraform State, Modules & Drift](terraform-state-modules-and-drift.md)  
+→ [Terraform Language, Lifecycle & Validation](terraform-language-lifecycle-and-validation.md)  
+→ [Terraform Team Workflow & State Recovery](terraform-team-workflows-and-state-recovery.md)  
 → [Terraform on Azure](terraform-on-azure-production.md)  
 → Runnable evidence: labs/13-terraform-azure
 
@@ -525,6 +529,9 @@ Bạn hoàn thành Module 13 khi có thể:
 - explain CI vs CD;
 - explain Terraform configuration vs state vs remote reality;
 - manage remote state, locking, modules, imports/moves and drift;
+- distinguish variable validation, precondition, postcondition and check blocks;
+- reason about lifecycle rules, provider aliases, sensitive vs ephemeral values;
+- design state/environment boundaries, plan/apply workflow and state recovery runbooks;
 - design Azure Terraform authentication/state with OIDC and least privilege;
 - separate platform IaC from workload configuration;
 - explain why Kubernetes is a deployment/runtime target inside DevOps;

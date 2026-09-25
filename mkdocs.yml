@@ -200,6 +200,9 @@ nav:
       - Overview: 14-cloud/README.md
       - Core Platform, Control Plane & Governance: 14-cloud/azure-core-platform-control-plane-and-governance.md
       - Foundations & Landing Zones: 14-cloud/azure-foundations-resource-hierarchy-and-landing-zones.md
+      - Core Platform, Control Plane & Governance: 14-cloud/azure-core-platform-control-plane-and-governance.md
+      - Service Selection & Workload Architecture: 14-cloud/azure-service-selection-and-workload-architecture.md
+      - Governance, Security & Operations Playbook: 14-cloud/azure-governance-security-and-operations-playbook.md
       - Cloud Primitives, Identity & Network: 14-cloud/cloud-primitives-identity-and-networking.md
       - Production Compute Handbook: 14-cloud/azure-production-handbook-compute.md
       - Production Data & Messaging Handbook: 14-cloud/azure-production-handbook-data-messaging.md

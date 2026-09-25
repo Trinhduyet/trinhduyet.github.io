@@ -106,10 +106,14 @@ Reference < Guided < Deep
 |---|---|---:|---:|---|---:|---|
 | DevOps | CI/CD/artifact promotion/rollback | P1 | 5 | Deep/Guided | No | [CI/CD](../13-devops-iac/ci-cd-artifacts-and-promotion.md) |
 | Terraform | HCL/graph/state/backend/modules/import/moved/drift/testing | P0/P1 | 4/5 | **Deep/Runnable** | **Yes — mock provider** | [Terraform](../13-devops-iac/terraform-state-modules-and-drift.md) + `labs/13-terraform-azure` |
+| Terraform | lifecycle/validation/checks/provider aliases/ephemeral data | P0/P1 | 4/5 | **Deep/Active** | Partial via core lab | [Language/Lifecycle](../13-devops-iac/terraform-language-lifecycle-and-validation.md) |
+| Terraform | team workflow/state boundaries/import/recovery/partial apply | P0/P1 | 5 | **Deep/Active** | Failure-drill guided | [Team Workflow/Recovery](../13-devops-iac/terraform-team-workflows-and-state-recovery.md) |
 | Terraform + Azure | AzureRM/AzAPI/AVM, Blob state, OIDC, Policy/RBAC, multi-subscription, CI/CD | P0/P1 | 4/5 | **Deep/Runnable** | **Yes — baseline** | [Terraform on Azure](../13-devops-iac/terraform-on-azure-production.md) + `labs/13-terraform-azure` |
 | Delivery | testing → image → registry → K8s/GitOps | P1 | 4/5 | Deep/Guided | No | [Production Delivery](../13-devops-iac/devops-kubernetes-production-delivery.md) |
 | Azure | ARM/control-plane/data-plane/scopes/RBAC/Policy/locks/region-zone/network-DNS | P0 | 5 | **Deep/Active** | **Partial via Terraform lab** | [Azure core platform](../14-cloud/azure-core-platform-control-plane-and-governance.md) |
 | Azure | landing zone/resource hierarchy/governance | P1 | 4/5 | Deep handbook | No dedicated | [Azure foundations](../14-cloud/azure-foundations-resource-hierarchy-and-landing-zones.md) |
+| Azure | service selection/workload topology/WAF trade-offs | P0 | 5 | **Deep/Active** | Architecture evidence | [Service Selection](../14-cloud/azure-service-selection-and-workload-architecture.md) |
+| Azure | platform/workload governance, Policy, DNS/egress, backup/DR, FinOps | P0/P1 | 5 | **Deep/Active** | Guided failure drills | [Governance/Operations](../14-cloud/azure-governance-security-and-operations-playbook.md) |
 | Azure | identity/network/private access/edge | P0/P1 | 5 | Deep handbook | No | [Network/Security handbook](../14-cloud/azure-production-handbook-network-security.md) |
 | Azure | compute service selection/config/cost | P0/P1 | 5 | Deep handbook | No | [Compute handbook](../14-cloud/azure-production-handbook-compute.md) |
 | Azure | SQL/storage/cache/messaging selection | P0/P1 | 5 | Deep handbook | No | [Data/Messaging handbook](../14-cloud/azure-production-handbook-data-messaging.md) |

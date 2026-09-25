@@ -89,3 +89,16 @@ Current stable baseline verified for the repository: Terraform 1.16.4. Terraform
 - Azure Landing Zones — Terraform: https://azure.github.io/Azure-Landing-Zones/terraform/
 
 AzureRM stable release verified for examples: 5.6.0.
+
+
+## Terraform language / lifecycle / recovery — refreshed 2026-09-25
+
+- Validate configuration: https://developer.hashicorp.com/terraform/language/validate
+- Lifecycle meta-argument: https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle
+- Provider configuration and aliases: https://developer.hashicorp.com/terraform/language/block/provider
+- Providers within modules: https://developer.hashicorp.com/terraform/language/modules/develop/providers
+- Check blocks: https://developer.hashicorp.com/terraform/language/block/check
+- Ephemeral resources: https://developer.hashicorp.com/terraform/language/block/ephemeral
+- Variable ephemeral/sensitive/nullability: https://developer.hashicorp.com/terraform/language/block/variable
+
+New guidance separates configuration validation from cloud governance and adds explicit state/team recovery practices.
