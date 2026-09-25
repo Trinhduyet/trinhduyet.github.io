@@ -93,7 +93,6 @@ nav:
       - Master Roadmap: 00-roadmap/master-roadmap.md
       - Skills Matrix: 00-roadmap/skills-matrix.md
       - Repository Health: 00-roadmap/repository-health.md
-      - Technology Baseline: 00-roadmap/technology-baseline.md
       - Learning Quality Standard: 00-roadmap/learning-quality-standard.md
       - Learning Path: 00-roadmap/learning-path.md
       - Cách đọc tài liệu: 00-roadmap/how-to-read.md
@@ -272,7 +271,6 @@ nav:
 
   - Resources:
       - Roadmap Overview: 00-roadmap/README.md
-      - Repository Health: 00-roadmap/repository-health.md
       - Historical Quality Review — 2026-08-28: 00-roadmap/repository-quality-review-2026-08-28.md
       - Learning Quality Standard: 00-roadmap/learning-quality-standard.md
       - Prerequisites: 00-roadmap/prerequisites.md
