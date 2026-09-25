@@ -51,6 +51,20 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
+      - name: Set up Terraform 1.16.4
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.16.4'
+
+      - name: Verify Terraform + Azure runnable lab
+        shell: bash
+        run: |
+          set -euo pipefail
+          terraform -chdir=labs/13-terraform-azure fmt -check -recursive
+          terraform -chdir=labs/13-terraform-azure init -backend=false -input=false
+          terraform -chdir=labs/13-terraform-azure validate
+          terraform -chdir=labs/13-terraform-azure test
+
       - name: Verify AI Engineering runnable lab
         shell: bash
         run: |
