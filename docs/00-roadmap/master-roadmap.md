@@ -111,12 +111,12 @@ Target level phụ thuộc role. Kubernetes có thể P1 cho Backend Engineer nh
 | 10 Performance | measurement, bottleneck, capacity, regression | Deep/Guided | No |
 | 11 Redis/Caching | consistency, TTL, stampede, HA/operations | Deep/Guided | No |
 | 12 Docker | build/runtime/network/storage/resources/security | Deep/Guided | No |
-| 13 DevOps/IaC | CI/CD, artifact promotion, Terraform, recovery | Deep/Guided | No |
-| 14 Azure | service selection/config/cost/reliability/.NET architecture | Deep handbook | No |
+| 13 DevOps/IaC | CI/CD, artifact promotion, Terraform, recovery | **Deep/Runnable** | **Yes — Terraform/Azure baseline** |
+| 14 Azure | service selection/config/cost/reliability/.NET architecture | Deep handbook | **Partial via Module 13 IaC lab** |
 | 15 Kubernetes | reconciliation, workloads/network/storage/security/debugging/AKS | Deep/Guided | **Yes — core** |
 | 17 Distributed Systems | partial failure, idempotency, messaging, outbox/saga/backpressure | Deep/Guided | No |
 | 18 Microservices Architecture | boundaries, data ownership, saga, deployment/migration | Deep/Guided | No |
-| 19 AI Engineering | models/tools/RAG/eval/security/operations | Deep/Guided | No |
+| 19 AI Engineering | models/tools/RAG/eval/security/operations | **Deep/Runnable** | **Yes — core + MEAI** |
 | 21 AI Coding Agents | repo context, permissions, tests, review | Deep/Guided | No |
 | 24 System Design | requirements/capacity/data/failure/security/cost/cases | Deep | No direct lab |
 | 25 Software Architecture | quality attributes, boundaries/styles, DDD, evolution/ADR | Deep | No direct lab |
@@ -398,7 +398,9 @@ labs/01-computer-science
 labs/02-linux-git-networking
 labs/03-dotnet
 labs/04-backend
+labs/13-terraform-azure
 labs/15-kubernetes
+labs/19-ai-engineering
 ```
 
 ## Documented project/evidence targets
@@ -411,8 +413,8 @@ Các module sau mô tả project/failure drills nhưng chưa phải tất cả �
 | Production Delivery | 09–13 | security/load/cache/Docker/CI evidence |
 | Kubernetes extensions | 15 | ConfigMap/Secret, RBAC, PVC, NetworkPolicy, HPA scenarios beyond core lab |
 | Distributed Checkout | 17–18 | outbox/dedup/UNKNOWN/reconciliation |
-| Azure .NET Platform | 14 | IaC + network/identity/cost/DR |
-| Enterprise AI Assistant | 19 | AuthZ/RAG/tools/eval/telemetry |
+| Azure live platform extension | 13–14 | credentialed OIDC/remote-state/private-network/drift evidence beyond mock baseline |
+| Enterprise AI Assistant extension | 19 | real-provider/vector-search/release-gate evidence beyond deterministic/MEAI core |
 | Design Dossier | 24–25 | capacity/failure/ADR/evolution |
 
 Do not label these “runnable project” until artifact exists.
@@ -474,5 +476,5 @@ A serious design/review should answer:
 - [Role-based Learning Paths](role-based-learning-paths.md)
 - [Skills Matrix](skills-matrix.md)
 - [Learning Quality Standard](learning-quality-standard.md)
-- [Repository Quality Review](repository-quality-review-2026-08-28.md)
+- [Repository Health](repository-health.md)
 - [Technology Baseline](technology-baseline.md)

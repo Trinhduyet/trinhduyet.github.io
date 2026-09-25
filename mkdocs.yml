@@ -92,6 +92,7 @@ nav:
       - Concept Cards: 00-roadmap/concept-cards.md
       - Master Roadmap: 00-roadmap/master-roadmap.md
       - Skills Matrix: 00-roadmap/skills-matrix.md
+      - Repository Health: 00-roadmap/repository-health.md
       - Learning Quality Standard: 00-roadmap/learning-quality-standard.md
       - Learning Path: 00-roadmap/learning-path.md
       - Cách đọc tài liệu: 00-roadmap/how-to-read.md
@@ -183,6 +184,8 @@ nav:
           - Overview: 13-devops-iac/README.md
           - CI/CD & Artifacts: 13-devops-iac/ci-cd-artifacts-and-promotion.md
           - Terraform State, Graph, Modules & Drift: 13-devops-iac/terraform-state-modules-and-drift.md
+          - Terraform Language, Lifecycle & Validation: 13-devops-iac/terraform-language-lifecycle-and-validation.md
+          - Terraform Team Workflow & State Recovery: 13-devops-iac/terraform-team-workflows-and-state-recovery.md
           - Terraform on Azure: 13-devops-iac/terraform-on-azure-production.md
           - Safe Delivery & Recovery: 13-devops-iac/safe-delivery-drift-and-recovery.md
           - References: 13-devops-iac/references.md
@@ -200,7 +203,6 @@ nav:
       - Overview: 14-cloud/README.md
       - Core Platform, Control Plane & Governance: 14-cloud/azure-core-platform-control-plane-and-governance.md
       - Foundations & Landing Zones: 14-cloud/azure-foundations-resource-hierarchy-and-landing-zones.md
-      - Core Platform, Control Plane & Governance: 14-cloud/azure-core-platform-control-plane-and-governance.md
       - Service Selection & Workload Architecture: 14-cloud/azure-service-selection-and-workload-architecture.md
       - Governance, Security & Operations Playbook: 14-cloud/azure-governance-security-and-operations-playbook.md
       - Cloud Primitives, Identity & Network: 14-cloud/cloud-primitives-identity-and-networking.md
@@ -269,7 +271,7 @@ nav:
 
   - Resources:
       - Roadmap Overview: 00-roadmap/README.md
-      - Repository Quality Review: 00-roadmap/repository-quality-review-2026-08-28.md
+      - Historical Quality Review — 2026-08-28: 00-roadmap/repository-quality-review-2026-08-28.md
       - Learning Quality Standard: 00-roadmap/learning-quality-standard.md
       - Prerequisites: 00-roadmap/prerequisites.md
       - Technology Baseline: 00-roadmap/technology-baseline.md

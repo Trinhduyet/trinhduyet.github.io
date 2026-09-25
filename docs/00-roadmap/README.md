@@ -140,10 +140,10 @@ Deep content hiện đặc biệt mạnh ở:
 25 Software Architecture
 ```
 
-Module 09 Security, 10 Performance và 11 Redis đã được nâng overview theo quality bar mới trong review 2026-08-28.
+Module 09 Security, 10 Performance và 11 Redis đã được nâng overview theo quality bar mới; Terraform/Azure và AI Engineering hiện cũng có runnable baseline được CI verify.
 
-Chi tiết maturity/evidence thật:
-[Repository Quality Review — 2026-08-28](repository-quality-review-2026-08-28.md).
+Chi tiết maturity/evidence hiện tại:
+[Repository Health](repository-health.md).
 
 ---
 
@@ -156,7 +156,9 @@ Dedicated runnable artifacts dưới `labs/` hiện có cho:
 02 Linux/Git/Networking
 03 .NET Runtime
 04 Backend
+13 Terraform + Azure IaC baseline
 15 Kubernetes Core
+19 Production AI + Microsoft.Extensions.AI
 ```
 
 Kubernetes core lab mới chứng minh trực tiếp:
@@ -172,7 +174,7 @@ resources / scaling / rollout
 kubectl debugging
 ```
 
-→ [`labs/15-kubernetes`](https://github.com/Trinhduyet/trinhduyet.github.io/tree/main/labs/15-kubernetes)
+→ [Repository Health](repository-health.md) để xem mapping đầy đủ giữa module và `labs/*`.
 
 Nhiều module sau vẫn có deep guided commands/config/failure drills nhưng **chưa có dedicated runnable lab**. Đây vẫn là backlog chính tiếp theo, không được che bằng chữ “Done”.
 
@@ -180,12 +182,13 @@ Nhiều module sau vẫn có deep guided commands/config/failure drills nhưng *
 
 ```text
 05–08 Production Backend Lab
-09–13 Production Delivery Lab
+09–12 Production Runtime/Delivery Lab
 17 Distributed Reliability Lab
 18 Checkout Saga Lab
-14 Azure IaC Lab
-19 Production AI Lab
+21 Coding Agent sandbox/context/review lab
+14 Azure live sandbox extension
 15 Kubernetes extensions only when problem-driven
+19 real-provider/RAG release extension
 ```
 
 Một integrated system được phá/debug xuyên nhiều module tốt hơn nhiều sample rời.
@@ -349,5 +352,5 @@ Technology chỉ xuất hiện khi pressure yêu cầu nó.
 - **Không biết học gì:** [Role-based Learning Paths](role-based-learning-paths.md)
 - **Muốn học bằng một system:** [Example-First Path](example-first-learning-path.md)
 - **Muốn xem toàn landscape:** [Master Roadmap](master-roadmap.md)
-- **Muốn xem debt/chất lượng repo:** [Repository Quality Review](repository-quality-review-2026-08-28.md)
+- **Muốn xem debt/chất lượng repo:** [Repository Health](repository-health.md)
 - **Muốn biết chuẩn viết content:** [Learning Quality Standard](learning-quality-standard.md)

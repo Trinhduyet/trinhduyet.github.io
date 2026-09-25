@@ -2,16 +2,16 @@
 
 > Snapshot này dùng để giữ ví dụ nhất quán. Nó **không** thay compatibility matrix của cloud/provider, security advisory hoặc exact version pin của executable lab.
 
-## Baseline reviewed 2026-08-28
+## Baseline reviewed 2026-09-25
 
 | Technology | Documentation baseline | Observed stable/current signal | Verified | Official source |
 |---|---|---|---|---|
-| .NET | **10.0 LTS** | latest servicing patch `10.0.11`; support đến 2028-11-14 | 2026-08-28 | [.NET support policy](https://dotnet.microsoft.com/en-us/platform/support/policy) |
-| ASP.NET Core | **10.0** | lifecycle đi cùng .NET 10 | 2026-08-28 | [ASP.NET support policy](https://dotnet.microsoft.com/en-us/platform/support/policy/aspnet) |
-| EF Core | **10.0** | stable package `10.0.11`; provider compatibility kiểm tra riêng | 2026-08-28 | [Microsoft.EntityFrameworkCore](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore) · [providers](https://learn.microsoft.com/en-us/ef/core/providers/) |
-| SQL Server | **SQL Server 2025** | latest CU listed by Microsoft: **CU8 / August 2026** | 2026-08-28 | [SQL Server latest updates](https://learn.microsoft.com/en-us/troubleshoot/sql/releases/download-and-install-latest-updates) |
-| Docker Engine | **29.x** | documented latest 29.x patch: `29.7.2` | 2026-08-28 | [Docker Engine 29 release notes](https://docs.docker.com/engine/release-notes/29/) |
-| Kubernetes | **1.37 concepts/API line for new upstream docs** | upstream `1.37.0` released 2026-08-26; managed-provider support may lag | 2026-08-28 | [Kubernetes 1.37](https://kubernetes.io/releases/1.37/) · [release announcement](https://kubernetes.io/blog/2026/08/26/kubernetes-v1-37-release/) |
+| .NET | **10.0 LTS** | latest servicing/security patch `10.0.12`; SDK `10.0.401`; support đến 2028-11-14 | 2026-09-25 | [.NET support policy](https://dotnet.microsoft.com/en-us/platform/support/policy) |
+| ASP.NET Core | **10.0** | lifecycle đi cùng .NET 10; use current .NET 10 servicing patch | 2026-09-25 | [ASP.NET support policy](https://dotnet.microsoft.com/en-us/platform/support/policy/aspnet) |
+| EF Core | **10.0** | stable package `10.0.12`; provider compatibility kiểm tra riêng | 2026-09-25 | [Microsoft.EntityFrameworkCore](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore) · [providers](https://learn.microsoft.com/en-us/ef/core/providers/) |
+| SQL Server | **SQL Server 2025** | latest CU listed by Microsoft: **CU9 / September 2026** | 2026-09-25 | [SQL Server latest updates](https://learn.microsoft.com/en-us/troubleshoot/sql/releases/download-and-install-latest-updates) |
+| Docker Engine | **29.x** | documented latest 29.x patch: `29.8.1` (2026-09-15) | 2026-09-25 | [Docker Engine 29 release notes](https://docs.docker.com/engine/release-notes/29/) |
+| Kubernetes | **1.37 concepts/API line for new upstream docs** | upstream `1.37.0` remains current release on official release page; managed-provider support may lag | 2026-09-25 | [Kubernetes 1.37](https://kubernetes.io/releases/1.37/) · [release announcement](https://kubernetes.io/blog/2026/08/26/kubernetes-v1-37-release/) |
 | Terraform | **1.16.x** for new docs/labs | latest stable `1.16.4`; 1.17 remains prerelease | 2026-09-25 | [Terraform releases](https://github.com/hashicorp/terraform/releases) |
 | AzureRM Terraform Provider | **5.x** | latest stable verified `5.6.0`; 5.x is a major line and 4.x upgrades require review | 2026-09-25 | [AzureRM releases](https://github.com/hashicorp/terraform-provider-azurerm/releases) |
 | Redis Open Source | **8.10.x** | observed stable `8.10.0` | 2026-08-28 | [Redis releases](https://github.com/redis/redis/releases) · [Redis docs](https://redis.io/docs/latest/) |
@@ -20,7 +20,7 @@
 | Microsoft Agent Framework (.NET) | **1.17.x** | `dotnet-1.17.0` marked latest at review time | 2026-08-28 | [Agent Framework releases](https://github.com/microsoft/agent-framework/releases) |
 | OpenAI .NET | **2.12.x released line** | latest public release/package observed `2.12.0`; `main` version prefix is not treated as a released version | 2026-08-28 | [openai-dotnet releases](https://github.com/openai/openai-dotnet/releases) · [OpenAI NuGet](https://www.nuget.org/packages/OpenAI) |
 
-> Partial refresh: the `Microsoft.Extensions.AI` row was re-verified on **2026-09-03** while implementing the Module 19 runnable MEAI integration. Other rows retain their own verification dates.
+> Each row has its own verification date. The 2026-09-25 review refreshed the fast-moving runtime/database/container/orchestration/IaC rows; other ecosystems remain governed by their row-level dates and should be rechecked before production use.
 
 ---
 
@@ -141,11 +141,12 @@ A package upgrade still requires compile tests, behavior/eval regression and pro
 The 2026-08-11 snapshot is now stale in several places:
 
 ```text
-.NET       10.0.10 → 10.0.11 servicing
-EF Core    10.0.10 → 10.0.11 stable
-SQL 2025   CU7      → CU8 listed by Microsoft
-Kubernetes 1.36.x   → upstream 1.37.0 current
-Terraform  1.15.x   → 1.16.4 stable (1.17 prerelease)
+.NET       10.0.11 → 10.0.12 security/servicing
+EF Core    10.0.11 → 10.0.12 stable
+SQL 2025   CU8      → CU9 / September 2026
+Docker     29.7.2   → 29.8.1
+Kubernetes 1.37.0   → still current upstream release page
+Terraform  1.16.0   → 1.16.4 stable (1.17 prerelease)
 MEAI       10.8.x   → 10.9.0 stable/current
 ```
 
@@ -216,7 +217,7 @@ Roadmap sites/blogs can help audit breadth; they do not decide runtime/security/
 
 ## Verification metadata
 
-- Repository baseline review: **2026-08-28**, Asia/Bangkok.
-- Partial AI SDK refresh: **2026-09-03** for `Microsoft.Extensions.AI` 10.9.0.
+- Repository baseline review: **2026-09-25**, Asia/Bangkok.
+- Fast-moving rows refreshed **2026-09-25** for .NET/ASP.NET/EF Core, SQL Server, Docker, Kubernetes and Terraform; `Microsoft.Extensions.AI` remains pinned/verified at 10.9.0 from the executable Module 19 integration.
 - Critical refreshes verified against official .NET, Microsoft, Docker, Kubernetes, HashiCorp, OpenTelemetry, Microsoft package/framework and OpenAI release/package sources.
 - Managed cloud versions are intentionally not inferred from upstream Kubernetes current release.

@@ -37,7 +37,10 @@ def audit_module(path: Path, number: str, slug: str) -> ModuleAudit:
     references = path / "references.md"
     text = readme.read_text(encoding="utf-8") if readme.exists() else ""
 
-    lab_path = LABS / f"{number}-{slug}"
+    # A module can own one or more focused labs whose slug differs from the docs slug
+    # (for example: 13-devops-iac -> labs/13-terraform-azure).
+    lab_paths = [path for path in LABS.glob(f"{number}-*") if path.is_dir()]
+    has_lab = any(any(item.is_file() for item in path.rglob("*")) for path in lab_paths)
 
     return ModuleAudit(
         number=number,
@@ -45,7 +48,7 @@ def audit_module(path: Path, number: str, slug: str) -> ModuleAudit:
         path=path,
         has_readme=readme.exists(),
         has_references=references.exists(),
-        has_lab=lab_path.exists() and any(lab_path.rglob("*")),
+        has_lab=has_lab,
         has_exit_signal=contains_any(
             text,
             (

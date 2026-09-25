@@ -11,7 +11,7 @@ Học bằng **system thật, failure thật và evidence thật**. Repository n
 [Chọn lộ trình theo role →](00-roadmap/role-based-learning-paths.md){ .hero-button .hero-button-primary }
 [Học bằng Checkout system →](00-roadmap/example-first-learning-path.md){ .hero-button }
 [Master Roadmap →](00-roadmap/master-roadmap.md){ .hero-button }
-[Quality Review →](00-roadmap/repository-quality-review-2026-08-28.md){ .hero-button }
+[Repository Health →](00-roadmap/repository-health.md){ .hero-button }
 
 </div>
 
@@ -337,11 +337,21 @@ ADR + cost + migration trigger
 
 ### Quan trọng: content depth != runnable lab
 
-Dedicated executable labs hiện có cho Modules **01–04** và **Kubernetes core (15)**. Nhiều module còn lại đã có deep guided exercises/failure drills nhưng chưa có committed runnable lab tương ứng.
+Dedicated executable labs hiện có cho:
 
-Đây vẫn là backlog chính tiếp theo, không được che bằng chữ “Done”.
+```text
+labs/01-computer-science
+labs/02-linux-git-networking
+labs/03-dotnet
+labs/04-backend
+labs/13-terraform-azure
+labs/15-kubernetes
+labs/19-ai-engineering
+```
 
-→ [Repository Quality Review — 2026-08-28](00-roadmap/repository-quality-review-2026-08-28.md)
+Nghĩa là Foundations/Backend core, Terraform + Azure IaC baseline, Kubernetes core và Production AI/MEAI đã có executable evidence. SQL/API/ASP.NET/Testing, Security/Performance/Redis/Docker, Distributed/Microservices và Coding Agents vẫn là các vùng cần integrated runnable labs tiếp theo.
+
+→ [Repository Health — current](00-roadmap/repository-health.md)
 
 ---
 
@@ -374,7 +384,7 @@ Problem
 - [Concept Cards](00-roadmap/concept-cards.md)
 - [Practical Mini-Labs](00-roadmap/practical-mini-labs.md)
 - [Technology Baseline](00-roadmap/technology-baseline.md)
-- [Repository Quality Review](00-roadmap/repository-quality-review-2026-08-28.md)
+- [Repository Health](00-roadmap/repository-health.md)
 
 <div class="architect-note" markdown>
 <strong>Architect / Senior / Production AI mindset</strong>
