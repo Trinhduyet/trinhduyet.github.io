@@ -219,3 +219,16 @@ Kubernetes đã được tách sang [Module 15](../15-kubernetes/README.md); Kub
 - Azure Landing Zones Terraform: https://azure.github.io/Azure-Landing-Zones/terraform/
 
 The new core-platform chapter treats control-plane/data-plane, governance, network/DNS, identity, reliability and cost as prerequisites before service selection.
+
+
+## Workload architecture / governance operations — refreshed 2026-09-25
+
+- Azure application architecture fundamentals: https://learn.microsoft.com/azure/architecture/guide/
+- Azure technology choices: https://learn.microsoft.com/azure/architecture/guide/technology-choices/technology-choices-overview
+- Compute decision guide: https://learn.microsoft.com/azure/architecture/guide/technology-choices/compute-decision-tree
+- Load balancing decision guide: https://learn.microsoft.com/azure/architecture/guide/technology-choices/load-balancing-overview
+- Azure Policy overview: https://learn.microsoft.com/azure/governance/policy/overview
+- Well-Architected Framework: https://learn.microsoft.com/azure/well-architected/what-is-well-architected-framework
+- Regions and availability zones: https://learn.microsoft.com/azure/well-architected/resiliency/regions-availability-zones
+
+New chapters connect service choice to requirements, five-pillar trade-offs, platform/workload ownership, private networking/DNS, operational readiness and FinOps.
