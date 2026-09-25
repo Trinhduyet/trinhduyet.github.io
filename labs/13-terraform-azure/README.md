@@ -19,8 +19,12 @@ Terraform Core
 The live production path is covered in:
 
 - docs/13-devops-iac/terraform-state-modules-and-drift.md
+- docs/13-devops-iac/terraform-language-lifecycle-and-validation.md
+- docs/13-devops-iac/terraform-team-workflows-and-state-recovery.md
 - docs/13-devops-iac/terraform-on-azure-production.md
 - docs/14-cloud/azure-core-platform-control-plane-and-governance.md
+- docs/14-cloud/azure-service-selection-and-workload-architecture.md
+- docs/14-cloud/azure-governance-security-and-operations-playbook.md
 
 ## Baseline
 
@@ -48,7 +52,7 @@ terraform -chdir=labs/13-terraform-azure test
 Expected final test shape:
 
 ~~~text
-Success! 1 passed, 0 failed.
+Success! 3 passed, 0 failed.
 ~~~
 
 ## Why no Azure login?
@@ -67,7 +71,8 @@ This proves:
 - variable contracts;
 - naming/tagging invariants;
 - resource relationships;
-- output/resource shape.
+- output/resource shape;
+- negative variable-contract behavior through `expect_failures`.
 
 It does **not** prove:
 
