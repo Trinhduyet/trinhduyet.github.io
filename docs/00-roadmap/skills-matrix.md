@@ -105,9 +105,9 @@ Reference < Guided < Deep
 | Area | Capability | Priority | Typical target | Content | Runnable lab | Evidence path |
 |---|---|---:|---:|---|---:|---|
 | DevOps | CI/CD/artifact promotion/rollback | P1 | 5 | Deep/Guided | No | [CI/CD](../13-devops-iac/ci-cd-artifacts-and-promotion.md) |
-| Terraform | state/plan/apply/modules/drift | P1 | 4 | Deep/Guided | No | [Terraform](../13-devops-iac/terraform-state-modules-and-drift.md) |
+| Terraform | HCL/graph/state/backend/modules/import/moved/drift/testing | P0/P1 | 4/5 | **Deep/Runnable** | **Yes — mock provider** | [Terraform](../13-devops-iac/terraform-state-modules-and-drift.md) + `labs/13-terraform-azure` |\n| Terraform + Azure | AzureRM/AzAPI/AVM, Blob state, OIDC, Policy/RBAC, multi-subscription, CI/CD | P0/P1 | 4/5 | **Deep/Runnable** | **Yes — baseline** | [Terraform on Azure](../13-devops-iac/terraform-on-azure-production.md) + `labs/13-terraform-azure` |
 | Delivery | testing → image → registry → K8s/GitOps | P1 | 4/5 | Deep/Guided | No | [Production Delivery](../13-devops-iac/devops-kubernetes-production-delivery.md) |
-| Azure | landing zone/resource hierarchy/governance | P1 | 4 | Deep handbook | No | [Azure foundations](../14-cloud/azure-foundations-resource-hierarchy-and-landing-zones.md) |
+| Azure | ARM/control-plane/data-plane/scopes/RBAC/Policy/locks/region-zone/network-DNS | P0 | 5 | **Deep/Active** | **Partial via Terraform lab** | [Azure core platform](../14-cloud/azure-core-platform-control-plane-and-governance.md) |\n| Azure | landing zone/resource hierarchy/governance | P1 | 4/5 | Deep handbook | No dedicated | [Azure foundations](../14-cloud/azure-foundations-resource-hierarchy-and-landing-zones.md) |
 | Azure | identity/network/private access/edge | P0/P1 | 5 | Deep handbook | No | [Network/Security handbook](../14-cloud/azure-production-handbook-network-security.md) |
 | Azure | compute service selection/config/cost | P0/P1 | 5 | Deep handbook | No | [Compute handbook](../14-cloud/azure-production-handbook-compute.md) |
 | Azure | SQL/storage/cache/messaging selection | P0/P1 | 5 | Deep handbook | No | [Data/Messaging handbook](../14-cloud/azure-production-handbook-data-messaging.md) |
@@ -185,7 +185,7 @@ Không gán trạng thái `Planned` cho capability đã có content sâu ở mod
 
 # Repository evidence gap
 
-Dedicated runnable lab directories now cover Modules **01–04, Kubernetes core (15), and Production AI core/MEAI (19)**. The highest-leverage backlog remains turning later deep content into executable integrated scenarios.
+Dedicated runnable lab directories now cover Modules **01–04, Terraform/Azure IaC baseline (13), Kubernetes core (15), and Production AI core/MEAI (19)**. The highest-leverage backlog remains turning later deep content into executable integrated scenarios.
 
 Priority:
 
