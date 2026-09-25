@@ -91,6 +91,11 @@ Well-Architected five pillars
 
 → [Azure Core Platform — Resource Model, Control Plane & Governance](azure-core-platform-control-plane-and-governance.md)
 
+Sau core platform, học cách ghép requirement thành workload architecture:
+
+→ [Azure Service Selection & Workload Architecture](azure-service-selection-and-workload-architecture.md)  
+→ [Azure Governance, Security & Operations Playbook](azure-governance-security-and-operations-playbook.md)
+
 Nếu provisioning bằng Terraform:
 
 → [Terraform on Azure — Production State, Identity, Modules & Delivery](../13-devops-iac/terraform-on-azure-production.md)
@@ -478,6 +483,8 @@ zone/region scenario when NFR requires
 | Guide | Mục tiêu |
 |---|---|
 | [Azure Core Platform](azure-core-platform-control-plane-and-governance.md) | ARM, control/data plane, scopes, RBAC/Policy/locks, region/zone, network/DNS, operations |
+| [Service Selection & Workload Architecture](azure-service-selection-and-workload-architecture.md) | requirement → compute/data/network/messaging choice → WAF trade-offs → ADR |
+| [Governance, Security & Operations Playbook](azure-governance-security-and-operations-playbook.md) | platform/workload ownership, RBAC, Policy, DNS/egress, Monitor, backup/DR, quota/FinOps |
 | [Cloud Primitives, Identity & Networking](cloud-primitives-identity-and-networking.md) | hiểu primitive cloud trước Azure product names |
 | [Azure Foundations & Landing Zones](azure-foundations-resource-hierarchy-and-landing-zones.md) | hierarchy, subscription, platform/application landing zones, governance |
 | [Terraform on Azure](../13-devops-iac/terraform-on-azure-production.md) | state backend, OIDC, AzureRM/AzAPI/AVM, modules, Policy/RBAC, CI/CD |
@@ -496,7 +503,9 @@ zone/region scenario when NFR requires
 Bạn hoàn thành Module 14 khi có thể lấy một backend .NET và tạo được:
 
 - architecture diagram + traffic path;
+- service-selection ADR reviewed against five Well-Architected pillars;
 - resource hierarchy/ownership;
+- platform-vs-workload governance boundary;
 - compute decision có tier/SKU;
 - database/storage/message decision có capacity model;
 - network + DNS + private/public boundary;
