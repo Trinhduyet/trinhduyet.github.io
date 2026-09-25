@@ -202,3 +202,20 @@ Kubernetes đã được tách sang [Module 15](../15-kubernetes/README.md); Kub
 - Azure SQL vCore/DTU and serverless purchasing models checked against current docs.
 - Azure Monitor logs ingestion remains a major cost dimension and requires explicit retention/sampling design.
 - Live pricing and regional availability must be checked again before provisioning.
+
+
+## Azure core platform — refreshed 2026-09-25
+
+- Azure landing zones: https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone
+- Azure landing zone design principles: https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-principles
+- Management groups: https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/resource-org-management-groups
+- Landing zone identity/access: https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/identity-access-landing-zones
+- Azure Well-Architected Framework: https://learn.microsoft.com/azure/well-architected/what-is-well-architected-framework
+- Regions and availability zones: https://learn.microsoft.com/azure/well-architected/resiliency/regions-availability-zones
+- Hub-spoke network: https://learn.microsoft.com/azure/networking/design-guide/hub-spoke
+- Private Link + DNS guidance: https://learn.microsoft.com/azure/architecture/networking/guide/private-link-virtual-wan-dns-guide
+- Azure DNS Private Resolver: https://learn.microsoft.com/azure/dns/private-resolver-endpoints-rulesets
+- Azure Verified Modules: https://azure.github.io/Azure-Verified-Modules/
+- Azure Landing Zones Terraform: https://azure.github.io/Azure-Landing-Zones/terraform/
+
+The new core-platform chapter treats control-plane/data-plane, governance, network/DNS, identity, reliability and cost as prerequisites before service selection.

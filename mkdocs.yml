@@ -182,7 +182,8 @@ nav:
       - DevOps & IaC:
           - Overview: 13-devops-iac/README.md
           - CI/CD & Artifacts: 13-devops-iac/ci-cd-artifacts-and-promotion.md
-          - Terraform State & Modules: 13-devops-iac/terraform-state-modules-and-drift.md
+          - Terraform State, Graph, Modules & Drift: 13-devops-iac/terraform-state-modules-and-drift.md
+          - Terraform on Azure: 13-devops-iac/terraform-on-azure-production.md
           - Safe Delivery & Recovery: 13-devops-iac/safe-delivery-drift-and-recovery.md
           - References: 13-devops-iac/references.md
       - Kubernetes:
@@ -197,6 +198,7 @@ nav:
 
   - Azure & Platform:
       - Overview: 14-cloud/README.md
+      - Core Platform, Control Plane & Governance: 14-cloud/azure-core-platform-control-plane-and-governance.md
       - Foundations & Landing Zones: 14-cloud/azure-foundations-resource-hierarchy-and-landing-zones.md
       - Cloud Primitives, Identity & Network: 14-cloud/cloud-primitives-identity-and-networking.md
       - Production Compute Handbook: 14-cloud/azure-production-handbook-compute.md

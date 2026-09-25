@@ -136,7 +136,8 @@ Kubernetes is one possible deployment/runtime platform
 | Guide | Priority | Bạn phải chứng minh được |
 |---|---:|---|
 | [CI/CD, Artifacts & Promotion](ci-cd-artifacts-and-promotion.md) | P0 | build once, immutable artifact, environment promotion |
-| [Terraform State, Modules & Drift](terraform-state-modules-and-drift.md) | P0 | repeatable infra, state ownership, drift reasoning |
+| [Terraform State, Modules & Drift](terraform-state-modules-and-drift.md) | P0 | HCL, graph, state, backends, modules, import/moved, drift, testing |
+| [Terraform on Azure](terraform-on-azure-production.md) | P0 | AzureRM/AzAPI/AVM, Blob state, OIDC, subscriptions, Policy/RBAC, CI/CD |
 | [Safe Delivery, Drift & Recovery](safe-delivery-drift-and-recovery.md) | P0 | safe rollout, rollback/forward, operational recovery |
 | [DevOps → Kubernetes Production Delivery](devops-kubernetes-production-delivery.md) | P0 | end-to-end pipeline from PR to Pods and recovery |
 
@@ -458,7 +459,19 @@ quality gates
 
 ## Phase 4 — IaC
 
-→ [Terraform State, Modules & Drift](terraform-state-modules-and-drift.md)
+~~~text
+Terraform language / graph
+→ state / backend / locking
+→ modules / import / moved / drift
+→ Terraform testing
+→ Terraform on Azure
+→ Blob remote state + OIDC
+→ Azure Policy/RBAC/Private Link boundaries
+~~~
+
+→ [Terraform State, Modules & Drift](terraform-state-modules-and-drift.md)  
+→ [Terraform on Azure](terraform-on-azure-production.md)  
+→ Runnable evidence: labs/13-terraform-azure
 
 ## Phase 5 — Kubernetes
 
@@ -510,7 +523,9 @@ Bạn hoàn thành Module 13 khi có thể:
 - connect Module 08 quality evidence into CI gates;
 - build once and promote immutable artifacts;
 - explain CI vs CD;
-- manage IaC state and drift;
+- explain Terraform configuration vs state vs remote reality;
+- manage remote state, locking, modules, imports/moves and drift;
+- design Azure Terraform authentication/state with OIDC and least privilege;
 - separate platform IaC from workload configuration;
 - explain why Kubernetes is a deployment/runtime target inside DevOps;
 - trace source → artifact → deployment → runtime;

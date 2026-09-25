@@ -72,6 +72,31 @@ Azure architecture tốt không phải là stack thật nhiều service. Mỗi l
 
 ---
 
+# Core platform foundation — học trước service catalog
+
+Trước khi chọn App Service, Azure SQL hay Front Door, cần hiểu:
+
+~~~text
+ARM control plane vs service data plane
+resource provider / resource ID / scopes
+RBAC vs Azure Policy vs resource locks
+region vs availability zone vs regional DR
+VNet / subnet / NSG / route / outbound
+public endpoint / service endpoint / private endpoint
+Private Link + DNS
+human vs CI vs runtime identity
+quota / capacity / service health
+Well-Architected five pillars
+~~~
+
+→ [Azure Core Platform — Resource Model, Control Plane & Governance](azure-core-platform-control-plane-and-governance.md)
+
+Nếu provisioning bằng Terraform:
+
+→ [Terraform on Azure — Production State, Identity, Modules & Delivery](../13-devops-iac/terraform-on-azure-production.md)
+
+---
+
 # 2. Azure service map — các dịch vụ backend thường dùng
 
 | Nhóm | Azure services chính | Bạn phải biết gì ngoài tên service? |
@@ -452,8 +477,10 @@ zone/region scenario when NFR requires
 
 | Guide | Mục tiêu |
 |---|---|
+| [Azure Core Platform](azure-core-platform-control-plane-and-governance.md) | ARM, control/data plane, scopes, RBAC/Policy/locks, region/zone, network/DNS, operations |
 | [Cloud Primitives, Identity & Networking](cloud-primitives-identity-and-networking.md) | hiểu primitive cloud trước Azure product names |
-| [Azure Foundations & Landing Zones](azure-foundations-resource-hierarchy-and-landing-zones.md) | hierarchy, subscription, policy, governance |
+| [Azure Foundations & Landing Zones](azure-foundations-resource-hierarchy-and-landing-zones.md) | hierarchy, subscription, platform/application landing zones, governance |
+| [Terraform on Azure](../13-devops-iac/terraform-on-azure-production.md) | state backend, OIDC, AzureRM/AzAPI/AVM, modules, Policy/RBAC, CI/CD |
 | [Compute Handbook](azure-production-handbook-compute.md) | cấu hình + cost App Service/Functions/Container Apps/VM |
 | [Data & Messaging Handbook](azure-production-handbook-data-messaging.md) | database/storage/cache/messaging + capacity/cost |
 | [Network & Security Handbook](azure-production-handbook-network-security.md) | edge, DNS, VNet, private connectivity, IAM/security |

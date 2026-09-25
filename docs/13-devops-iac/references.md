@@ -59,3 +59,33 @@ Roadmap.sh currently frames DevOps around collaboration/automation plus skills s
 - roadmap.sh DevOps/Kubernetes pages checked against current 2026 scope.
 - Official project documentation remains canonical for behavior/version-sensitive claims.
 - Claude artifact URL supplied by the learner could not be fetched from this environment; no claims were copied from it.
+
+
+## Terraform core — refreshed 2026-09-25
+
+- Terraform language: https://developer.hashicorp.com/terraform/language
+- Terraform state: https://developer.hashicorp.com/terraform/language/state
+- State locking: https://developer.hashicorp.com/terraform/language/state/locking
+- Backends: https://developer.hashicorp.com/terraform/language/backend
+- AzureRM backend: https://developer.hashicorp.com/terraform/language/backend/azurerm
+- Dependency lock file: https://developer.hashicorp.com/terraform/language/files/dependency-lock
+- Modules: https://developer.hashicorp.com/terraform/language/modules
+- Import: https://developer.hashicorp.com/terraform/language/import
+- moved block: https://developer.hashicorp.com/terraform/language/block/moved
+- Terraform tests: https://developer.hashicorp.com/terraform/language/tests
+- Provider mocking: https://developer.hashicorp.com/terraform/language/tests/mocking
+- Terraform releases: https://github.com/hashicorp/terraform/releases
+
+Current stable baseline verified for the repository: Terraform 1.16.4. Terraform 1.17 is prerelease at the verification date.
+
+## Terraform on Azure
+
+- AzureRM provider: https://registry.terraform.io/providers/hashicorp/azurerm/latest
+- AzureRM releases: https://github.com/hashicorp/terraform-provider-azurerm/releases
+- Azure Terraform documentation: https://learn.microsoft.com/en-us/azure/developer/terraform/
+- GitHub Actions OIDC + Terraform on Azure sample: https://learn.microsoft.com/en-us/samples/azure-samples/github-terraform-oidc-ci-cd/github-terraform-oidc-ci-cd/
+- Azure Verified Modules: https://azure.github.io/Azure-Verified-Modules/
+- AVM Terraform solution development: https://azure.github.io/Azure-Verified-Modules/usage/solution-development/terraform/
+- Azure Landing Zones — Terraform: https://azure.github.io/Azure-Landing-Zones/terraform/
+
+AzureRM stable release verified for examples: 5.6.0.
