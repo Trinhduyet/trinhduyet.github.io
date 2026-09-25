@@ -16,6 +16,11 @@ HIGH_LEVEL_STATUS = [
     DOCS / "00-roadmap" / "repository-health.md",
 ]
 
+CURRENT_ENTRY_PAGES = [
+    DOCS / "index.md",
+    DOCS / "00-roadmap" / "master-roadmap.md",
+]
+
 REQUIRED_NAV = {
     "00-roadmap/repository-health.md",
     "00-roadmap/technology-baseline.md",
@@ -73,10 +78,10 @@ def main() -> int:
             if lab not in text:
                 errors.append(f"{status_file.relative_to(ROOT)} does not mention current lab: {lab}")
 
-    high_level_text = "\n".join(
-        path.read_text(encoding="utf-8") for path in HIGH_LEVEL_STATUS
+    current_entry_text = "\n".join(
+        path.read_text(encoding="utf-8") for path in CURRENT_ENTRY_PAGES
     )
-    if "repository-quality-review-2026-08-28.md" in high_level_text:
+    if "repository-quality-review-2026-08-28.md" in current_entry_text:
         errors.append(
             "current high-level status pages still link the historical 2026-08-28 review; "
             "link repository-health.md instead"
