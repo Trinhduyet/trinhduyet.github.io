@@ -90,6 +90,9 @@ jobs:
       - name: Audit learning quality and runnable evidence
         run: python scripts/audit-learning-quality.py
 
+      - name: Audit roadmap, navigation and evidence consistency
+        run: python scripts/audit-site-consistency.py
+
       - name: Normalize legacy SVG text bounds
         run: python scripts/normalize-diagrams.py
 
@@ -114,11 +117,19 @@ jobs:
           critical=(
             site/index.html
             site/00-roadmap/master-roadmap/index.html
+            site/00-roadmap/repository-health/index.html
+            site/00-roadmap/technology-baseline/index.html
             site/03-dotnet/index.html
             site/04-backend/index.html
+            site/13-devops-iac/terraform-language-lifecycle-and-validation/index.html
+            site/13-devops-iac/terraform-team-workflows-and-state-recovery/index.html
             site/14-cloud/index.html
+            site/14-cloud/azure-service-selection-and-workload-architecture/index.html
+            site/14-cloud/azure-governance-security-and-operations-playbook/index.html
+            site/15-kubernetes/index.html
             site/17-distributed-systems/index.html
             site/19-ai-engineering/index.html
+            site/21-ai-coding-agents/index.html
             site/24-system-design/index.html
             site/25-software-architecture/index.html
           )
