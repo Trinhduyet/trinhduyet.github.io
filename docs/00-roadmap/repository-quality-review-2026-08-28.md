@@ -1,5 +1,7 @@
 # Repository Quality Review — 2026-08-28
 
+> **Historical snapshot.** Current repository maturity, runnable labs and version status live at [Repository Health](repository-health.md). This page is preserved to show what changed over time.
+
 > Scope: toàn bộ learning system trong `docs/`, executable evidence trong `labs/`, roadmap/navigation và documentation CI.
 
 Review này không chấm chất lượng bằng số trang. Nó hỏi: **người học có biết bắt đầu đâu, hiểu đúng mental model, áp dụng được vào system thật, debug được failure và có evidence để biết mình đã học chưa?**
