@@ -155,7 +155,10 @@ Sau đó:
 
 ```text
 13 DevOps / CI/CD / IaC
+→ Terraform language/lifecycle
+→ Terraform team/state recovery
 → 14 Azure / Platform
+→ service selection + governance/operations
 → 15 Kubernetes
 ```
 
@@ -198,8 +201,12 @@ Git SHA
 → rollback/recovery
 ```
 
-Recommended integration guide:
-[DevOps → Kubernetes Production Delivery](../13-devops-iac/devops-kubernetes-production-delivery.md).
+Recommended depth guides:
+
+- [Terraform Language, Lifecycle & Validation](../13-devops-iac/terraform-language-lifecycle-and-validation.md)
+- [Terraform Team Workflow & State Recovery](../13-devops-iac/terraform-team-workflows-and-state-recovery.md)
+- [Terraform on Azure](../13-devops-iac/terraform-on-azure-production.md)
+- [DevOps → Kubernetes Production Delivery](../13-devops-iac/devops-kubernetes-production-delivery.md)
 
 ---
 
@@ -299,12 +306,13 @@ Backend + SQL + API
 
 ```text
 14 Azure Overview
+→ Core platform / control plane / governance
 → Resource hierarchy / Landing Zones
+→ Service Selection & Workload Architecture
+→ Governance, Security & Operations
 → Identity / Network / Private access
-→ Compute selection
-→ Data / Messaging selection
-→ Operations / Cost
-→ Reliability / DR
+→ Compute + Data + Messaging handbooks
+→ Reliability / DR / Cost
 → .NET Reference Architecture
 ```
 
@@ -536,4 +544,4 @@ Nếu không trả lời được, quay lại một scenario cụ thể thay vì
 - [Human Learning Mode](human-learning-mode.md)
 - [Example-First Learning Path](example-first-learning-path.md)
 - [Learning Quality Standard](learning-quality-standard.md)
-- [Repository Quality Review](repository-quality-review-2026-08-28.md)
+- [Repository Health](repository-health.md)
