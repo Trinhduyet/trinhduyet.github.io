@@ -12,7 +12,7 @@
 | SQL Server | **SQL Server 2025** | latest CU listed by Microsoft: **CU8 / August 2026** | 2026-08-28 | [SQL Server latest updates](https://learn.microsoft.com/en-us/troubleshoot/sql/releases/download-and-install-latest-updates) |
 | Docker Engine | **29.x** | documented latest 29.x patch: `29.7.2` | 2026-08-28 | [Docker Engine 29 release notes](https://docs.docker.com/engine/release-notes/29/) |
 | Kubernetes | **1.37 concepts/API line for new upstream docs** | upstream `1.37.0` released 2026-08-26; managed-provider support may lag | 2026-08-28 | [Kubernetes 1.37](https://kubernetes.io/releases/1.37/) · [release announcement](https://kubernetes.io/blog/2026/08/26/kubernetes-v1-37-release/) |
-| Terraform | **1.16.x** for new docs; existing labs/config must be compatibility-tested before bump | stable `1.16.0` released 2026-08-26; 1.17 is prerelease | 2026-08-28 | [Terraform releases](https://github.com/hashicorp/terraform/releases) |
+| Terraform | **1.16.x** for new docs/labs | latest stable `1.16.4`; 1.17 remains prerelease | 2026-09-25 | [Terraform releases](https://github.com/hashicorp/terraform/releases) |\n| AzureRM Terraform Provider | **5.x** | latest stable verified `5.6.0`; 5.x is a major line and 4.x upgrades require review | 2026-09-25 | [AzureRM releases](https://github.com/hashicorp/terraform-provider-azurerm/releases) |
 | Redis Open Source | **8.10.x** | observed stable `8.10.0` | 2026-08-28 | [Redis releases](https://github.com/redis/redis/releases) · [Redis docs](https://redis.io/docs/latest/) |
 | OpenTelemetry .NET | **1.17.x** | `core-1.17.0` remains latest stable release signal | 2026-08-28 | [OpenTelemetry .NET releases](https://github.com/open-telemetry/opentelemetry-dotnet/releases) |
 | Microsoft.Extensions.AI | **10.9.x** | NuGet stable/current `10.9.0`; Module 19 lab pins `10.9.0` | 2026-09-03 | [Microsoft.Extensions.AI](https://www.nuget.org/packages/Microsoft.Extensions.AI) · [.NET AI docs](https://learn.microsoft.com/en-us/dotnet/ai/) |
@@ -144,7 +144,7 @@ The 2026-08-11 snapshot is now stale in several places:
 EF Core    10.0.10 → 10.0.11 stable
 SQL 2025   CU7      → CU8 listed by Microsoft
 Kubernetes 1.36.x   → upstream 1.37.0 current
-Terraform  1.15.x   → 1.16.0 stable
+Terraform  1.15.x   → 1.16.4 stable (1.17 prerelease)
 MEAI       10.8.x   → 10.9.0 stable/current
 ```
 
