@@ -1,27 +1,45 @@
-# Azure Cloud — .NET workload design
+# Microsoft Azure — từ API deployment đến platform decisions
 
-## Chọn compute theo bài toán
+<div class="lesson-meta"><span>Azure Compute</span><span>Identity / Network</span><span>Data / Messaging</span><span>Reliability / Cost</span></div>
 
-| Dịch vụ | Hợp lý khi | Điểm đánh đổi |
+[Bắt đầu với 9 câu Azure / Distributed →](../05-interview-preparation/distributed-cloud.md){ .hero-button .hero-button-primary }
+
+## Trả lời câu hỏi “chọn service nào?” bằng requirements
+
+| Workload | Lựa chọn cần cân nhắc | Không được bỏ qua |
 | --- | --- | --- |
-| App Service | HTTP API, ít platform operations | Ít orchestration control |
-| Container Apps | Container services/worker, event-driven autoscale | Cần quản lý revisions, ingress, scale rules |
-| Azure Functions | Trigger-based jobs | Cold start/runtime constraints tùy plan |
-| AKS | Complex multi-workload orchestration | Network/RBAC/upgrades/operational cost |
+| ASP.NET Core HTTP API | App Service, Container Apps, AKS | Ingress, auth, revisions, probes, cost |
+| Event-driven worker | Functions, Container Apps jobs/worker | Concurrency, retries, idempotency |
+| Durable business messaging | Azure Service Bus | Settlement/DLQ, lock, quotas |
+| High-volume stream | Event Hubs | Partition, consumer groups, lag, retention |
+| File/object data | Blob Storage | RBAC, SAS, retention, private endpoint |
+| API observability | Application Insights / Azure Monitor | Traces, dependency errors, ingestion cost |
 
-**Không** tự chọn Kubernetes vì có nhiều API.
+## Đọc sâu từ bộ tài liệu Azure hiện có
 
-## Kiến thức interview
+<div class="course-grid" markdown>
 
-- Entra ID: authentication vs authorization; token issuer/audience, scopes/roles.
-- Managed Identity: không cần hardcode client secret để truy cập Azure service; vẫn cần cấp RBAC.
-- Blob Storage: private access, SAS expiry, lifecycle và versioning.
-- Service Bus: queue/topics, DLQ, duplicates; Event Hubs: partitioned stream/consumer groups.
-- App Insights: distributed trace, dependency latency, errors và correlation.
-- Availability: zones, RTO/RPO, restore testing và cost.
+[**Service Selection** — lựa chọn compute, data, messaging theo workloads.](../../14-cloud/azure-service-selection-and-workload-architecture.md){ .course-card }
 
-## Case production
+[**Security & Identity** — Entra ID, Managed Identity, zero trust, networking.](../../14-cloud/azure-identity-networking-and-zero-trust.md){ .course-card }
 
-API Container Apps deploy thành công nhưng revision NotReady. Check startup/readiness, logs, ingress target, smoke tests; pipeline chỉ success khi application healthy. DB migrations phải backwards compatible để rollback an toàn.
+[**Operations, DR & Cost** — availability zones, recovery, cloud budget.](../../14-cloud/azure-reliability-observability-governance-and-cost.md){ .course-card }
 
-[Azure in-depth](../../14-cloud/README.md) · [Azure identity](../../14-cloud/azure-identity-networking-and-zero-trust.md) · [Reference Architecture](../../14-cloud/azure-dotnet-reference-architecture.md).
+[**Reference Architecture** — triển khai hệ thống .NET trên Azure với ranh giới rõ.](../../14-cloud/azure-dotnet-reference-architecture.md){ .course-card }
+
+</div>
+
+## Failure drill: revision NotReady
+
+Deploy CLI báo thành công nhưng API không Ready. Kiểm tra image, startup exception, readiness, ingress, dependencies và traffic. CI chỉ xanh nếu **revision thực sự healthy + smoke test**; có kế hoạch rollback khi DB migration không tương thích.
+
+[Đáp án DIST-07](../05-interview-preparation/distributed-cloud.md#dist-07-azure-container-apps-deploy-thanh-cong-nhung-revision-notready) · [DevOps track](../08-devops-platform-engineering/index.md).
+
+## 4 góc nhìn phỏng vấn
+
+- **Foundation:** Service Bus và Event Hubs khác nhau ở đâu?
+- **Applied:** Cấu hình Managed Identity/RBAC như thế nào?
+- **Advanced:** Xử lý duplicate, retries và monitoring workload event-driven?
+- **Architecture:** Compute selection, SLO, cost, availability zones, DR, team operations.
+
+**Sang bài khác:** [DevOps →](../08-devops-platform-engineering/index.md) · [Architecture →](../09-solution-architecture-leadership/index.md).
