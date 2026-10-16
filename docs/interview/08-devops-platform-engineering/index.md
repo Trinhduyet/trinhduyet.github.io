@@ -1,26 +1,40 @@
-# DevOps, Terraform & Kubernetes — phỏng vấn theo production lifecycle
+# DevOps, Terraform & Kubernetes — từ Commit tới Recovery
 
-## Từ Git commit đến live service
+<div class="lesson-meta"><span>CI/CD</span><span>Docker / Linux</span><span>Terraform</span><span>AKS / Kubernetes</span></div>
+
+[Bắt đầu với câu hỏi DevOps, Azure →](../05-interview-preparation/distributed-cloud.md){ .hero-button .hero-button-primary }
+
+## Production delivery mental model
 
 ```text
-Commit → tests + scan → immutable artifact → staging
-→ approved deploy → revision Ready → business smoke test
-→ traffic switch → telemetry → rollback gate
+Change / Pull request
+    ↓ quality gates (tests, static analysis, security)
+Build immutable image/artifact → Registry
+    ↓
+IaC plan/review + deployment
+    ↓ readiness & business smoke tests
+Promote traffic
+    ↓ metrics/traces, error budget
+Rollback or roll-forward + postmortem
 ```
 
-**CI green ≠ application ready**.
+Một pipeline GitLab CI hoặc Azure DevOps chạy xanh **không có nghĩa** revision mới phục vụ người dùng thành công.
 
-## Các chủ đề
+## Chọn bài theo vấn đề
 
-- Docker: multi-stage builds, image layers, resource limits, nonroot runtime.
-- GitLab CI/Azure DevOps: promotion, environments, secrets, approvals, artifact integrity.
-- Terraform: state/locking, plan, drift, module, provider upgrade, state recovery.
-- Kubernetes: Control Plane, Pods, Deployments, ReplicaSets, Services, probes, RBAC, HPA, PVC.
-- AKS: managed control plane, node pools, workload identity, network policies, operational ownership.
-- SRE: SLI/SLO, tracing, logs, metrics, incident runbook, postmortem.
+| Gặp vấn đề | Đọc sâu | Phỏng vấn cần chứng minh |
+| --- | --- | --- |
+| Build image quá lớn/lộ secret | [Docker](../../12-docker/README.md) | Multi-stage, immutable digest, nonroot |
+| CI green nhưng API lỗi | [CI/CD](../../13-devops-iac/ci-cd-artifacts-and-promotion.md) | Readiness, rollout, rollback |
+| Terraform muốn replace resource chứa data | [State/Drift](../../13-devops-iac/terraform-state-modules-and-drift.md) | Không apply mù, protect/recovery |
+| Pods Running nhưng 503 | [Kubernetes debugging](../../15-kubernetes/kubectl-debugging-and-ckad-practice.md) | Selector, EndpointSlices, readiness |
+| AKS tăng replicas không giảm latency | [AKS architecture](../../15-kubernetes/aks-on-azure-production-architecture.md) | Bottleneck, HPA, node capacity |
+| Alert 5xx tăng sau deploy | [Production troubleshooting](../../02-linux-git-networking/production-troubleshooting-foundations.md) | Incident triage, mitigation |
 
-## Interview case
+## 3 câu phỏng vấn thực tế
 
-Pods `Running`, Service trả 503. Kiểm tra selector, endpoints/EndpointSlices, readiness, ingress/service target, container listen address trước khi scale bừa. Nếu p95 tăng vì SQL lock, HPA tăng Pods có thể khiến tình hình tệ hơn.
+1. **Revision NotReady:** lệnh deploy trả exit 0, điều kiện CI success nào chưa đủ?
+2. **Service 503:** vì sao Running Pods không đồng nghĩa Ready Endpoints?
+3. **Terraform:** plan replace SQL Storage; người chịu trách nhiệm làm gì trước khi apply?
 
-[DevOps/IaC](../../13-devops-iac/README.md) · [Kubernetes](../../15-kubernetes/README.md) · [AKS](../../15-kubernetes/aks-on-azure-production-architecture.md).
+[Đáp án và follow-up](../05-interview-preparation/distributed-cloud.md) · [Mock Interview](../05-interview-preparation/mock-interview.md).
