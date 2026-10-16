@@ -4,8 +4,6 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-  schedule:
-    - cron: '17 2 * * *'  # Refresh external interview source daily (UTC)
 
 permissions:
   contents: read
@@ -85,21 +83,6 @@ jobs:
 
       - name: Install documentation dependencies
         run: python -m pip install -r requirements-docs.txt
-
-      - name: Fetch canonical interview handbook (sparse checkout)
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p .cache
-          git clone --depth 1 --filter=blob:none --sparse \
-            --branch docs/senior-dotnet-ir-interview-20261015 \
-            https://github.com/Trinhduyet/stock-ai.git .cache/stock-ai-interview
-          git -C .cache/stock-ai-interview sparse-checkout set docs/interview
-          python scripts/sync-interview.py .cache/stock-ai-interview
-          test -s docs/interview/index.md
-          test -s docs/interview/07-azure-cloud/index.md
-          test -s docs/interview/08-devops-platform-engineering/index.md
-          test -s docs/interview/09-solution-architecture-leadership/index.md
 
       - name: Audit portable documentation paths
         run: python scripts/audit-docs.py
