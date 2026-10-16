@@ -2,6 +2,21 @@
 
 <div class="lesson-meta"><span>Behavioral & HR</span><span>English example answers</span><span>STAR(R) · Evidence-first</span></div>
 
+**Thứ tự học cho doanh nghiệp Việt Nam:** hiểu và trả lời bằng tiếng Việt trước, giữ tiếng Anh như từ vựng/cấu trúc tham khảo. Trong vòng quốc tế, chuyển sang English answer examples khi được yêu cầu.
+
+### 8 câu hỏi HR thường gặp — đáp án mẫu bằng tiếng Việt
+
+| Câu hỏi | Cách trả lời ngắn, đúng trọng tâm |
+| --- | --- |
+| Giới thiệu bản thân? | Hiện tại làm gì → một kỹ năng mạnh/dự án liên quan → lý do phù hợp công việc. |
+| Vì sao muốn chuyển công việc? | Nói động cơ **thật**, liên kết hướng phát triển với yêu cầu JD, không nói xấu công ty cũ. |
+| Dự án khó nhất? | Nêu bài toán, phần **mình làm**, giải pháp và kết quả có thể xác minh. |
+| Điểm mạnh? | Chọn 1–2 điểm có ví dụ thực: phân tích SQL/API, xử lý lỗi hoặc phối hợp team. |
+| Điểm yếu? | Chỉ một điều có thật và kế hoạch khắc phục; đừng tự nhận kiến thức chưa có. |
+| Từng xảy ra xung đột kỹ thuật? | STAR(R): bối cảnh, trách nhiệm, cách trao đổi dựa vào evidence, outcome. |
+| Bạn đã thực sự lead team chưa? | Phân biệt review/mentoring với quản lý/estimate/technical ownership; chỉ nhận phần thật. |
+| Bạn muốn hỏi gì ở cuối phỏng vấn? | Hỏi về system challenges, SLO, ownership, expectations 90 ngày và quy trình review. |
+
 Những câu sau thường xuất hiện ở các vòng recruiter, hiring manager và behavioral interview. **Tất cả câu trả lời là template hoặc tình huống mô phỏng**; không phải kinh nghiệm đã được xác nhận của người đọc.
 
 ## Career & motivation
