@@ -1,29 +1,43 @@
-# Practical Labs — học bằng lỗi có kiểm soát
+# Practical Labs — không chỉ đọc câu trả lời
 
-**Đề bài thực hành** — không khẳng định đã chạy trong environment của người học.
+<div class="lesson-meta"><span>Executable evidence</span><span>Failures & recovery</span><span>Không dùng dữ liệu nội bộ</span></div>
 
-## Lab A — SQL performance
+## Lab bắt đầu ngay
 
-Dựng bảng synthetic 100k+ rows, query theo tenant/time range, đo actual plan và `SET STATISTICS IO, TIME ON`, thêm composite index rồi so sánh. Test keyset pagination khi có duplicate timestamp.
+<div class="course-grid" markdown>
 
-## Lab B — ASP.NET Core resilience
+[**SQL Query Optimization** — script T-SQL đầy đủ tạo synthetic data, so index, keyset và execution plan.](sql-performance-lab.md){ .course-card }
 
-Minimal API + fake slow dependency; truyền CancellationToken, kiểm tra timeout và retry giới hạn. Load test bằng k6/JMeter; thu p95/p99, RPS và 5xx.
+[**.NET Runtime & Async** — chạy ví dụ trong module thực hành đã có trên website.](../../03-dotnet/README.md){ .course-card }
 
-## Lab C — Messaging failure
+[**Terraform + Azure** — runnable lab, format/validate/test theo pipeline website.](../../13-devops-iac/terraform-on-azure-production.md){ .course-card }
 
-Queue + consumer + local SQL; cố tình crash sau DB commit trước ACK, đảm bảo duplicate delivery không tạo duplicate business action.
+[**Kubernetes Debugging** — Deployment/Service/probes, wrong selector và recovery.](../../15-kubernetes/kubectl-debugging-and-ckad-practice.md){ .course-card }
 
-## Lab D — CI/CD and rollback
+</div>
 
-Build Docker image, release staging, cố tình readiness fail, xác minh deploy job báo fail. Luyện expand-contract migration với 2 app revisions.
+## Các bài guided practice chưa có code chạy sẵn
 
-## Lab E — Kubernetes debugging
+| Bài | Làm gì? | Đầu ra cần có |
+| --- | --- | --- |
+| HTTP cancellation | ASP.NET Core + fake slow dependency | Tracing, status, timeout contract |
+| Idempotent consumer | Message broker + SQL unique operation | Crash-after-commit test |
+| Deployment readiness | New revision fail startup | CI fail và rollback evidence |
+| Architecture review | Design 10k notifications | Diagram, assumptions, failure matrix, ADR |
 
-Deployment → ReplicaSet → Pods; thay sai selector Service để tạo 503, quan sát Ready endpoints rồi recover.
+**Guided ≠ Runnable.** Chỉ đánh dấu hoàn thành khi người học có logs, test, plan hoặc trace thực tế. Không chạy lệnh deploy/SQL DDL trên môi trường production.
 
-## Exit criteria
+## Báo cáo sau mỗi lab
 
-Mỗi lab cần: lệnh chạy, expected output, negative test, metrics/capture và giải thích trade-off. Không kết luận “pass” khi chưa thực sự chạy.
+```text
+Question / target behavior:
+Environment (versions):
+Commands or code:
+Expected:
+Observed:
+Failure injected:
+Recovery:
+Trade-off / next action:
+```
 
-[Existing runnable labs](../../00-roadmap/practical-mini-labs.md) · [Terraform delivery](../../13-devops-iac/devops-kubernetes-production-delivery.md).
+**Luyện trình bày:** [Mock Interview](../05-interview-preparation/mock-interview.md).
