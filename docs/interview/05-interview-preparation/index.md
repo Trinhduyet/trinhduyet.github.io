@@ -4,7 +4,7 @@
 
 **Ưu tiên phỏng vấn tại công ty Việt Nam:** giải thích bằng tiếng Việt, dùng thuật ngữ .NET tiếng Anh khi cần. Không yêu cầu học thuộc đáp án tiếng Anh; CV viết tiếng Anh vẫn phù hợp.
 
-[**96 câu hỏi theo JD Senior/Tech Lead**](senior-techlead-question-map.md) · [**10 tình huống Lead có đáp án**](techlead-scenarios.md).
+[**96 câu hỏi theo JD Senior/Tech Lead**](senior-techlead-question-map.md) · [**10 tình huống Lead có đáp án**](techlead-scenarios.md) · [**Checklist đánh giá mức sẵn sàng theo JD**](job-readiness-checklist.md).
 
 **Đây không còn là bảng câu hỏi chỉ có từ khóa.** Mỗi bài đưa ra short explanation, mechanism, trade-off, failure scenario hoặc follow-up, kèm liên kết đến tài liệu kiến thức chuyên sâu trên website.
 
