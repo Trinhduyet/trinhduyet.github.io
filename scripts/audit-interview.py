@@ -68,7 +68,7 @@ hr = INTERVIEW / "career" / "common-hr-questions.md"
 if not hr.is_file():
     errors.append("Missing common HR question bank")
 else:
-    hr_ids = re.findall(r"^###\\s+(HR-\\d{2})\\.", hr.read_text(encoding="utf-8"), re.MULTILINE)
+    hr_ids = re.findall(r"^###\s+(HR-\d{2})\.", hr.read_text(encoding="utf-8"), re.MULTILINE)
     if len(hr_ids) != 24 or len(set(hr_ids)) != 24:
         errors.append(f"Expected 24 unique HR questions, found {len(hr_ids)} / {len(set(hr_ids))}")
 
