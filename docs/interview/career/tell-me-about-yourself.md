@@ -4,6 +4,16 @@
 
 **Khác biệt quan trọng:** “Tell me about yourself” không đồng nghĩa “Walk me through your entire CV.” Hãy nhấn mạnh vai trò hiện tại, kinh nghiệm liên quan nhất và điều bạn mong muốn đóng góp.
 
+## Câu trả lời tiếng Việt — dùng cho phỏng vấn trong nước
+
+**Ví dụ 60–90 giây (mẫu giả định, cần thay bằng kinh nghiệm thật):**
+
+“Tôi là lập trình viên backend .NET, tập trung phát triển API bằng C# và ASP.NET Core. Trong công việc gần đây, tôi tham gia thiết kế và tối ưu API, xử lý dữ liệu trên SQL Server và tích hợp các dịch vụ cloud/messaging. Trước đó, tôi từng phát triển các ứng dụng nghiệp vụ và làm việc với các hệ thống tích hợp bên thứ ba. Tôi thường phối hợp với team để review code, kiểm thử và xử lý các vấn đề về hiệu năng hoặc độ ổn định. Ở vị trí tiếp theo, tôi muốn tiếp tục phát triển backend chất lượng cao, đồng thời đóng góp nhiều hơn vào các quyết định kỹ thuật phù hợp với nhu cầu dự án.”
+
+**Lưu ý:** Đây là mẫu công khai không phải CV cá nhân. Không nói đã mentor/design/lead nếu chưa có bằng chứng. Có thể rút xuống 45–60 giây cho vòng HR.
+
+**Mẫu tiếng Anh ở phần dưới chỉ dành cho CV profile, HR quốc tế hoặc vòng English screening khi JD yêu cầu**; không phải câu bắt buộc học thuộc cho doanh nghiệp Việt Nam.
+
 ## Khung trả lời
 
 | Phần | Cần nói | Tránh |
