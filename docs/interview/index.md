@@ -4,7 +4,7 @@
 
 # Luyện phỏng vấn kỹ thuật, từ câu hỏi đến quyết định thiết kế
 
-Không giới hạn một chức danh hay số năm kinh nghiệm. Học từ **C# / SQL / API** đến **Azure, DevOps, Distributed Systems, System Design và Technical Leadership** — với câu trả lời có cơ chế, failure modes, ví dụ và follow-up.
+**Phỏng vấn tại công ty Việt Nam: chuẩn bị trả lời bằng tiếng Việt.** CV vẫn có thể viết bằng tiếng Anh theo chuẩn tuyển dụng; chỉ luyện trả lời tiếng Anh khi nhà tuyển dụng hoặc dự án yêu cầu. Không giới hạn một chức danh hay số năm kinh nghiệm. Học từ **C# / SQL / API** đến **Azure, DevOps, Distributed Systems, System Design và Technical Leadership** — với câu trả lời có cơ chế, failure modes, ví dụ và follow-up.
 
 <div class="hero-actions" markdown>
 
@@ -21,6 +21,16 @@ Không giới hạn một chức danh hay số năm kinh nghiệm. Học từ **
   <div class="stat-card"><strong>3</strong><span>System Design cases có failure/trade-off</span></div>
   <div class="stat-card"><strong>4</strong><span>Góc nhìn Foundation → Architecture</span></div>
   <div class="stat-card"><strong>1</strong><span>Lab SQL độc lập, không dùng dữ liệu nội bộ</span></div>
+</div>
+
+## Câu hỏi Senior .NET và Tech Lead theo yêu cầu tuyển dụng
+
+<div class="course-grid" markdown>
+
+[**96 câu hỏi ưu tiên theo JD** — lộ trình 12 nhóm: C#, ASP.NET Core, SQL, messaging, security, Azure, DevOps, System Design, Tech Lead và HR.](05-interview-preparation/senior-techlead-question-map.md){ .course-card }
+
+[**10 tình huống Tech Lead có mẫu trả lời tiếng Việt** — estimate, phân tích requirements, design conflict, QA/security, mentoring, incident và rollout.](05-interview-preparation/techlead-scenarios.md){ .course-card }
+
 </div>
 
 ## Vòng giới thiệu và HR — chuẩn bị trước khi vào chuyên môn
