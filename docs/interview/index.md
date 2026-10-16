@@ -9,6 +9,7 @@ Không giới hạn một chức danh hay số năm kinh nghiệm. Học từ **
 <div class="hero-actions" markdown>
 
 [Bắt đầu với 36 câu có đáp án →](05-interview-preparation/index.md){ .hero-button .hero-button-primary }
+[Chuẩn bị giới thiệu CV & HR →](career/index.md){ .hero-button }
 [Luyện mock interview 60 phút →](05-interview-preparation/mock-interview.md){ .hero-button }
 [Thử một bài System Design →](09-solution-architecture-leadership/design-exercises.md){ .hero-button }
 
@@ -22,7 +23,21 @@ Không giới hạn một chức danh hay số năm kinh nghiệm. Học từ **
   <div class="stat-card"><strong>1</strong><span>Lab SQL độc lập, không dùng dữ liệu nội bộ</span></div>
 </div>
 
-## Chọn một chủ đề để học ngay
+## Vòng giới thiệu và HR — chuẩn bị trước khi vào chuyên môn
+
+<div class="course-grid" markdown>
+
+[**Tell Me About Yourself** — câu giới thiệu 30/60/90 giây, Present–Past–Future, tiếng Việt và tiếng Anh.](career/tell-me-about-yourself.md){ .course-card }
+
+[**Walk Through Your Resume** — kể hành trình công việc, dự án, trách nhiệm cá nhân và kết quả.](career/walk-through-resume.md){ .course-card }
+
+[**24 câu HR/Hiring Manager** — why change, why us, strengths, teamwork, conflict, salary và STAR(R).](career/common-hr-questions.md){ .course-card }
+
+[**English Speaking Practice** — luyện nói, cách nối ý, từ vựng interview và self-check.](career/english-speaking-practice.md){ .course-card }
+
+</div>
+
+## Chọn một chủ đề kỹ thuật để học ngay
 
 <div class="course-grid" markdown>
 
@@ -44,6 +59,7 @@ Không giới hạn một chức danh hay số năm kinh nghiệm. Học từ **
 
 | Bạn muốn làm được gì? | Lộ trình ngắn | Kiểm chứng |
 | --- | --- | --- |
+| Chuẩn bị vòng HR và kể CV | [Career Story & HR](career/index.md) → [English speaking](career/english-speaking-practice.md) | Có pitch 60 giây và 2 câu STAR thật |
 | Giải thích C#/.NET thật chắc | [C# & API questions](05-interview-preparation/dotnet-api.md) → [Runtime knowledge](../03-dotnet/README.md) | Giải thích async bằng thread/trace |
 | Debug API/SQL production | [SQL questions](05-interview-preparation/sql-data.md) → [Performance lab](06-practical-labs/sql-performance-lab.md) | Có execution plan và IO |
 | Vận hành Azure & DevOps | [Distributed/Azure](05-interview-preparation/distributed-cloud.md) → [Azure platform](../14-cloud/README.md) → [DevOps](../13-devops-iac/README.md) | Có rollout/failure/recovery plan |
