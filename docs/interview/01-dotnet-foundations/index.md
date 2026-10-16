@@ -1,23 +1,31 @@
-# .NET Foundations — C#, Runtime, ASP.NET Core
+# C# / .NET Backend — học đến đâu trả lời được đến đó
 
-**Goal:** Giải thích tại sao code hoạt động, làm được bài lab và điều tra được lỗi; không chỉ học thuộc định nghĩa.
+<div class="lesson-meta"><span>Runtime · ASP.NET Core · API</span><span>9 câu có lời giải</span></div>
 
-## Các chủ đề phải nắm
+[Bắt đầu với bộ câu hỏi .NET →](../05-interview-preparation/dotnet-api.md){ .hero-button .hero-button-primary }
 
-- Value/reference semantics, record/class/struct, generic collections, nullable reference types.
-- async/await, Task vs ValueTask, cancellation, ThreadPool starvation và deadlocks.
-- Garbage collection, allocation, IDisposable, memory leak, diagnostics.
-- ASP.NET Core pipeline, dependency injection lifetimes, middleware, options, authentication/authorization.
-- API contracts: REST, GraphQL, pagination, rate limiting, versioning và error behavior.
+## Bản đồ kiến thức
 
-## Phỏng vấn theo chiều sâu
+| Chủ đề | Cần hiểu thực sự | Bài chuyên sâu |
+| --- | --- | --- |
+| Type system | Value vs reference, boxing, record, nullable | [C# types](../../03-dotnet/csharp-types-generics-and-collections.md) |
+| Async/Concurrency | I/O vs CPU-bound, cancellation, ThreadPool | [Async](../../03-dotnet/async-await-cancellation-and-task-lifecycle.md) · [ThreadPool](../../03-dotnet/threadpool-concurrency-and-diagnostics.md) |
+| Memory/Resource | Allocation, GC, IDisposable, leaks | [GC](../../03-dotnet/gc-allocations-and-runtime-memory.md) |
+| ASP.NET Core | DI, middleware, hosting, auth, error handling | [Pipeline](../../07-aspnet-core/pipeline-hosting-and-configuration.md) |
+| API Design | HTTP semantics, idempotency, pagination, caching | [API contracts](../../06-api-design/http-resource-contracts-and-semantics.md) |
+| Quality | Unit/integration/contract/load tests | [Test strategy](../../08-testing-code-review/test-strategy-and-boundaries.md) |
 
-**Q: `async` có tạo thread mới không?** Không. `async/await` biểu diễn state machine; bất đồng bộ I/O thường giải phóng thread trong thời gian chờ. `Task.Run` chủ yếu dành cho CPU-bound work khi có lý do, không dùng để bọc SQL asynchronous.
+## Một câu hỏi mẫu
 
-**Follow-up:** CancellationToken phải được truyền xuống những layer nào? Vì sao `.Result`/blocking trên ASP.NET có thể gây thread pool starvation? Cách đo bằng `dotnet-counters`/trace?
+**`async/await` có tạo thread mới?** Không. Async I/O cho phép thread phục vụ request khác khi chờ I/O, thay vì blocking; task continuation chạy khi có kết quả. `Task.Run` dành cho workload CPU-bound được đo đạc, không phải cách cải thiện mọi SQL/HTTP call.
 
-**Q: Scoped service có thể inject vào singleton không?** Không nên giữ scoped dependency vượt scope request; cần tạo scope đúng và quản lý lifetime phù hợp. Kiểm tra ValidateScopes trong development.
+**Follow-up:** Dưới tải cao, sync-over-async có thể khiến ThreadPool queue tăng thế nào? Cần kiểm chứng bằng metrics/tracing thay vì suy đoán.
 
-## Đọc và làm
+## Học trong một buổi 45 phút
 
-[C# types](../../03-dotnet/csharp-types-generics-and-collections.md) · [Async](../../03-dotnet/async-await-cancellation-and-task-lifecycle.md) · [GC](../../03-dotnet/gc-allocations-and-runtime-memory.md) · [ASP.NET Core](../../07-aspnet-core/README.md).
+1. Chọn [NET-01, NET-02 và NET-03](../05-interview-preparation/dotnet-api.md), tự nói đáp án.
+2. Đọc bài async/DI, viết API có CancellationToken và Scoped DbContext.
+3. Cố tình timeout dependency; quan sát trace và phản ứng của API.
+4. Ghi một failure path và điều kiện để cải thiện.
+
+**Tiếp theo:** [SQL & EF Core](../02-data-and-distributed-systems/index.md) · [Mock Interview](../05-interview-preparation/mock-interview.md).
