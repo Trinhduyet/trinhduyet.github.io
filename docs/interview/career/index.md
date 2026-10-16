@@ -2,6 +2,8 @@
 
 <div class="lesson-meta"><span>Recruiter / HR</span><span>Hiring Manager</span><span>Vietnamese + English</span><span>Không giới hạn vai trò hay năm kinh nghiệm</span></div>
 
+**Mặc định trả lời tiếng Việt ở vòng phỏng vấn công ty Việt Nam** nếu không có yêu cầu khác. CV tiếng Anh là tài liệu ứng tuyển, không đồng nghĩa toàn bộ vòng phỏng vấn phải nói tiếng Anh. Với vị trí có khách hàng quốc tế, vẫn nên chuẩn bị bài giới thiệu ngắn và từ vựng tiếng Anh khi JD yêu cầu.
+
 Phỏng vấn backend không chỉ có C#, SQL và System Design. Ở những vòng đầu và cuối, interviewer thường muốn biết **bạn đã làm gì, đóng góp cá nhân là gì, vì sao quan tâm cơ hội này và phối hợp với người khác ra sao**.
 
 <div class="course-grid" markdown>
