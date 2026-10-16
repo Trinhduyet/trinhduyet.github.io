@@ -49,7 +49,7 @@ Nếu chưa biết chọn role nào, bắt đầu với **.NET Backend Engineer*
 
 <div class="course-grid" markdown>
 
-[**Interview Studio** — 36 câu có đáp án, SQL lab, System Design cases và mock interview.](interview/index.md){ .course-card }
+[**Interview Studio** — câu hỏi kỹ thuật có đáp án, giới thiệu CV, HR/STAR, English practice, SQL lab và mock interview.](interview/index.md){ .course-card }
 
 [**.NET Backend Engineering** — C#, async, SQL, API Design, ASP.NET Core và production request behavior.](03-dotnet/README.md){ .course-card }
 
