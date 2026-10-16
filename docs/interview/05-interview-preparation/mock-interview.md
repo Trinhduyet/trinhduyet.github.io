@@ -2,7 +2,7 @@
 
 <div class="lesson-meta"><span>Practical</span><span>Đánh giá dựa trên bằng chứng</span><span>Không cố định chức danh</span></div>
 
-Mỗi buổi có thể luyện theo năng lực hiện tại. Không cần chứng minh đã làm 8 hoặc 10 năm; cần giải thích đúng một quyết định kỹ thuật và khả năng xử lý khi thông tin chưa đủ.
+Với công ty Việt Nam, mặc định luyện nói **tiếng Việt** và thuật ngữ kỹ thuật quen dùng; chỉ chuyển sang tiếng Anh nếu JD/yêu cầu vòng phỏng vấn có kiểm tra tiếng Anh. Mỗi buổi có thể luyện theo năng lực hiện tại. Không cần chứng minh đã làm 8 hoặc 10 năm; cần giải thích đúng một quyết định kỹ thuật và khả năng xử lý khi thông tin chưa đủ.
 
 ## 1. Chọn phiên luyện
 
