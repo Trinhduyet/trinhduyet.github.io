@@ -9,6 +9,7 @@ Học bằng **system thật, failure thật và evidence thật**. Repository n
 <div class="hero-actions" markdown>
 
 [Chọn lộ trình theo role →](00-roadmap/role-based-learning-paths.md){ .hero-button .hero-button-primary }
+[Luyện phỏng vấn .NET →](interview/index.md){ .hero-button }
 [Học bằng Checkout system →](00-roadmap/example-first-learning-path.md){ .hero-button }
 [Master Roadmap →](00-roadmap/master-roadmap.md){ .hero-button }
 [Repository Health →](00-roadmap/repository-health.md){ .hero-button }
@@ -47,6 +48,8 @@ Nếu chưa biết chọn role nào, bắt đầu với **.NET Backend Engineer*
 ## Chọn track theo vấn đề đang giải quyết
 
 <div class="course-grid" markdown>
+
+[**Interview Studio** — 36 câu có đáp án, SQL lab, System Design cases và mock interview.](interview/index.md){ .course-card }
 
 [**.NET Backend Engineering** — C#, async, SQL, API Design, ASP.NET Core và production request behavior.](03-dotnet/README.md){ .course-card }
 
