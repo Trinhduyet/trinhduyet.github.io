@@ -16,6 +16,12 @@
 
 </div>
 
+## Câu hỏi giới thiệu bản thân và quá trình làm việc
+
+Ngoài 36 câu kỹ thuật, website đã có phần **[Career Story & HR Interview](../career/index.md)** gồm giới thiệu tiếng Việt/Anh, kể CV theo dự án, 24 câu hỏi HR có mẫu trả lời và bài luyện nói. Phần này **không** tính vào 36 câu technical answers.
+
+[Giới thiệu 60 giây](../career/tell-me-about-yourself.md) · [Walk through CV](../career/walk-through-resume.md) · [Common HR questions](../career/common-hr-questions.md).
+
 ## Chọn câu theo tình huống
 
 | Interviewer hỏi | Bài có đáp án |
