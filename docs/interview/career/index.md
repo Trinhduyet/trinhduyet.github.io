@@ -22,7 +22,7 @@ Phỏng vấn backend không chỉ có C#, SQL và System Design. Ở những v�
 | --- | --- | --- |
 | “Tell me about yourself” | [Present → Past → Future](tell-me-about-yourself.md) | 45–90 giây |
 | “Walk me through your CV” | [Career timeline](walk-through-resume.md) | 2–3 phút |
-| “What did **you** implement?” | [Ownership & project answers](walk-through-resume.md#project-ownership-va-bang-chung) | 60–120 giây |
+| “What did **you** implement?” | [Ownership & project answers](walk-through-resume.md) | 60–120 giây |
 | “Tell me about a conflict/mistake” | [STAR(R)](common-hr-questions.md) | 2–3 phút |
 | “Why leave / why us / salary?” | [Recruiter questions](common-hr-questions.md) | 30–90 giây |
 | English screening | [Speaking drills](english-speaking-practice.md) | 15–30 phút |
