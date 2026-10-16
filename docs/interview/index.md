@@ -31,6 +31,8 @@
 
 [**10 tình huống Tech Lead có mẫu trả lời tiếng Việt** — estimate, phân tích requirements, design conflict, QA/security, mentoring, incident và rollout.](05-interview-preparation/techlead-scenarios.md){ .course-card }
 
+[**Kiểm tra mức độ sẵn sàng theo JD** — Backend/Senior/Tech Lead, rubrics và bốn bài đánh giá thực hành.](05-interview-preparation/job-readiness-checklist.md){ .course-card }
+
 </div>
 
 ## Vòng giới thiệu và HR — chuẩn bị trước khi vào chuyên môn
