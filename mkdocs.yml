@@ -269,17 +269,28 @@ nav:
           - Safe Agentic Coding Workflow: 21-ai-coding-agents/safe-agentic-coding-workflow.md
           - References: 21-ai-coding-agents/references.md
 
-  - Interview Preparation:
-      - Overview & Learning Paths: interview/index.md
-      - .NET Foundations: interview/01-dotnet-foundations/index.md
-      - Data & Distributed Systems: interview/02-data-and-distributed-systems/index.md
-      - Investor Relations Case Studies: interview/03-investor-relations/index.md
-      - Fintech & Payment Case Studies: interview/04-lynkid-fintech-loyalty/index.md
-      - Question Bank & Mock Interviews: interview/05-interview-preparation/index.md
-      - Hands-on Labs: interview/06-practical-labs/index.md
-      - Azure Cloud: interview/07-azure-cloud/index.md
-      - DevOps & Kubernetes: interview/08-devops-platform-engineering/index.md
-      - Solution Architecture & Leadership: interview/09-solution-architecture-leadership/index.md
+  - Interview:
+      - Start Here: interview/index.md
+      - Question Bank:
+          - Overview — 36 answers: interview/05-interview-preparation/index.md
+          - C# / .NET & ASP.NET Core: interview/05-interview-preparation/dotnet-api.md
+          - SQL Server & EF Core: interview/05-interview-preparation/sql-data.md
+          - Distributed / Azure / DevOps: interview/05-interview-preparation/distributed-cloud.md
+          - Architecture & Leadership: interview/05-interview-preparation/architecture-leadership.md
+          - Mock Interview 30/60/90 min: interview/05-interview-preparation/mock-interview.md
+      - Practical:
+          - Labs & Evidence: interview/06-practical-labs/index.md
+          - SQL Performance Lab: interview/06-practical-labs/sql-performance-lab.md
+          - System Design Cases: interview/09-solution-architecture-leadership/design-exercises.md
+      - Study Tracks:
+          - .NET Foundations: interview/01-dotnet-foundations/index.md
+          - Data & Distributed: interview/02-data-and-distributed-systems/index.md
+          - Azure Cloud: interview/07-azure-cloud/index.md
+          - DevOps / Terraform / Kubernetes: interview/08-devops-platform-engineering/index.md
+          - Solution Architecture & Leadership: interview/09-solution-architecture-leadership/index.md
+      - Domain Case Studies:
+          - Investor Relations (simulation): interview/03-investor-relations/index.md
+          - Payment & Fintech (simulation): interview/04-fintech-payments/index.md
 
   - Resources:
       - Roadmap Overview: 00-roadmap/README.md
