@@ -1,28 +1,88 @@
-# Interview Preparation — .NET Backend, Cloud & Architecture
+<div class="hero-shell" markdown>
 
-Bộ tài liệu **công khai** để ôn tập, thực hành và luyện phỏng vấn Backend .NET, Senior Backend, Technical Lead và Solution Architect. Không giới hạn số năm kinh nghiệm, công ty hoặc một JD cụ thể.
+<span class="hero-kicker">Interview Studio · .NET Backend, Cloud & Architecture</span>
 
-> **Phạm vi:** Nội dung đã được biên tập lại theo kiến thức chung. Các tài liệu nghiên cứu source code, database và hệ thống nội bộ nằm ở kho lưu trữ private, **không được đồng bộ công khai**.
+# Luyện phỏng vấn kỹ thuật, từ câu hỏi đến quyết định thiết kế
 
-## Chọn tuyến học
+Không giới hạn một chức danh hay số năm kinh nghiệm. Học từ **C# / SQL / API** đến **Azure, DevOps, Distributed Systems, System Design và Technical Leadership** — với câu trả lời có cơ chế, failure modes, ví dụ và follow-up.
 
-| Mục tiêu | Bắt đầu | Tiếp theo |
+<div class="hero-actions" markdown>
+
+[Bắt đầu với 36 câu có đáp án →](05-interview-preparation/index.md){ .hero-button .hero-button-primary }
+[Luyện mock interview 60 phút →](05-interview-preparation/mock-interview.md){ .hero-button }
+[Thử một bài System Design →](09-solution-architecture-leadership/design-exercises.md){ .hero-button }
+
+</div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card"><strong>36</strong><span>Câu hỏi có lời giải và follow-up</span></div>
+  <div class="stat-card"><strong>3</strong><span>System Design cases có failure/trade-off</span></div>
+  <div class="stat-card"><strong>4</strong><span>Góc nhìn Foundation → Architecture</span></div>
+  <div class="stat-card"><strong>1</strong><span>Lab SQL độc lập, không dùng dữ liệu nội bộ</span></div>
+</div>
+
+## Chọn một chủ đề để học ngay
+
+<div class="course-grid" markdown>
+
+[**01 · C# / ASP.NET Core** — async/await, Task lifetime, DI, middleware, GraphQL, performance.](05-interview-preparation/dotnet-api.md){ .course-card }
+
+[**02 · SQL Server / EF Core** — query plan, index, keyset, isolation, concurrency, N+1.](05-interview-preparation/sql-data.md){ .course-card }
+
+[**03 · Distributed / Azure** — Event Hubs, Service Bus, Redis, Managed Identity, deployment failures.](05-interview-preparation/distributed-cloud.md){ .course-card }
+
+[**04 · Architecture / Leadership** — NFR, modular monolith, ADR, migration, incident leadership.](05-interview-preparation/architecture-leadership.md){ .course-card }
+
+[**05 · System Design Practice** — Notification 10k recipients, market-data read path, legacy migration.](09-solution-architecture-leadership/design-exercises.md){ .course-card }
+
+[**06 · SQL Performance Lab** — synthetic data, actual plan, composite index và keyset.](06-practical-labs/sql-performance-lab.md){ .course-card }
+
+</div>
+
+## Học theo vấn đề thay vì theo năm kinh nghiệm
+
+| Bạn muốn làm được gì? | Lộ trình ngắn | Kiểm chứng |
 | --- | --- | --- |
-| Củng cố C# và .NET | [.NET Foundations](01-dotnet-foundations/index.md) | [Data & Distributed](02-data-and-distributed-systems/index.md) |
-| Phỏng vấn Backend | [Questions & Mock](05-interview-preparation/index.md) | [Labs](06-practical-labs/index.md) |
-| Hiểu domain từ case mô phỏng | [IR case](03-investor-relations/index.md) | [Payment/Fintech](04-lynkid-fintech-loyalty/index.md) |
-| Cloud & production | [Azure](07-azure-cloud/index.md) | [DevOps/Kubernetes](08-devops-platform-engineering/index.md) |
-| System design / lead | [Architecture & Leadership](09-solution-architecture-leadership/index.md) | [Case studies](05-interview-preparation/index.md) |
+| Giải thích C#/.NET thật chắc | [C# & API questions](05-interview-preparation/dotnet-api.md) → [Runtime knowledge](../03-dotnet/README.md) | Giải thích async bằng thread/trace |
+| Debug API/SQL production | [SQL questions](05-interview-preparation/sql-data.md) → [Performance lab](06-practical-labs/sql-performance-lab.md) | Có execution plan và IO |
+| Vận hành Azure & DevOps | [Distributed/Azure](05-interview-preparation/distributed-cloud.md) → [Azure platform](../14-cloud/README.md) → [DevOps](../13-devops-iac/README.md) | Có rollout/failure/recovery plan |
+| Thiết kế kiến trúc hệ thống | [Architecture questions](05-interview-preparation/architecture-leadership.md) → [Design exercises](09-solution-architecture-leadership/design-exercises.md) | Trình bày NFR, diagram, alternatives |
+| Nâng kỹ năng Technical Lead | [Leadership scenarios](05-interview-preparation/architecture-leadership.md) → [Mock](05-interview-preparation/mock-interview.md) | ADR, review, incident communication |
 
-## Phương pháp học: một câu hỏi, bốn độ sâu
+### 30 phút đầu tiên nên làm gì?
 
-1. **Foundation:** định nghĩa, ví dụ nhỏ đúng.
-2. **Applied:** code/API/SQL, tình huống lỗi và tests.
-3. **Advanced:** concurrency, failure modes, performance, bảo mật, telemetry.
-4. **Architecture & Leadership:** alternatives, NFR, cost, vận hành, rủi ro, migration và giao tiếp.
+<div class="learning-path" markdown>
 
-**Không** coi 200 câu hỏi hoặc 25 đề System Design trong tài liệu riêng tư là 200/25 đáp án đã được chứng minh đúng. Trên website này, bài học công khai được dẫn về các chương kỹ thuật và bài lab tương ứng.
+**5 phút:** Chọn một câu trong [Question Bank](05-interview-preparation/index.md).
 
-## Bộ tài liệu nền đã có trên website
+**10 phút:** Tự trả lời không nhìn đáp án, nêu cơ chế và ví dụ.
 
-[.NET Runtime](../03-dotnet/README.md) · [SQL](../05-sql/README.md) · [API Design](../06-api-design/README.md) · [DevOps/Terraform](../13-devops-iac/README.md) · [Azure](../14-cloud/README.md) · [Kubernetes](../15-kubernetes/README.md) · [System Design](../24-system-design/README.md) · [Software Architecture](../25-software-architecture/README.md).
+**10 phút:** Đọc đáp án + theo follow-up đến bài kiến thức gốc.
+
+**5 phút:** Ghi một điều chưa biết và một cách kiểm chứng bằng code, SQL, logs hoặc diagram.
+
+</div>
+
+## Học sâu với các chương đang có trên website
+
+<div class="course-grid" markdown>
+
+[**.NET & ASP.NET Core** — runtime, memory, cancellation, middleware.](../03-dotnet/README.md){ .course-card }
+
+[**SQL & EF Core** — transaction, execution plan, query shape.](../05-sql/README.md){ .course-card }
+
+[**Azure Platform** — compute, data, identity, messaging, networking.](../14-cloud/README.md){ .course-card }
+
+[**DevOps / Terraform / Kubernetes** — CI/CD, IaC, cluster debugging.](../13-devops-iac/README.md){ .course-card }
+
+[**System Design** — workload, consistency, availability, scale, cost.](../24-system-design/README.md){ .course-card }
+
+[**Software Architecture** — C4, DDD, ADR, modularity, evolution.](../25-software-architecture/README.md){ .course-card }
+
+</div>
+
+!!! info "Phạm vi xuất bản"
+    Đây là tài liệu học **công khai, đã biên tập từ kiến thức chung và tình huống mô phỏng**. Repository nghiên cứu kỹ thuật nội bộ là private và không được sao chép tự động lên website. Bản công khai hiện có **36 câu trả lời chọn lọc**, không tuyên bố đã công bố/kiểm chứng toàn bộ ngân hàng 200 câu của tài liệu nghiên cứu.
+
+**Tiếp theo:** [Question Bank →](05-interview-preparation/index.md) · [Mock Interview →](05-interview-preparation/mock-interview.md)
