@@ -2,6 +2,8 @@
 
 <div class="lesson-meta"><span>English at work</span><span>15–30 phút/buổi</span><span>Communication first</span></div>
 
+**Không bắt buộc cho vòng phỏng vấn hoàn toàn bằng tiếng Việt.** Hãy giữ CV tiếng Anh chuẩn và luyện phần này khi JD, khách hàng quốc tế hoặc HR yêu cầu English communication.
+
 Mục tiêu là nói **đúng kỹ thuật, dễ hiểu và tự nhiên**, không đọc thuộc toàn bộ bài phỏng vấn. Khi chưa có trải nghiệm, dùng “I haven't worked with it in production yet” thay vì giả vờ thành thạo.
 
 ## Buổi 1 — Tell Me About Yourself (15 phút)
