@@ -14,7 +14,11 @@ Mỗi buổi có thể luyện theo năng lực hiện tại. Không cần chứ
 
 ## 2. Kịch bản 60 phút thực hành ngay
 
-### Phút 0–5 — Giới thiệu
+### Phút 0–5 — Giới thiệu (đọc mẫu trước khi luyện)
+
+Chuẩn bị [Tell Me About Yourself](../career/tell-me-about-yourself.md) và [Walk Through Resume](../career/walk-through-resume.md); nếu là vòng HR, thêm [24 common HR questions](../career/common-hr-questions.md).
+
+### Tình huống giới thiệu thực tế
 
 **Interviewer:** “Bạn hãy kể một tính năng backend bạn từng xây, giới hạn công việc của bạn là gì?”
 
@@ -78,6 +82,15 @@ Follow-up question for next session:
 
 Nói: “Tôi chưa trực tiếp vận hành AKS production; tôi đã thực hành Kubernetes Deployment/Service/probes và có thể giải thích các failure modes. Để production, tôi sẽ kiểm tra RBAC, network policies, upgrade/backup và đội ngũ vận hành.” Không biến kiến thức lab thành ownership production.
 
-## 6. Bộ đề dùng lại
+## 6. Luyện riêng HR / Hiring Manager trong 30 phút
+
+- 5 phút: giới thiệu bản thân Present → Past → Future.
+- 10 phút: đi qua CV và project ownership.
+- 10 phút: 2 câu STAR về teamwork, conflict, mistake hoặc failure (phải có sự kiện thật).
+- 5 phút: why us, định hướng, và hỏi ngược interviewer.
+
+Chi tiết: [Career & HR](../career/index.md) · [Speaking Practice](../career/english-speaking-practice.md).
+
+## 7. Bộ đề dùng lại
 
 [C# / API](dotnet-api.md) · [SQL/EF](sql-data.md) · [Azure/Distributed](distributed-cloud.md) · [Architecture/Leadership](architecture-leadership.md) · [Design exercise](../09-solution-architecture-leadership/design-exercises.md).
