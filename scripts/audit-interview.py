@@ -26,8 +26,8 @@ prohibited = [
 ]
 errors: list[str] = []
 files = sorted(INTERVIEW.rglob("*.md"))
-if len(files) < 18:
-    errors.append(f"Expected >=18 interview pages, found {len(files)}")
+if len(files) < 23:
+    errors.append(f"Expected >=23 interview pages, found {len(files)}")
 
 for file in files:
     content = file.read_text(encoding="utf-8")
@@ -64,6 +64,19 @@ for filename, (prefix, expected) in expected_question_counts.items():
     if len(ids) != expected or len(set(ids)) != expected:
         errors.append(f"{filename}: expected {expected} unique IDs, got {len(ids)} / {len(set(ids))}")
 
+hr = INTERVIEW / "career" / "common-hr-questions.md"
+if not hr.is_file():
+    errors.append("Missing common HR question bank")
+else:
+    hr_ids = re.findall(r"^###\\s+(HR-\\d{2})\\.", hr.read_text(encoding="utf-8"), re.MULTILINE)
+    if len(hr_ids) != 24 or len(set(hr_ids)) != 24:
+        errors.append(f"Expected 24 unique HR questions, found {len(hr_ids)} / {len(set(hr_ids))}")
+
+for required in ("index.md", "tell-me-about-yourself.md", "walk-through-resume.md",
+                 "common-hr-questions.md", "english-speaking-practice.md"):
+    if not (INTERVIEW / "career" / required).is_file():
+        errors.append(f"Missing Career / HR page: {required}")
+
 site = MKDOCS.read_text(encoding="utf-8")
 for target in set(re.findall(r":\s+(interview/[0-9a-zA-Z_\-/.]+\.md)\s*$", site, re.MULTILINE)):
     if not (DOCS / target).is_file():
@@ -74,4 +87,4 @@ if errors:
         print("::error::" + issue, file=sys.stderr)
     raise SystemExit(1)
 
-print(f"Interview audit passed: {len(files)} pages; 36 unique answers; local links and nav targets verified.")
+print(f"Interview audit passed: {len(files)} pages; 36 technical answers + 24 HR answers; local links and nav targets verified.")
