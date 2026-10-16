@@ -269,6 +269,18 @@ nav:
           - Safe Agentic Coding Workflow: 21-ai-coding-agents/safe-agentic-coding-workflow.md
           - References: 21-ai-coding-agents/references.md
 
+  - Interview Preparation:
+      - Overview & Learning Paths: interview/index.md
+      - .NET Foundations: interview/01-dotnet-foundations/index.md
+      - Data & Distributed Systems: interview/02-data-and-distributed-systems/index.md
+      - Investor Relations Case Studies: interview/03-investor-relations/index.md
+      - Fintech & Payment Case Studies: interview/04-lynkid-fintech-loyalty/index.md
+      - Question Bank & Mock Interviews: interview/05-interview-preparation/index.md
+      - Hands-on Labs: interview/06-practical-labs/index.md
+      - Azure Cloud: interview/07-azure-cloud/index.md
+      - DevOps & Kubernetes: interview/08-devops-platform-engineering/index.md
+      - Solution Architecture & Leadership: interview/09-solution-architecture-leadership/index.md
+
   - Resources:
       - Roadmap Overview: 00-roadmap/README.md
       - Historical Quality Review — 2026-08-28: 00-roadmap/repository-quality-review-2026-08-28.md
