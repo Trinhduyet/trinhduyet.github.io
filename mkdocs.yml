@@ -279,6 +279,8 @@ nav:
           - English Speaking Practice: interview/career/english-speaking-practice.md
       - Question Bank:
           - Overview — 36 answers: interview/05-interview-preparation/index.md
+          - 96 JD-aligned Questions: interview/05-interview-preparation/senior-techlead-question-map.md
+          - 10 Tech Lead Scenarios: interview/05-interview-preparation/techlead-scenarios.md
           - C# / .NET & ASP.NET Core: interview/05-interview-preparation/dotnet-api.md
           - SQL Server & EF Core: interview/05-interview-preparation/sql-data.md
           - Distributed / Azure / DevOps: interview/05-interview-preparation/distributed-cloud.md
