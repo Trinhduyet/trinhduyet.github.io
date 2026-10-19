@@ -1,129 +1,243 @@
-# .NET Solution Architect — Practical System Design Cases
+# Case Study .NET Solution Architect — Tài chính, Loyalty, Booking và Chứng khoán
 
-> [Competency map](solution-architect-dotnet-roadmap.md) · [Architecture Review Playbook](architecture-review-playbook.md)
+> [← Lộ trình học](solution-architect-dotnet-roadmap.md) · [Architecture Review](architecture-review-playbook.md)
 
-## 1. Four cases, different business invariants
+**Mục tiêu:** hiểu vì sao cùng một bộ kỹ thuật SQL Transaction, Atomic Update, Unique Constraint, Idempotency, Outbox/Inbox và Reconciliation lại được triển khai khác nhau tùy nghiệp vụ. Ví dụ dùng **ASP.NET Core + EF Core + SQL Server + Azure Service Bus**.
 
-| Domain | Resource | Invariant | Main failure to design for | Recovery |
+## 1. So sánh nghiệp vụ trước khi chọn công nghệ
+
+| Tiêu chí | Tài chính (Financial) | Điểm thưởng (Loyalty) | Đặt chỗ (Booking) | Đặt lệnh chứng khoán (OMS) |
 |---|---|---|---|---|
-| Financial Wallet / Transfer | Money / ledger | Never spend above available; balanced ledger | Debit committed, external payout unknown | Query provider + reconciliation, reversal entries when appropriate |
-| Loyalty Redemption | Points / buckets / voucher | Never redeem points twice; expiry respected | Points reserved, voucher provider timed out | Verify voucher, issue or release points idempotently |
-| Booking / Ticketing | Seat, room, timeslot | One active exclusive allocation per capacity unit | Payment succeeds after hold expiry | Verify ownership before confirmation; refund or alternative |
-| Securities Order Management | Buying power, order, execution | No double reservation; no duplicate exchange submission | Gateway timed out after sending order | Order ID correlation, exchange status reconciliation |
+| Tài nguyên | Tiền và sổ cái | Điểm, lô điểm, voucher | Ghế, phòng, slot | Sức mua, lệnh, khớp lệnh |
+| Bất biến phải bảo vệ | Không chi vượt; ledger cân đối | Không đổi vượt điểm | Không cấp trùng slot độc quyền | Không phong tỏa tiền hai lần; không gửi lệnh trùng |
+| Tính nhất quán mạnh | Ghi tiền và ledger | Trừ/giữ điểm | Giữ/confirm slot | Phong tỏa sức mua và order state |
+| Có thể eventual consistency | Báo cáo, notification | Voucher/notification | Email, tìm kiếm | Portfolio projection, bảng tổng hợp |
+| Trạng thái không xác định | Bank/provider timeout | Voucher provider timeout | Payment callback trễ | Exchange gateway timeout |
+| Phục hồi | Đối soát giao dịch, bút toán điều chỉnh | Đối soát điểm/voucher | Kiểm tra thanh toán, refund | Tra cứu trạng thái lệnh và khớp |
 
-**Local atomicity** and **distributed convergence** are different goals. SQL Transaction + Atomic Update + Unique Constraint guard local state; idempotency and Outbox/Inbox reduce duplicate/lost effects; reconciliation resolves unknown or divergent external states.
+**Bất biến (invariant)** là điều kiện nghiệp vụ luôn phải đúng dù có concurrency, retry hoặc crash. Không thể chọn kiến trúc trước khi xác định bất biến.
 
-## 2. Financial: reserve funds in SQL Server
+## 2. Sáu lớp bảo vệ phối hợp như thế nào?
 
-Example assumes `CashAccounts(AccountId, AvailableBalance, ReservedBalance)`; add real ledger records and reservation uniqueness within the **same** database transaction:
+```text
+Client POST /operations + Idempotency-Key
+              |
+              v
+ASP.NET Core: validate + payload hash
+              |
+              v
+SQL TRANSACTION
+  1. Claim unique idempotency key
+  2. Atomic conditional UPDATE tài nguyên
+  3. Ghi bản ghi nghiệp vụ + ledger/reservation
+  4. Ghi Outbox event
+  5. Ghi kết quả idempotency
+COMMIT
+              |
+              v
+BackgroundService gửi Outbox → Azure Service Bus
+              |
+              v
+Consumer: SQL TRANSACTION [Inbox unique + business update]
+              |
+              v
+External provider / hệ thống khác
+              |
+              v
+Reconciliation: xác minh và sửa sai lệch
+```
+
+| Kỹ thuật | Bảo vệ điều gì? | Nếu bỏ đi |
+|---|---|---|
+| SQL Transaction | Các ghi trong một DB commit/rollback cùng nhau | Có tiền bị trừ nhưng không có reservation |
+| Atomic Update | Chỉ ghi nếu còn đủ tài nguyên tại thời điểm cập nhật | Race condition, oversell, overspend |
+| Unique Constraint | DB chặn business key trùng | Hai worker cùng tạo cùng một giao dịch |
+| Idempotency | Retry cùng request không tạo tác động mới | Timeout rồi retry gây trừ tiền hai lần |
+| Outbox/Inbox | Ghi nhận ý định phát event và dedup consumer | Mất event hoặc xử lý event trùng |
+| Reconciliation | Phát hiện trạng thái lệch/không xác định | Giao dịch kẹt Pending vô hạn |
+
+**Lưu ý:** Outbox thường là *at-least-once*, không bảo đảm exactly-once end-to-end. Inbox phải ghi cùng transaction với side effect nội bộ; gọi API bên ngoài cần idempotency của provider hoặc reconciliation.
+
+## 3. Case A — Ví tiền và chuyển tiền
+
+**Tình huống:** Tài khoản A có 1.000.000 đồng. Hai request cùng chuyển 700.000 đồng sang B.
+
+**Sai:** đọc số dư, kiểm tra rồi ghi trong hai bước không có concurrency guard. Hai request đều có thể cho rằng còn đủ tiền.
+
+**Đúng:** claim idempotency key; dùng conditional update; ghi debit/credit/ledger, transfer record và outbox trong cùng transaction nếu cả hai tài khoản thuộc cùng DB.
 
 ```sql
 BEGIN TRAN;
-UPDATE dbo.CashAccounts
-SET AvailableBalance = AvailableBalance - @Amount,
-    ReservedBalance = ReservedBalance + @Amount
-WHERE AccountId = @AccountId
+
+UPDATE dbo.Accounts
+SET AvailableBalance = AvailableBalance - @Amount
+WHERE AccountId = @FromAccount
   AND AvailableBalance >= @Amount;
+
 IF @@ROWCOUNT <> 1
 BEGIN
     ROLLBACK;
-    THROW 50001, 'Insufficient buying power', 1;
+    THROW 50001, 'Không đủ số dư', 1;
 END;
-INSERT dbo.CashReservations(ReservationId, AccountId, Amount)
-VALUES (@ReservationId, @AccountId, @Amount);
-INSERT dbo.OutboxMessages(EventId, EventType, AggregateId)
-VALUES (@EventId, 'FundsReserved', @ReservationId);
+
+UPDATE dbo.Accounts
+SET AvailableBalance = AvailableBalance + @Amount
+WHERE AccountId = @ToAccount;
+
+IF @@ROWCOUNT <> 1
+BEGIN
+    ROLLBACK;
+    THROW 50002, 'Không tìm thấy tài khoản nhận', 1;
+END;
+
+-- Cùng transaction: ledger debit/credit, transfer, outbox.
 COMMIT;
 ```
 
-Prerequisites: `@Amount > 0`; unique `ReservationId` and idempotency scope; SQL decimal fixed precision; ledger integrity and audit rules. Claim idempotency key transactionally *before* any update, handle constraint violation by reading original committed result. Unique constraint alone is not equivalent to idempotency handling.
+Ví dụ rút gọn; production cần kiểm tra số tiền dương, tài khoản nguồn/đích, tiền tệ, unique transfer ID, thứ tự khóa chống deadlock, audit và ledger cân đối.
 
-## 3. Loyalty: reserve points then issue voucher
+**Khi không dùng local transaction:** chuyển tiền sang ngân hàng đối tác. Không thể bao transaction SQL quanh HTTP request. Thay bằng durable workflow với `Pending → Submitted → Confirmed/Rejected/Unknown` và đối soát.
 
-```text
-Redeem request (customer + idempotency key)
-  → SQL TX: claim key, conditional reserve, redemption(Pending), outbox
-  → worker publishes event
-  → voucher consumer: inbox + durable issue state
-  → provider invocation with provider idempotency key
-  → confirmed / unknown / failed
-  → scheduled reconciliation
+## 4. Case B — Loyalty đổi điểm lấy voucher
+
+**Tình huống:** Khách có 1.000 điểm, gửi hai request đổi voucher 800 điểm.
+
+**Luồng:**
+
+1. API nhận `Idempotency-Key` và tính payload hash.
+2. SQL transaction claim key, reserve 800 điểm bằng atomic update, tạo `Redemption(Pending)` và Outbox.
+3. Worker phát `RedemptionRequested`.
+4. Voucher consumer dùng Inbox để chống xử lý event trùng; gửi provider bằng cùng business ID nếu provider hỗ trợ idempotency.
+5. Thành công thì confirm; timeout thì đánh dấu `Unknown`, query provider trước khi phát lại.
+6. Không phát được voucher thì hoàn điểm bằng transaction idempotent.
+
+```sql
+UPDATE dbo.LoyaltyAccounts
+SET AvailablePoints = AvailablePoints - @Points,
+    ReservedPoints = ReservedPoints + @Points
+WHERE CustomerId = @CustomerId
+  AND AvailablePoints >= @Points;
 ```
 
-Points can expire and carry different acquisition/expiry dates. For FEFO point buckets, single `AvailablePoints` column may not be sufficient. Design reserve/release operations per bucket inside a transaction, plus point ledger and invariant tests.
+**Điểm khác Financial:** điểm có thể hết hạn và được lưu theo lô. Nếu dùng quy tắc điểm hết hạn trước (FEFO), một cột tổng điểm không đủ; phải có point bucket, ledger và transaction bảo vệ các bucket.
 
-## 4. Booking: hold slot with expiry and payment saga
+**Lỗi production cần test:** voucher đã phát nhưng API timeout; message bị giao hai lần; hai request cùng key nhưng payload khác nhau; worker crash trước khi ghi kết quả.
 
-```text
-Available --atomic hold--> Held(expiresAt, reservationId)
-Held --paid and still owned--> Confirmed
-Held --expire/fail--> Released
-Payment result unknown --> Reconcile payment provider
-Late payment --> Refund/alternative, never sell same seat twice
-```
+## 5. Case C — Booking một ghế cuối cùng
 
-For a single seat in SQL:
+**Tình huống:** Hai khách cùng giữ ghế A1, chỉ một khách được giữ thành công.
 
 ```sql
 UPDATE dbo.Seats
-SET State = 'Held', HeldBy = @ReservationId,
+SET Status = 'Held',
+    HeldBy = @ReservationId,
     HoldExpiresAt = @ExpiresAt
-WHERE SeatId = @SeatId AND State = 'Available';
+WHERE SeatId = @SeatId
+  AND Status = 'Available';
 ```
 
-A reaper may release expired holds transactionally, with a predicate checking current reservation and expiry. Confirmation must also compare the current `HeldBy` and valid state; do not trust the cache or only the payment callback. Multi-seat booking needs all-or-nothing reservation in the local DB transaction or explicit partial-allocation semantics.
+Nếu affected rows = 0, request không giành được ghế. SQL transaction tạo reservation + outbox cùng lần giữ ghế.
 
-## 5. Securities: Order API → Cash → OMS → Exchange Gateway
+**State machine:**
 
 ```text
-Client --idempotent request--> Trading API
-                  → order intent (Pending)
-                  → cash owner reserves buying power
-                  → OMS submits with stable business/exchange identifiers
-                  → gateway/exchange acknowledgment or UNKNOWN
-                  → execution/fills update order and ledger
-                  → portfolio/read models converge asynchronously
+Available → Held(reservationId, expiresAt)
+                 ├── Paid + hold vẫn hợp lệ → Confirmed
+                 ├── Payment Failed → Released
+                 └── Hold Expired → Released
+Payment Unknown → Verify provider → Confirm hoặc Refund
 ```
 
-Key questions: Who owns buying power? Does order submission require reservation confirmed? Which identifier prevents duplicate exchange submissions? How are amend/cancel races resolved? How do partial fills affect reserved amount? How are trade corrections and settlement reconciled? Do not assume exchange exactly-once behavior without a documented contract.
+**Không làm:** giữ SQL transaction mở 10 phút chờ khách trả tiền. Chỉ giữ trạng thái trong DB rồi commit ngay.
 
-## 6. .NET components and tests
+**Race khó:** payment callback đến đồng thời với worker nhả ghế hết hạn. Cả hai phải UPDATE có điều kiện trên `reservationId`, trạng thái và hạn giữ. Không được chỉ dựa vào Redis TTL hoặc trạng thái cache.
 
-| Concern | Implementation candidate | Required proof |
-|---|---|---|
-| HTTP + auth | ASP.NET Core + policies | Tenant isolation and idempotent retry |
-| Local state | EF Core + SQL Server/PostgreSQL | Real-DB concurrency / deadlock tests |
-| Atomic balance | ExecuteUpdate / parametrized SQL | 100–1000 requests cannot overspend |
-| Outbox | DB table + BackgroundService relay | Crash after commit before publish |
-| Inbox | Unique `(Consumer, MessageId)` + business TX | Duplicate and concurrent delivery |
-| Transport | Azure Service Bus / Kafka per semantics | DLQ/replay/ordering behavior |
-| Workflow | Explicit state machine / durable workflow | Timeout=Unknown, resume after restart |
-| Telemetry | OpenTelemetry + audit + domain metrics | Trace one end-to-end transaction |
-| Load testing | k6 / NBomber | p95/p99, lock wait, queue age, saturation |
-| Recovery | Reconciliation worker + alerts | Safe resolution without double side effects |
+**Trade-off:** giữ ghế lâu tăng khả năng thanh toán nhưng làm giảm inventory khả dụng; giữ ngắn tăng turnover nhưng nhiều payment late/refund.
 
-## 7. Failure injection matrix
+## 6. Case D — Securities OMS đặt lệnh mua
 
-| Injection | Expected result |
+**Tình huống:** Tài khoản có 100 triệu sức mua, hai lệnh mua 80 triệu đồng đến đồng thời.
+
+```text
+Mobile/Web
+   ↓
+Trading API (Auth + Idempotency)
+   ↓
+Order Service (Order Pending)
+   ↓
+Cash Service (Reserve buying power)
+   ↓
+OMS (Accepted / Pending Exchange)
+   ↓
+Exchange Gateway (Submit stable OrderId)
+   ↓
+Exchange ACK / Reject / Fill / Unknown
+   ↓
+Ledger, positions, read models, reconciliation
+```
+
+**Điểm khác biệt quan trọng:** ACK từ gateway không đồng nghĩa lệnh đã khớp. Một lệnh có thể `New → PartiallyFilled → Filled`, bị reject, cancel hoặc amend. Khi timeout sau khi gửi lệnh, **không gửi lệnh mới với ID mới một cách mù quáng**. Phải tra cứu trạng thái bằng định danh ổn định và đối soát thông điệp sở.
+
+**Khi nào strong consistency:** phong tỏa sức mua, order state transition và ledger trong phạm vi owner. **Khi nào eventual consistency:** báo cáo, dashboard, portfolio projection, notification.
+
+**Cần kiểm tra:** partial fill giải phóng/điều chỉnh tiền thế nào; cancel và fill đến gần đồng thời; event bị trễ/out-of-order; gateway reconnect; recovery sau restart.
+
+## 7. Code .NET — Atomic Update bằng EF Core
+
+```csharp
+public async Task<bool> TryReserveAsync(
+    long accountId, decimal amount, CancellationToken ct)
+{
+    if (amount <= 0) throw new ArgumentOutOfRangeException(nameof(amount));
+
+    var affected = await db.CashAccounts
+        .Where(x => x.AccountId == accountId &&
+                    x.AvailableBalance >= amount)
+        .ExecuteUpdateAsync(s => s
+            .SetProperty(x => x.AvailableBalance,
+                         x => x.AvailableBalance - amount)
+            .SetProperty(x => x.ReservedBalance,
+                         x => x.ReservedBalance + amount), ct);
+
+    return affected == 1;
+}
+```
+
+**Lưu ý:** đoạn code chỉ minh họa atomic update. Production phải bọc nó cùng thao tác claim idempotency key, insert reservation/ledger và outbox trong một transaction rõ ràng. Mỗi request/task sử dụng DbContext riêng. Không dùng EF Core InMemory để kết luận concurrency của SQL Server.
+
+## 8. Ma trận lỗi production và cách chứng minh
+
+| Tình huống giả lập | Kết quả mong đợi |
 |---|---|
-| 100 concurrent requests for 1 balance/seat | Only permitted allocations commit |
-| Duplicate idempotency key with same payload | One business effect, response/status reused |
-| Same key with different payload | Conflict, no additional effect |
-| DB commit then publisher crash | Outbox eventually published after restart |
-| Broker delivers same event twice | Inbox/business uniqueness prevents repeated effect |
-| External timeout after remote success | UNKNOWN until verified; no blind new submission |
-| Worker dies mid-saga | Durable state resumes / reconciles |
-| Confirmation races hold expiry | One outcome wins under authoritative DB condition |
-| Replayed event | External side effects guarded or replay suppressed |
-| DR failover | Restore within measured RPO/RTO; reconcile in-flight external actions |
+| 100 request tranh cùng số dư/ghế | Không vượt số dư, không bán trùng |
+| Retry cùng idempotency key | Trả lại cùng business result, không trừ thêm |
+| Cùng key nhưng payload khác | Báo conflict, không thực hiện |
+| DB commit xong, publisher crash | Outbox còn và phát lại sau restart |
+| Broker giao cùng event hai lần | Inbox/unique business key chặn tác động lặp |
+| Provider xử lý thành công rồi HTTP timeout | Đánh dấu Unknown, tra cứu trạng thái |
+| Booking expiry và payment callback chạy đồng thời | Chỉ một transition hợp lệ thắng |
+| Consumer replay lịch sử | Không gửi lại thanh toán/voucher ngoài ý muốn |
+| Database failover | Phục hồi theo RPO/RTO đã đo; đối soát giao dịch dở dang |
 
-## 8. Architecture decision checklist
+## 9. Câu hỏi phỏng vấn Solution Architect
 
-1. Decide which invariants require strong consistency; which projections may lag.
-2. Specify state owner, DB/transaction scope and unique keys.
-3. Choose synchronization: local transaction first; saga only across independent owners.
-4. Define retry + idempotency **at every side-effect boundary**.
-5. Quantify capacity, p95/p99, SLO, failover and operating cost.
-6. Provide diagrams, ADR, test evidence, dashboard and runbook.
+1. Vì sao `lock` trong C# không bảo vệ được hai instance ASP.NET Core?
+2. Vì sao Atomic Conditional Update thường phù hợp hơn RowVersion với hot balance?
+3. SQL Transaction bảo vệ được những bảng nào và không bảo vệ được HTTP provider nào?
+4. Tại sao cần cả Unique Constraint và Idempotency Key?
+5. Outbox giải quyết dual-write như thế nào, vì sao vẫn cần Inbox?
+6. Broker cam kết exactly-once trong phạm vi nào? Vì sao external side effect vẫn có thể trùng?
+7. Nếu payment đã thành công nhưng booking hết hạn, hệ thống phải làm gì?
+8. Nếu exchange gateway timeout, làm sao biết lệnh đã nhận?
+9. Saga compensation khác rollback của SQL ở điểm nào?
+10. Làm sao chứng minh không double-spend bằng integration test thay vì unit test mock?
 
-Avoid claiming exactly-once across arbitrary SQL + broker + external provider. Seek exactly-once **business effect** using constraints, deduplication and reconciliation.
+**Tiêu chí đạt:** câu trả lời phải có invariant, transaction boundary, tình huống lỗi, trade-off và cách kiểm chứng. Không chỉ kể tên pattern.
+
+## 10. Tài liệu đọc tiếp
+
+- [SQL — Transactions, Isolation & Concurrency](../05-sql/transactions-isolation-and-concurrency.md)
+- [Distributed Systems — Partial Failure & Idempotency](../17-distributed-systems/partial-failure-timeouts-retries-and-idempotency.md)
+- [Distributed Systems — Outbox, Inbox & Dedup](../17-distributed-systems/messaging-outbox-inbox-and-dedup.md)
+- [Software Architecture — Event-Driven & CQRS](event-driven-cqrs-and-integration.md)
+- [System Design — Case Studies](../24-system-design/case-studies-and-design-review.md)
