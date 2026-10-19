@@ -40,6 +40,8 @@ Clean Architecture, DDD, CQRS, Event-Driven Architecture hay Microservices chỉ
 
 | Guide | Bạn sẽ học |
 |---|---|
+| [.NET Solution Architect — Competency Map](solution-architect-dotnet-roadmap.md) | 16 knowledge areas, LLD → HLD → architect, priority + evidence |
+| [.NET Case Studies — Financial, Loyalty, Booking & Securities](solution-architect-dotnet-case-studies.md) | transaction, idempotency, failure recovery and reviews |
 | [Quality Attributes, Boundaries & Architecture Styles](quality-attributes-boundaries-and-styles.md) | reliability/performance/security/modifiability → boundary/style decision |
 | [DDD, Modular Monolith & Microservices](ddd-modular-monolith-and-microservices.md) | domain ownership, bounded contexts, modularity, decomposition triggers |
 | [Clean, Hexagonal, Vertical Slice & Application Structure](clean-hexagonal-and-vertical-slice.md) | dependency direction, ports/adapters, feature slices và testability |
