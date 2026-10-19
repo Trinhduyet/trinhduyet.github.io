@@ -84,8 +84,6 @@ jobs:
       - name: Install documentation dependencies
         run: python -m pip install -r requirements-docs.txt
 
-      - name: Audit Interview content and links
-        run: python scripts/audit-interview.py
 
       - name: Audit portable documentation paths
         run: python scripts/audit-docs.py
@@ -135,10 +133,6 @@ jobs:
             site/21-ai-coding-agents/index.html
             site/24-system-design/index.html
             site/25-software-architecture/index.html
-            site/interview/index.html
-            site/interview/07-azure-cloud/index.html
-            site/interview/08-devops-platform-engineering/index.html
-            site/interview/09-solution-architecture-leadership/index.html
           )
           for file in "${critical[@]}"; do
             test -s "$file" || { echo "::error::Missing critical page: $file"; exit 1; }
