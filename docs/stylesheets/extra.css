@@ -296,3 +296,39 @@
   .hero-button { justify-content: center; }
   .lesson-meta span { width: 100%; border-radius: 9px; }
 }
+
+
+/* Module 25 — scoped, responsive landing page; preserves other chapters */
+.md-typeset .arch-landing {
+  border: 1px solid var(--se-card-border);
+  border-radius: 20px;
+  padding: clamp(1.2rem, 3vw, 2.1rem);
+  background: var(--se-hero-bg);
+  margin: 1.2rem 0 2rem;
+}
+.md-typeset .arch-landing h2 { margin: .5rem 0 .75rem; font-size: clamp(1.45rem, 3vw, 2.15rem); line-height: 1.2; }
+.md-typeset .arch-eyebrow { font-size: .72rem; letter-spacing: .09em; font-weight: 800; color: var(--se-brand-2); }
+.md-typeset .arch-metrics { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: .65rem; margin: 1.2rem 0; }
+.md-typeset .arch-metrics > div { border: 1px solid var(--se-card-border); background: var(--se-card-bg); padding: .8rem; border-radius: 12px; }
+.md-typeset .arch-metrics strong { display:block; font-size: 1.5rem; color: var(--se-brand-2); line-height: 1.25; }
+.md-typeset .arch-metrics span { display:block; font-size: .74rem; color: var(--se-muted); line-height: 1.4; margin-top: .25rem; }
+.md-typeset .arch-actions { display:flex; flex-wrap:wrap; gap:.6rem; margin-top:1.15rem; }
+.md-typeset .arch-action { display:inline-block; border:1px solid var(--se-card-border); background:var(--se-card-bg); color:var(--md-default-fg-color); padding:.65rem .9rem; border-radius:10px; font-weight:700; text-decoration:none; }
+.md-typeset .arch-action--primary { background:var(--se-brand-2); border-color:var(--se-brand-2); color:#fff; }
+.md-typeset .arch-card-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.85rem; margin:1.2rem 0 2rem; }
+.md-typeset .arch-path-card { display:flex; flex-direction:column; gap:.5rem; border:1px solid var(--se-card-border); border-radius:14px; background:var(--se-card-bg); padding:1.1rem; color:var(--md-default-fg-color); text-decoration:none; transition:border-color .15s,transform .15s; }
+.md-typeset .arch-path-card:hover { border-color:var(--se-brand-2); transform:translateY(-2px); }
+.md-typeset .arch-path-card strong { font-size:1.02rem; line-height:1.4; }
+.md-typeset .arch-path-card span:not(.arch-card-index) { font-size:.83rem; color:var(--se-muted); line-height:1.6; }
+.md-typeset .arch-card-index { font-size:.69rem; font-weight:800; color:var(--se-brand-2); letter-spacing:.06em; }
+.md-typeset .arch-path-card em { font-size:.78rem; color:var(--se-brand-2); font-style:normal; font-weight:700; margin-top:auto; }
+.md-typeset .arch-stage-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.75rem; margin:1.2rem 0 1.8rem; }
+.md-typeset .arch-stage-grid > div { border-left:3px solid var(--se-brand-2); background:var(--se-card-bg); padding:.85rem; border-radius:0 10px 10px 0; }
+.md-typeset .arch-stage-grid b { font-size:.85rem; }
+.md-typeset .arch-stage-grid p { font-size:.78rem; color:var(--se-muted); line-height:1.55; margin:.5rem 0 0; }
+@media(max-width:760px) {
+ .md-typeset .arch-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .md-typeset .arch-card-grid,.md-typeset .arch-stage-grid { grid-template-columns:1fr; }
+ .md-typeset .arch-landing { padding:1.15rem; }
+}
+@media(prefers-reduced-motion:reduce) { .md-typeset .arch-path-card { transition:none; } }

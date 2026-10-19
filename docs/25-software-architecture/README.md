@@ -1,54 +1,65 @@
-# Module 25 — Software Architecture
+# Software Architecture — Lộ trình .NET Solution Architect
 
 > [← System Design](../24-system-design/README.md) · [Master Roadmap](../00-roadmap/master-roadmap.md)
 
-<div class="lesson-meta">
-  <span><strong>Priority</strong>&nbsp;P0</span>
-  <span><strong>Focus</strong>&nbsp;boundaries · quality attributes · evolution</span>
-  <span><strong>Mode</strong>&nbsp;decision-first</span>
+<div class="arch-landing" markdown>
+
+<div class="arch-eyebrow">CHƯƠNG 25 · LỘ TRÌNH TỪ SENIOR BACKEND ĐẾN SOLUTION ARCHITECT</div>
+
+## Học thiết kế hệ thống có thể kiểm chứng
+
+Từ **C# / SQL Server** đến **Distributed Systems, HLD, LLD, Cloud và vận hành production**. Học bằng tiếng Việt, có ví dụ **Financial, Loyalty, Booking và Securities OMS**; không học thuộc tên pattern.
+
+<div class="arch-metrics" markdown>
+<div><strong>16</strong><span>Nhóm kiến thức</span></div>
+<div><strong>12</strong><span>Lab nền tảng bắt buộc</span></div>
+<div><strong>4</strong><span>Case study nghiệp vụ</span></div>
+<div><strong>3</strong><span>Cấp độ LLD · HLD · Architect</span></div>
 </div>
 
-Software Architecture không phải bộ sưu tập pattern names. Nó là cách **cấu trúc hệ thống để các quality attributes quan trọng được bảo vệ trong khi hệ thống vẫn có thể thay đổi**.
-
-Mental model:
-
-```text
-Business domain
-      ↓
-Quality attributes / constraints
-      ↓
-Boundaries + ownership
-      ↓
-Architecture style
-      ↓
-Integration + data ownership
-      ↓
-Deployment / operations
-      ↓
-Evolution / migration
-      ↓
-Evidence + ADR + fitness functions
-```
-
-<div class="key-takeaway" markdown>
-<strong>Architecture = decisions under constraints.</strong>
-
-Clean Architecture, DDD, CQRS, Event-Driven Architecture hay Microservices chỉ là tools. Chúng không tốt tự thân; chúng chỉ tốt khi giải quyết đúng coupling, ownership, quality-attribute hoặc evolution problem.
+<div class="arch-actions" markdown>
+<a class="arch-action arch-action--primary" href="solution-architect-technical-catalog/">Xem danh mục kiến thức →</a>
+<a class="arch-action" href="solution-architect-mandatory-labs/">Bài thực hành bắt buộc →</a>
 </div>
 
-## Learning path
+</div>
 
-| Guide | Bạn sẽ học |
+## Bắt đầu từ đâu?
+
+<div class="arch-card-grid">
+<a class="arch-path-card" href="solution-architect-dotnet-roadmap/"><span class="arch-card-index">01 · LỘ TRÌNH</span><strong>Bản đồ System Design</strong><span>LLD → HLD → Solution Architecture; thứ tự học và tiêu chuẩn đầu ra.</span><em>Đọc lộ trình →</em></a>
+<a class="arch-path-card" href="solution-architect-technical-catalog/"><span class="arch-card-index">02 · KIẾN THỨC</span><strong>Danh mục 16 nhóm kỹ thuật</strong><span>Từ networking, SQL, DDD, concurrency đến observability và DR.</span><em>Tra cứu kỹ thuật →</em></a>
+<a class="arch-path-card" href="solution-architect-mandatory-labs/"><span class="arch-card-index">03 · THỰC HÀNH</span><strong>12 lab bắt buộc + 4 mở rộng</strong><span>Đề bài, stack, pass/fail và bằng chứng cần nộp.</span><em>Xem bài lab →</em></a>
+<a class="arch-path-card" href="solution-architect-dotnet-case-studies/"><span class="arch-card-index">04 · NGHIỆP VỤ</span><strong>Financial · Loyalty · Booking · OMS</strong><span>Transaction, idempotency, outbox/inbox, recovery và reconciliation.</span><em>Xem case study →</em></a>
+</div>
+
+## Ba cấp độ năng lực
+
+<div class="arch-stage-grid">
+<div><b>LLD — Thiết kế chi tiết</b><p>Code C#, SQL, API, isolation, locks, unique constraints, state machine và integration tests.</p></div>
+<div><b>HLD — Thiết kế hệ thống</b><p>Bounded contexts, data ownership, messaging, caching, scaling, availability và failure flows.</p></div>
+<div><b>Solution Architect — Quyết định kiến trúc</b><p>Business/NFR, C4, ADR, capacity, security, cost, SLO, RTO/RPO và governance.</p></div>
+</div>
+
+## Nội dung Software Architecture chuyên sâu đang có
+
+Không viết trùng kiến thức. Sau khi nắm bản đồ và làm lab, đọc các chương hiện hữu:
+
+| Chủ đề | Nội dung |
 |---|---|
-| [.NET Solution Architect — Competency Map](solution-architect-dotnet-roadmap.md) | 16 knowledge areas, LLD → HLD → architect, priority + evidence |
-| [.NET Case Studies — Financial, Loyalty, Booking & Securities](solution-architect-dotnet-case-studies.md) | transaction, idempotency, failure recovery and reviews |
-| [Quality Attributes, Boundaries & Architecture Styles](quality-attributes-boundaries-and-styles.md) | reliability/performance/security/modifiability → boundary/style decision |
-| [DDD, Modular Monolith & Microservices](ddd-modular-monolith-and-microservices.md) | domain ownership, bounded contexts, modularity, decomposition triggers |
-| [Clean, Hexagonal, Vertical Slice & Application Structure](clean-hexagonal-and-vertical-slice.md) | dependency direction, ports/adapters, feature slices và testability |
-| [Event-Driven, CQRS & Integration Architecture](event-driven-cqrs-and-integration.md) | sync/async, domain/integration events, CQRS, outbox, contract evolution |
-| [Architecture Decisions, Fitness Functions & Evolution](architecture-decisions-evolution-and-fitness-functions.md) | ADR, governance, architecture tests, strangler/migration/evolution |
-| [Architecture Review Playbook](architecture-review-playbook.md) | cách review một hệ thống thật từ business tới failure/cost |
-| [References](references.md) | user-supplied architecture scope + primary guidance |
+| [Quality Attributes, Boundaries & Styles](quality-attributes-boundaries-and-styles.md) | Chọn kiến trúc theo NFR |
+| [DDD, Modular Monolith & Microservices](ddd-modular-monolith-and-microservices.md) | Ranh giới nghiệp vụ và sở hữu dữ liệu |
+| [Clean, Hexagonal & Vertical Slice](clean-hexagonal-and-vertical-slice.md) | Cấu trúc code và khả năng kiểm thử |
+| [Event-Driven, CQRS & Integration](event-driven-cqrs-and-integration.md) | Hợp đồng tích hợp, event, transaction phân tán |
+| [ADR, Fitness Functions & Evolution](architecture-decisions-evolution-and-fitness-functions.md) | Quyết định, kiểm chứng, tiến hóa kiến trúc |
+| [Architecture Review Playbook](architecture-review-playbook.md) | Review kiến trúc theo business, NFR và failure |
+| [Nguồn tham khảo](references.md) | Tài liệu nền và nguồn chính thống |
+
+---
+
+## Kiến thức nền: tại sao không chọn kiến trúc theo trào lưu?
+
+**Software Architecture** là cách phân chia trách nhiệm và đưa ra quyết định dưới các ràng buộc cụ thể. Microservices, CQRS hay Event Sourcing không tự động tốt hơn Modular Monolith. Hãy xác định **bất biến nghiệp vụ, yêu cầu chất lượng, ranh giới dữ liệu và bằng chứng** trước khi chọn công nghệ.
 
 ## 1. Quality attributes trước style
 
