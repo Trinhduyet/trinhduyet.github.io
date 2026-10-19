@@ -245,6 +245,8 @@ nav:
 
   - Architecture:
       - Software Architecture Overview: 25-software-architecture/README.md
+      - .NET Solution Architect Competency Map: 25-software-architecture/solution-architect-dotnet-roadmap.md
+      - .NET Financial, Loyalty, Booking & Securities Cases: 25-software-architecture/solution-architect-dotnet-case-studies.md
       - Quality Attributes, Boundaries & Styles: 25-software-architecture/quality-attributes-boundaries-and-styles.md
       - DDD, Modular Monolith & Microservices: 25-software-architecture/ddd-modular-monolith-and-microservices.md
       - Clean, Hexagonal & Vertical Slice: 25-software-architecture/clean-hexagonal-and-vertical-slice.md
