@@ -241,3 +241,42 @@ public async Task<bool> TryReserveAsync(
 - [Distributed Systems — Outbox, Inbox & Dedup](../17-distributed-systems/messaging-outbox-inbox-and-dedup.md)
 - [Software Architecture — Event-Driven & CQRS](event-driven-cqrs-and-integration.md)
 - [System Design — Case Studies](../24-system-design/case-studies-and-design-review.md)
+
+
+## 11. Các phần cần hoàn thiện trước khi coi đây là reference architecture
+
+Các ví dụ trong tài liệu này là **mẫu thiết kế để học**, chưa phải triển khai production đã được chứng minh. Khi biến thành dự án thực hành, bổ sung tối thiểu:
+
+### Financial Wallet
+
+- Double-entry ledger với debit/credit cân bằng theo currency và business transaction.
+- Idempotency claim/response replay, transaction boundary và unique constraints.
+- Reversal/adjustment bằng bút toán mới; không sửa/xóa ledger entry đã ghi sổ.
+- Reconciliation giữa ledger, payment provider/settlement và trạng thái giao dịch nội bộ.
+
+### Loyalty
+
+- Point bucket theo expiry date; quy tắc consume điểm sắp hết hạn trước và xử lý refund/reversal.
+- Voucher issuance có idempotency và state machine; timeout provider là UNKNOWN cho đến khi query/reconcile.
+- Kiểm thử đồng thời khi hai yêu cầu cùng reserve số điểm còn lại.
+
+### Booking
+
+- Quy tắc hết hạn hold và xử lý payment thành công đến muộn.
+- Race giữa expiry worker và payment callback; một state transition phải thắng bằng conditional update/row version hoặc transaction phù hợp.
+- Chính sách refund/compensation khi ghế đã release nhưng payment provider báo thành công muộn.
+
+### Securities OMS
+
+- State machine rõ ràng cho New/PendingNew/Accepted/PartiallyFilled/Filled/PendingCancel/Canceled/Rejected/Unknown.
+- Phân biệt gateway ACK, exchange acceptance và execution fill; xử lý partial fill và cancel/replace race.
+- Client order ID/idempotency, sequence-gap detection, replay và reconciliation sau reconnect.
+- Buying power reservation/release theo trạng thái order/execution; không giả định HTTP success đồng nghĩa lệnh đã khớp.
+
+### Tiêu chí nghiệm thu
+
+- [ ] Có domain invariants và state transition table.
+- [ ] Có sequence diagram cho happy path, timeout/unknown và recovery.
+- [ ] Có test đồng thời trên SQL Server thật hoặc Testcontainers.
+- [ ] Có duplicate, delayed callback, process restart và reconciliation tests.
+- [ ] Mọi giả định nghiệp vụ và giới hạn mô phỏng được ghi rõ.

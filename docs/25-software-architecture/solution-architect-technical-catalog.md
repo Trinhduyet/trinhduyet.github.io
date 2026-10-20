@@ -2,7 +2,7 @@
 
 > [← Tổng quan kiến trúc](README.md) · [Lộ trình học](solution-architect-dotnet-roadmap.md) · [Bài thực hành bắt buộc](solution-architect-mandatory-labs.md)
 
-Đây là **danh mục học có thể kiểm chứng**, không phải danh sách thuật ngữ để học thuộc. Mỗi nhóm gồm kiến thức cần nắm, một tình huống production, tài liệu đọc và bài lab đối chiếu. **P0** là kiến thức cốt lõi; **P1** là năng lực vận hành; **P2** dành cho yêu cầu chuyên sâu.
+Đây là **bản đồ chương trình học**, không phải 16 giáo trình đã hoàn thiện. Mỗi nhóm nêu kiến thức cần nắm, tình huống production, tài liệu nền và lab cần làm. Dùng [bảng kiểm độ bao phủ](solution-architect-completeness-review.md) để phân biệt nội dung đã được đề cập với nội dung đã giải thích sâu hoặc có bằng chứng chạy thật. Các lab ở đây là đề bài; không coi là đã thực thi nếu chưa có source và evidence. **P0** là kiến thức cốt lõi; **P1** là năng lực vận hành; **P2** dành cho yêu cầu chuyên sâu.
 
 <div class="arch-metrics" markdown>
 <div><strong>16</strong><span>Nhóm kiến thức</span></div><div><strong>12</strong><span>Lab cốt lõi</span></div><div><strong>4</strong><span>Case study nghiệp vụ</span></div><div><strong>7</strong><span>Câu hỏi kiểm chứng / chủ đề</span></div>
@@ -33,7 +33,9 @@
 
 <h3 id="nhom-01">01. Khoa học máy tính và Networking — P0</h3>
 
-**Phải nắm:** Process, Thread, ThreadPool, async/await; TCP, DNS, TLS, HTTP/2, HTTP/3; Reverse Proxy, NAT; latency, throughput, p95/p99, Little’s Law.
+**Phải nắm:** Process/Thread/Task; scheduling, ThreadPool starvation, CPU-bound vs I/O-bound; TCP handshake/retransmission, DNS TTL/cache, TLS trust chain, HTTP/1.1/2/3, keep-alive, proxy/load balancer, NAT/SNAT, connection reuse, timeout/cancellation, p95/p99, queueing và Little’s Law.
+
+**Bài học chi tiết:** [Computer Science & Networking cho .NET Architect](computer-science-networking-dotnet-architect.md).
 
 **Tình huống thực tế:** API timeout do DNS/TLS hay SQL? Phân biệt ThreadPool starvation với cạn connection pool.
 

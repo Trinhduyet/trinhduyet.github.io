@@ -41,6 +41,11 @@ Từ **C# / SQL Server** đến **Distributed Systems, HLD, LLD, Cloud và vận
 <div><b>Solution Architect — Quyết định kiến trúc</b><p>Business/NFR, C4, ADR, capacity, security, cost, SLO, RTO/RPO và governance.</p></div>
 </div>
 
+## Kiểm tra độ bao phủ và học sâu từ nền tảng
+
+- [Kiểm tra độ bao phủ kiến thức](solution-architect-completeness-review.md) — phân biệt nội dung đã có nền tảng với nội dung cần đào sâu và evidence cần có.
+- [Computer Science & Networking cho .NET Solution Architect](computer-science-networking-dotnet-architect.md) — process/thread/Task, ThreadPool, TCP/DNS/TLS/HTTP, latency, connection pooling, lỗi production và lab L01.
+
 ## Nội dung Software Architecture chuyên sâu đang có
 
 Không viết trùng kiến thức. Sau khi nắm bản đồ và làm lab, đọc các chương hiện hữu:
