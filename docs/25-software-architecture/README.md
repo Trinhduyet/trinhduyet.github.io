@@ -45,6 +45,7 @@ Từ **C# / SQL Server** đến **Distributed Systems, HLD, LLD, Cloud và vận
 
 - [Kiểm tra độ bao phủ kiến thức](solution-architect-completeness-review.md) — phân biệt nội dung đã có nền tảng với nội dung cần đào sâu và evidence cần có.
 - [Computer Science & Networking cho .NET Solution Architect](computer-science-networking-dotnet-architect.md) — process/thread/Task, ThreadPool, TCP/DNS/TLS/HTTP, latency, connection pooling, lỗi production và lab L01.
+- [System Design Case Study Template](system-design-case-study-template.md) — template chuẩn cho FR/NFR, capacity, APIs, entities, HLD, failure modes, security, ADR và verification evidence.
 
 ## Nội dung Software Architecture chuyên sâu đang có
 
