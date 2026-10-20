@@ -29,9 +29,9 @@
 
 <h3 id="l01">L01 — Điều tra HTTP chậm và ThreadPool</h3>
 
-**Stack:** ASP.NET Core + HttpClient + OpenTelemetry.
+**Stack:** ASP.NET Core + HttpClient + OpenTelemetry + dotnet-counters + k6/NBomber.
 
-**Thực hiện:** Gây DNS/TLS/SQL latency; đo request p95, ThreadPool queue, connection pool; phân biệt I/O-bound với CPU-bound.
+**Thực hiện:** Tạo endpoint I/O-bound, CPU-bound và endpoint blocking chỉ dùng trong lab; đo p95/p99, ThreadPool queue, CPU, memory và dependency duration. Nếu chưa dựng DNS/TLS fault thật, ghi rõ simulated latency; không tuyên bố đã tái hiện lỗi DNS/TLS.
 
 **Pass/Fail:** Có trace và giải thích đúng bottleneck; không kết luận chỉ từ một log.
 
@@ -84,7 +84,7 @@
 
 <h3 id="l06">L06 — Outbox, Inbox và Saga recovery</h3>
 
-**Stack:** SQL Server + Azure Service Bus emulator/compatible broker.
+**Stack:** SQL Server + broker local/compatible để test lặp lại; chạy thêm integration test trên Azure Service Bus thật nếu cần xác minh sessions, DLQ và semantics riêng của dịch vụ Azure.
 
 **Thực hiện:** Kill publisher sau commit; gửi event trùng; crash consumer trước/ sau commit; timeout external API.
 
