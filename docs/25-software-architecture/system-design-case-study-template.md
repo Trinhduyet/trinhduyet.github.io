@@ -18,6 +18,37 @@
 - Mọi con số chưa được đề bài xác nhận phải ghi là giả định.
 - Phân biệt yêu cầu bắt buộc, mong muốn và câu hỏi cần hỏi Product/Business.
 
+## 1.1 Solution Architect competency map
+
+Use these seven capability areas as a review lens for every case study. They are not seven separate technology checklists: each capability must connect to requirements, architecture decisions, implementation choices and evidence.
+
+| Capability | Questions the design must answer | Expected artifacts / evidence |
+|---|---|---|
+| **Scalable backend services and distributed systems** | What are the service boundaries and data ownership? Which operations are synchronous/asynchronous? What are the scaling bottlenecks, partition keys and cross-service consistency constraints? | HLD, service responsibility map, data-flow/sequence diagrams, scaling assumptions and failure boundaries |
+| **Technical leadership and architecture decisions** | Which requirements drive the design? What alternatives were considered? Why is this solution proportionate to current scale? What triggers a future redesign? | ADRs, trade-off table, assumptions/open questions, phased architecture and review checklist |
+| **High-throughput, performance, reliability and scalability** | What are average/peak throughput, concurrency and latency targets? Where is saturation likely? How are backpressure, timeouts, bulkheads and graceful degradation handled? | Capacity estimates, p50/p95/p99 targets, load-test plan/results, bottleneck analysis, SLO/SLI and recovery evidence |
+| **Event-driven architecture and asynchronous processing** | Which state change emits an event? How is DB/event consistency guaranteed? What are delivery, ordering, deduplication, retry, poison-message and replay semantics? | Event contracts, sequence diagram, outbox/inbox or equivalent reliability strategy, idempotent consumer and replay tests |
+| **Database optimization, caching, distributed locking and large-scale data processing** | What are the read/write patterns, indexes, isolation and transaction boundaries? Is a lock truly needed? How are stale cache, hot keys, deadlocks, pool exhaustion and batch checkpoints handled? | Schema/index rationale, query plan/measurements, concurrency strategy, cache invalidation plan, checkpoint/recovery tests |
+| **System integration and secure internal/external communication** | How are identity, authorization, secrets, TLS, token rotation, timeouts, rate limits, retries and provider-specific failure states handled? How are callbacks verified and reconciled? | Trust-boundary diagram, threat/abuse cases, integration contract, secret-handling plan, contract tests and reconciliation runbook |
+| **Mentoring and engineering practices** | How will the team implement the design consistently? How are code ownership, reviews, testing, observability, documentation and incident learning embedded into delivery? | Implementation slices, coding/review standards, test strategy, runbooks, ADR ownership, rollout plan and knowledge-sharing checklist |
+
+### Architecture leadership review
+
+For each major decision, document:
+
+1. **Requirement link:** which FR/NFR or risk requires this decision?
+2. **Options:** simplest viable option plus at least one credible alternative.
+3. **Decision and rationale:** why it fits the expected workload and team capabilities.
+4. **Consequences:** consistency, latency, throughput, reliability, security, operational burden and cost.
+5. **Evidence:** what test, measurement, prototype or external constraint supports the decision?
+6. **Revisit trigger:** a measurable signal or business change that would justify changing it.
+
+### Engineering leadership is part of the design
+
+A technically correct diagram is not sufficient. Include an implementation sequence that keeps the system releasable, code-review boundaries, test ownership, observability conventions, operational runbooks and a plan for sharing the key decisions with developers, QA, DevOps and product stakeholders. Do not claim mentoring or team impact without concrete examples; use these artifacts to demonstrate the practices.
+
+---
+
 ## 2. Functional requirements (FR)
 
 Mỗi yêu cầu phải có ID, actor, hành vi và tiêu chí nghiệm thu.
