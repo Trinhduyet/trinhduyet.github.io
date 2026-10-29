@@ -248,6 +248,9 @@ nav:
       - .NET Solution Architect Competency Map: 25-software-architecture/solution-architect-dotnet-roadmap.md
       - Danh mục 16 nhóm kiến thức kỹ thuật: 25-software-architecture/solution-architect-technical-catalog.md
       - Kiểm tra độ bao phủ kiến thức: 25-software-architecture/solution-architect-completeness-review.md
+      - Ma trận JD Solution Architect chứng khoán: 25-software-architecture/solution-architect-jd-coverage.md
+      - Securities Domain Architecture: 25-software-architecture/securities-domain-architecture.md
+      - Architecture Delivery & Governance: 25-software-architecture/solution-architecture-delivery-governance.md
       - Computer Science & Networking cho .NET Architect: 25-software-architecture/computer-science-networking-dotnet-architect.md
       - System Design Case Study Template: 25-software-architecture/system-design-case-study-template.md
       - Bài thực hành bắt buộc: 25-software-architecture/solution-architect-mandatory-labs.md
