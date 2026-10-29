@@ -1,0 +1,53 @@
+name: Solution Architect distributed workflow lab
+
+on:
+  pull_request:
+    paths:
+      - 'labs/25-solution-architect/**'
+      - '.github/workflows/solution-architect-lab.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Build API and smoke tests with NuGet audit
+        run: |
+          dotnet build labs/25-solution-architect/distributed-workflow/WorkflowLab.csproj -c Release
+          dotnet build labs/25-solution-architect/distributed-workflow/SmokeTests/SmokeTests.csproj -c Release
+      - name: Generate disposable lab credentials
+        shell: bash
+        run: |
+          echo "LAB_SQL_PASSWORD=Sql1!$(openssl rand -hex 16)" >> "$GITHUB_ENV"
+          echo "LAB_RABBIT_PASSWORD=Rabbit1_$(openssl rand -hex 16)" >> "$GITHUB_ENV"
+          echo "LAB_API_KEY=Api1_$(openssl rand -hex 16)" >> "$GITHUB_ENV"
+      - name: Start SQL Server, RabbitMQ and API
+        working-directory: labs/25-solution-architect/distributed-workflow
+        run: docker compose up -d --build
+      - name: Wait for API to initialize schema
+        shell: bash
+        run: |
+          ready=0
+          for attempt in $(seq 1 90); do
+            if curl -fsS http://localhost:8088/health >/dev/null; then ready=1; break; fi
+            sleep 2
+          done
+          test "$ready" -eq 1
+      - name: Run real SQL/broker concurrency + recovery smoke tests
+        run: dotnet run --project labs/25-solution-architect/distributed-workflow/SmokeTests/SmokeTests.csproj --configuration Release --no-build -- http://localhost:8088
+      - name: Logs on failure
+        if: failure()
+        working-directory: labs/25-solution-architect/distributed-workflow
+        run: docker compose logs --no-color --tail=300
+      - name: Shut down lab containers
+        if: always()
+        working-directory: labs/25-solution-architect/distributed-workflow
+        run: docker compose down

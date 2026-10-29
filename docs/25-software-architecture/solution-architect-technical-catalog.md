@@ -31,6 +31,20 @@
 
 ## Học chuyên sâu theo từng nhóm
 
+Các chương mới là **kiến thức kiến trúc tổng quát**, áp dụng cho nhiều ngành, được dùng bổ sung cho 16 nhóm thay vì biến OMS thành chương trình bắt buộc:
+
+| Nhóm | Deep dive tích hợp | Kỹ năng đầu ra |
+|---|---|---|
+| 01–03 Foundations, design, DDD | [Business → HLD/LLD](solution-architecture-from-requirements-to-design.md), [Leadership](architecture-leadership-decisions-and-governance.md) | Capability map, boundaries, design review |
+| 04–05 Database, concurrency | [Polyglot Data](data-architecture-polyglot-persistence.md), [Distributed Systems](distributed-systems-architecture-deep-dive.md) | Transaction, isolation, invariant, SQL/NoSQL trade-off |
+| 06, 08 Distributed & messaging | [Distributed Systems, EDA](distributed-systems-architecture-deep-dive.md) | Outbox/Inbox, Saga, backpressure, ordering, failure recovery |
+| 07, 11 API & security | [Integration/Security/Platform](integration-security-platform-architecture.md) | OAuth/OIDC, API Gateway, tenant/resource authz, partner contract |
+| 09–10 Cache, scale, HA | [Data/Cache](data-architecture-polyglot-persistence.md), [Performance/Operations](performance-reliability-operational-architecture.md) | p99, capacity, load shedding, HA/DR |
+| 12–14 Cloud/platform, observability, DR | [Integration/Hybrid](integration-security-platform-architecture.md), [Performance/Operations](performance-reliability-operational-architecture.md) | CI/CD, IaC, SLO, tracing, restore drill |
+| 15–16 Governance & advanced | [Leadership/Governance](architecture-leadership-decisions-and-governance.md), [Practice/Assessment](solution-architect-case-practice-and-assessment.md) | ADR, POC, deviations, mentoring, capstone |
+
+**Chú ý:** source lab [Distributed Workflow](https://github.com/Trinhduyet/trinhduyet.github.io/tree/main/labs/25-solution-architect/distributed-workflow) chỉ là một implementation chung cho một phần L05/L06/L07/L08. Không suy ra 16 nhóm hoặc 12 lab đã được kiểm chứng đầy đủ.
+
 <h3 id="nhom-01">01. Khoa học máy tính và Networking — P0</h3>
 
 **Phải nắm:** Process/Thread/Task; scheduling, ThreadPool starvation, CPU-bound vs I/O-bound; TCP handshake/retransmission, DNS TTL/cache, TLS trust chain, HTTP/1.1/2/3, keep-alive, proxy/load balancer, NAT/SNAT, connection reuse, timeout/cancellation, p95/p99, queueing và Little’s Law.

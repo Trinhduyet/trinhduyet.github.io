@@ -2,15 +2,17 @@
 
 > [← Trang tổng quan](README.md) · [Danh mục 16 nhóm kiến thức](solution-architect-technical-catalog.md) · [Case study Financial / Loyalty / Booking / OMS](solution-architect-dotnet-case-studies.md)
 
-**Nguyên tắc:** Không đánh dấu một lab là “đã chạy” khi chưa có source code, kết quả test và log/metrics thực tế. Các bài dưới đây là **đề bài và tiêu chí nghiệm thu**, không phải bằng chứng đã triển khai.
+**Nguyên tắc:** Không đánh dấu một lab là “đã chạy” khi chưa có source code, kết quả test và log/metrics thực tế. Các bài dưới đây là **đề bài và tiêu chí nghiệm thu**, không phải bằng chứng đã triển khai. **Lab và nguyên lý là domain-neutral**: chọn case Banking, Booking, Commerce, Loyalty, Messaging hoặc Securities; OMS không phải điều kiện bắt buộc.
+
+**Source mẫu liên ngành:** [Distributed Workflow Lab (.NET 10 + SQL Server + RabbitMQ)](https://github.com/Trinhduyet/trinhduyet.github.io/tree/main/labs/25-solution-architect/distributed-workflow) hiện có source và smoke-test runner cho một phần L05/L06/L07/L08. Kết quả `dotnet build` chưa chứng minh runtime integration; chỉ ghi L3 khi Docker/CI chạy SQL + broker và lưu evidence. Lab này không phải bộ 12 lab đã hoàn thành.
 
 ## 1. Bộ 12 lab cốt lõi và 4 lab mở rộng
 
 | Mã | Lab | Mức | Kết quả cần nộp |
 |---|---|---|---|
 | [L01](#l01) | Điều tra HTTP chậm và ThreadPool | Bắt buộc | Code + test + log/metrics |
-| [L02](#l02) | Refactor payment adapter | Bắt buộc | Code + test + log/metrics |
-| [L03](#l03) | DDD cho OMS, Cash và Gateway | Bắt buộc | Code + test + log/metrics |
+| [L02](#l02) | Refactor external integration adapter | Bắt buộc | Code + test + log/metrics |
+| [L03](#l03) | DDD, capabilities và service boundaries | Bắt buộc | Code + test + log/metrics |
 | [L04](#l04) | SQL index, isolation và deadlock | Bắt buộc | Code + test + log/metrics |
 | [L05](#l05) | Chống double-spend và oversell | Bắt buộc | Code + test + log/metrics |
 | [L06](#l06) | Outbox, Inbox và Saga recovery | Bắt buộc | Code + test + log/metrics |
@@ -38,22 +40,22 @@
 **Bằng chứng:** đường dẫn source, lệnh chạy, log test, metrics và kết quả thực tế. **Bắt buộc** trước khi hoàn thành lộ trình nền tảng.
 
 
-<h3 id="l02">L02 — Refactor payment adapter</h3>
+<h3 id="l02">L02 — Refactor external integration adapter</h3>
 
 **Stack:** ASP.NET Core + DI + xUnit.
 
-**Thực hiện:** Tách domain và provider; thay mock provider không sửa core; so sánh Clean/Vertical Slice.
+**Thực hiện:** Tách domain và provider (payment, shipping, ERP hoặc identity); thay mock provider không sửa core; so sánh Clean/Vertical Slice.
 
 **Pass/Fail:** Unit tests chứng minh không phụ thuộc HTTP provider.
 
 **Bằng chứng:** đường dẫn source, lệnh chạy, log test, metrics và kết quả thực tế. **Bắt buộc** trước khi hoàn thành lộ trình nền tảng.
 
 
-<h3 id="l03">L03 — DDD cho OMS, Cash và Gateway</h3>
+<h3 id="l03">L03 — DDD, capabilities và service boundaries</h3>
 
 **Stack:** .NET 8/9 + diagrams.
 
-**Thực hiện:** Vẽ bounded contexts, owner bảng dữ liệu, command/event contract, ACL giữa OMS và Gateway.
+**Thực hiện:** Chọn domain bất kỳ; vẽ capability map, bounded contexts, owner dữ liệu, command/event contract và anti-corruption layer tại một integration boundary.
 
 **Pass/Fail:** Không có cross-service direct table writes trong kiến trúc đích.
 

@@ -401,7 +401,10 @@ labs/04-backend
 labs/13-terraform-azure
 labs/15-kubernetes
 labs/19-ai-engineering
+labs/25-solution-architect
 ```
+
+**Module 25:** `labs/25-solution-architect` chứa nguồn .NET 10 + SQL Server + RabbitMQ cho concurrency/Outbox/Inbox/reconciliation xuyên domain. Build đã được xác nhận; tích hợp Docker và full L01–L16 evidence chưa được xác nhận.
 
 ## Documented project/evidence targets
 

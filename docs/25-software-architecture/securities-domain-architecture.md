@@ -59,24 +59,18 @@ Ví dụ dữ liệu trên chỉ là conceptual model. Khi làm LLD cần precis
 
 ## 4. Order state machine và exchange semantics
 
-```mermaid
-stateDiagram-v2
-    [*] --> PendingValidation
-    PendingValidation --> Rejected: Validation/risk reject
-    PendingValidation --> PendingSubmit: Risk reserved
-    PendingSubmit --> Working: Exchange accepted
-    PendingSubmit --> Unknown: Gateway timeout
-    Unknown --> Working: Status reconciliation
-    Unknown --> Rejected: Confirmed reject
-    Working --> PartiallyFilled: Execution
-    PartiallyFilled --> Filled: Remaining filled
-    Working --> Filled: Full execution
-    Working --> PendingCancel: Cancel requested
-    PartiallyFilled --> PendingCancel: Cancel requested
-    PendingCancel --> Canceled: Cancel confirmed
-    PendingCancel --> PartiallyFilled: Additional execution
-    PendingCancel --> Filled: Filled before cancel
-```
+| From | Trigger / condition | To |
+|---|---|---|
+| PendingValidation | Validation/risk reject | Rejected |
+| PendingValidation | Risk reserved | PendingSubmit |
+| PendingSubmit | Exchange accepted | Working |
+| PendingSubmit | Gateway timeout, venue state unknown | Unknown |
+| Unknown | Status reconciliation confirms acceptance/reject | Working / Rejected |
+| Working | Execution for part/all quantity | PartiallyFilled / Filled |
+| PartiallyFilled | Remaining quantity executed | Filled |
+| Working / PartiallyFilled | Cancel requested | PendingCancel |
+| PendingCancel | Venue confirms cancel | Canceled |
+| PendingCancel | Additional executions arrive | PartiallyFilled / Filled |
 
 Đây là sơ đồ tối giản, không bao phủ toàn bộ trạng thái protocol. **Gateway ACK ≠ exchange acceptance ≠ execution fill.** Không tự phát lại với ID mới khi kết quả gửi lệnh chưa xác định. Lưu client/exchange IDs, inbound/outbound sequence, raw payload có kiểm soát, timestamp và correlation chain. Quy tắc sửa/hủy, thời hạn và valid transitions phụ thuộc venue/order type.
 
@@ -89,23 +83,14 @@ stateDiagram-v2
 5. Exchange events vào inbox/dedup, validate sequence, kiểm soát trạng thái; fill cập nhật order/ledger/position qua workflow nhất quán.
 6. Đối soát exchange execution, reservation, ledger, position và provider/bank settlement; cảnh báo lệch.
 
-```mermaid
-sequenceDiagram
-    participant U as Client
-    participant O as OMS API
-    participant R as Risk/Cash
-    participant G as Gateway
-    participant X as Venue
-    U->>O: POST order + idempotency key
-    O->>R: Check & reserve
-    R-->>O: Reservation reference
-    O-->>U: OrderId + pending
-    O->>G: Durable submit request
-    G->>X: Submit stable ID
-    X-->>G: ACK / reject / fills
-    G-->>O: Dedup + sequenced events
-    O-->>U: Query latest order status
-```
+| Bước | Sender → Receiver | Contract / observable state |
+|---|---|---|
+| 1 | Client → OMS API | `POST order` + idempotency key |
+| 2 | OMS → Risk/Cash | Check & reserve; return reservation reference |
+| 3 | OMS → Client | Return `orderId` + pending status |
+| 4 | OMS → Gateway → Venue | Durable submit using stable external client ID |
+| 5 | Venue → Gateway → OMS | ACK/reject/fills, dedup + sequence validation |
+| 6 | Client → OMS | Query latest order state; no assumption that ACK is fill |
 
 Không giả định atomic transaction giữa OMS DB, Risk DB và venue. Chỉ khi cùng data owner/DB mới có thể gom các bảng vào một local transaction.
 

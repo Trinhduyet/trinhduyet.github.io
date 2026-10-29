@@ -6,6 +6,8 @@
 
 Trang này kiểm tra **độ bao phủ của chương trình học**, không khẳng định mọi nội dung đã được dạy sâu hay mọi lab đã chạy. Trạng thái phản ánh việc đối chiếu tài liệu trong repository; không thay cho build, test, security review hoặc production evidence.
 
+**Cập nhật lộ trình tổng quát:** Bộ tài liệu mới có [Business → HLD/LLD](solution-architecture-from-requirements-to-design.md), [Distributed Systems](distributed-systems-architecture-deep-dive.md), [Polyglot Data](data-architecture-polyglot-persistence.md), [Integration/Security/Platform](integration-security-platform-architecture.md), [Performance/Operations](performance-reliability-operational-architecture.md), [Leadership/Governance](architecture-leadership-decisions-and-governance.md) và [Practice/Assessment](solution-architect-case-practice-and-assessment.md). Đây là **bổ sung lý thuyết và tiêu chí thực hành**, chưa tự động chuyển các dòng “cần lab/evidence” thành đã hoàn thành.
+
 - **Có nền tảng:** đã có tài liệu tham chiếu, cần kiểm tra độ sâu theo mục tiêu cụ thể.
 - **Cần đào sâu:** có tên chủ đề nhưng thiếu giải thích, trade-off hoặc failure analysis xuyên suốt.
 - **Cần lab/evidence:** phải có source, lệnh chạy, test/metrics và kết quả lưu được.

@@ -248,6 +248,13 @@ nav:
       - .NET Solution Architect Competency Map: 25-software-architecture/solution-architect-dotnet-roadmap.md
       - Danh mục 16 nhóm kiến thức kỹ thuật: 25-software-architecture/solution-architect-technical-catalog.md
       - Kiểm tra độ bao phủ kiến thức: 25-software-architecture/solution-architect-completeness-review.md
+      - Business Requirements đến HLD & LLD: 25-software-architecture/solution-architecture-from-requirements-to-design.md
+      - Distributed Systems & Event-Driven Deep Dive: 25-software-architecture/distributed-systems-architecture-deep-dive.md
+      - Data Architecture & Polyglot Persistence: 25-software-architecture/data-architecture-polyglot-persistence.md
+      - Integration, Security & Hybrid Platform: 25-software-architecture/integration-security-platform-architecture.md
+      - Performance, Reliability & Operations: 25-software-architecture/performance-reliability-operational-architecture.md
+      - Technical Leadership & Governance: 25-software-architecture/architecture-leadership-decisions-and-governance.md
+      - System Design Practice & Assessment: 25-software-architecture/solution-architect-case-practice-and-assessment.md
       - Ma trận JD Solution Architect chứng khoán: 25-software-architecture/solution-architect-jd-coverage.md
       - Securities Domain Architecture: 25-software-architecture/securities-domain-architecture.md
       - Architecture Delivery & Governance: 25-software-architecture/solution-architecture-delivery-governance.md
