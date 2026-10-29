@@ -44,11 +44,27 @@ Từ **C# / SQL Server** đến **Distributed Systems, HLD, LLD, Cloud và vận
 ## Kiểm tra độ bao phủ và học sâu từ nền tảng
 
 - [Kiểm tra độ bao phủ kiến thức](solution-architect-completeness-review.md) — phân biệt nội dung đã có nền tảng với nội dung cần đào sâu và evidence cần có.
+- [Business Requirements → HLD/LLD](solution-architecture-from-requirements-to-design.md) — discovery, capability mapping, FR/NFR, capacity estimation, architecture styles, contracts và review.
+- [Distributed Systems & Event-Driven Deep Dive](distributed-systems-architecture-deep-dive.md) — service/data boundaries, consistency, Outbox/Inbox, Saga, message semantics, throughput và failure recovery.
+- [Data Architecture & Polyglot Persistence](data-architecture-polyglot-persistence.md) — SQL Server, PostgreSQL, Oracle, MongoDB, concurrency, indexes, caching, CDC, data governance và migration.
+- [Integration, Security & Cloud/Hybrid](integration-security-platform-architecture.md) — API gateway, OAuth2/OIDC, service trust, partner integration, Kubernetes/IaC và platform engineering.
+- [Performance, HA/DR & Operational Readiness](performance-reliability-operational-architecture.md) — SLO, p99, load testing, capacity/cost, resilience, observability, runbook và restore drill.
+- [Technical Leadership & Governance](architecture-leadership-decisions-and-governance.md) — ADR, POC, architecture review, risk/debt, deviations, engineering practices và mentoring.
+- [System Design Practice & Assessment](solution-architect-case-practice-and-assessment.md) — 7 đề bài cross-domain, template artifacts và rubric đánh giá evidence.
 - [Đối chiếu JD Solution Architect chứng khoán](solution-architect-jd-coverage.md) — mapping trách nhiệm, kỹ thuật, domain và khoảng trống thực hành theo yêu cầu tuyển dụng.
 - [Securities Domain Architecture](securities-domain-architecture.md) — account, cash/ledger, OMS, margin, derivatives, market data, portfolio, funds và bonds; reference order flow và failure analysis.
 - [Architecture Delivery & Governance](solution-architecture-delivery-governance.md) — BRD → NFR → HLD/LLD → POC → review, RACI, architecture deviation, risk/debt và go-live.
 - [Computer Science & Networking cho .NET Solution Architect](computer-science-networking-dotnet-architect.md) — process/thread/Task, ThreadPool, TCP/DNS/TLS/HTTP, latency, connection pooling, lỗi production và lab L01.
 - [System Design Case Study Template](system-design-case-study-template.md) — template chuẩn cho FR/NFR, capacity, APIs, entities, HLD, failure modes, security, ADR và verification evidence.
+
+> **Lộ trình mặc định là kiến thức Solution Architect tổng quát.** Financial, Loyalty, Booking, Securities OMS và các case khác chỉ là ngữ cảnh để thực hành. Đọc 7 bài chuyên sâu phía trên theo thứ tự, sau đó chọn một domain làm capstone. Có bài giảng hoặc snippet không đồng nghĩa lab đã chạy hay đã có bằng chứng production.
+
+### Thực hành xuyên domain
+
+- [Distributed Workflow Lab .NET 10 + SQL Server + RabbitMQ](https://github.com/Trinhduyet/trinhduyet.github.io/tree/main/labs/25-solution-architect/distributed-workflow) — resource reservation chung cho Booking/Inventory/Loyalty/Finance/Trading; atomic update, idempotency, outbox/inbox, duplicate, timeout unknown/reconciliation. [CI SQL/broker smoke tests đã pass](https://github.com/Trinhduyet/trinhduyet.github.io/actions/runs/40816563843); chưa thay thế full load, security, DR và production evidence.
+- [7 System Design cases & assessment rubric](solution-architect-case-practice-and-assessment.md) — chọn một case phù hợp nghiệp vụ, không lấy OMS làm điều kiện bắt buộc.
+
+**Exit criteria (Definition of Done) cho Module 25:** có thể chuyển FR/NFR → HLD/LLD → ADR; giải thích transaction, failure, security, availability, cost và vận hành; có test/evidence thực tế cho các invariants trọng yếu; bảo vệ quyết định trước reviewer và nêu rõ giới hạn. **Verification metadata:** nội dung chương được cập nhật 2026-10-29, còn thiếu production SLO/DR/large-scale deployment evidence; không coi đọc xong là đã có kinh nghiệm Solution Architect.
 
 ## Nội dung Software Architecture chuyên sâu đang có
 

@@ -348,9 +348,10 @@ labs/04-backend
 labs/13-terraform-azure
 labs/15-kubernetes
 labs/19-ai-engineering
+labs/25-solution-architect
 ```
 
-Nghĩa là Foundations/Backend core, Terraform + Azure IaC baseline, Kubernetes core và Production AI/MEAI đã có executable evidence. SQL/API/ASP.NET/Testing, Security/Performance/Redis/Docker, Distributed/Microservices và Coding Agents vẫn là các vùng cần integrated runnable labs tiếp theo.
+Nghĩa là Foundations/Backend core, Terraform + Azure IaC baseline, Kubernetes core, Production AI/MEAI và **lab Solution Architecture chung** đã có trong repository. [CI lab 25](https://github.com/Trinhduyet/trinhduyet.github.io/actions/runs/40816563843) đã xác nhận SQL Server/RabbitMQ smoke tests; các domain khác và đầy đủ 12 lab vẫn còn trong backlog.
 
 → [Repository Health — current](00-roadmap/repository-health.md)
 

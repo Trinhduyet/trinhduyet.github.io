@@ -69,6 +69,7 @@ labs/04-backend
 labs/13-terraform-azure
 labs/15-kubernetes
 labs/19-ai-engineering
+labs/25-solution-architect
 ```
 
 Meaning:
@@ -79,6 +80,7 @@ Meaning:
 | Terraform + Azure IaC 13 | Terraform 1.16.4 fmt/init/validate/test + AzureRM mock-provider contracts |
 | Kubernetes 15 | Deployment/ReplicaSet/Pod, Service/selectors, probes, rollout/debugging |
 | AI Engineering 19 | deterministic core + Microsoft.Extensions.AI self-test/eval/failure paths |
+| Solution Architecture 25 | domain-neutral workflow source + [SQL Server/RabbitMQ CI smoke passed](https://github.com/Trinhduyet/trinhduyet.github.io/actions/runs/40816563843); chưa đủ all labs/production evidence |
 
 Important:
 

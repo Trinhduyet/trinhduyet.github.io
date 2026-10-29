@@ -1,0 +1,48 @@
+name: solution-architect-workflow-lab
+services:
+  sql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "${LAB_SQL_PASSWORD:?Set LAB_SQL_PASSWORD in .env}"
+    ports:
+      - "14339:1433"
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/127.0.0.1/1433'"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+    volumes:
+      - sql-data:/var/opt/mssql
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    environment:
+      RABBITMQ_DEFAULT_USER: lab
+      RABBITMQ_DEFAULT_PASS: "${LAB_RABBIT_PASSWORD:?Set LAB_RABBIT_PASSWORD in .env}"
+    ports:
+      - "15679:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+
+  api:
+    build: .
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__LabDb: "Server=sql;Database=SolutionArchitectLab;User ID=sa;Password=${LAB_SQL_PASSWORD};Encrypt=True;TrustServerCertificate=True"
+      RabbitUri: "amqp://lab:${LAB_RABBIT_PASSWORD}@rabbitmq:5672/"
+      LabApiKey: "${LAB_API_KEY:?Set LAB_API_KEY in .env}"
+      FailAfterPublishOnce: "true"
+    ports:
+      - "8088:8080"
+    depends_on:
+      sql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+volumes:
+  sql-data:
