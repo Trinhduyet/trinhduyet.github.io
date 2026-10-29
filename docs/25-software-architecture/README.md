@@ -61,7 +61,7 @@ Từ **C# / SQL Server** đến **Distributed Systems, HLD, LLD, Cloud và vận
 
 ### Thực hành xuyên domain
 
-- [Distributed Workflow Lab .NET 10 + SQL Server + RabbitMQ](https://github.com/Trinhduyet/trinhduyet.github.io/tree/main/labs/25-solution-architect/distributed-workflow) — resource reservation chung cho Booking/Inventory/Loyalty/Finance/Trading; atomic update, idempotency, outbox/inbox, duplicate, timeout unknown/reconciliation. Build được không đồng nghĩa đã chạy integration trên Docker; xem CI và evidence.
+- [Distributed Workflow Lab .NET 10 + SQL Server + RabbitMQ](https://github.com/Trinhduyet/trinhduyet.github.io/tree/main/labs/25-solution-architect/distributed-workflow) — resource reservation chung cho Booking/Inventory/Loyalty/Finance/Trading; atomic update, idempotency, outbox/inbox, duplicate, timeout unknown/reconciliation. [CI SQL/broker smoke tests đã pass](https://github.com/Trinhduyet/trinhduyet.github.io/actions/runs/40816563843); chưa thay thế full load, security, DR và production evidence.
 - [7 System Design cases & assessment rubric](solution-architect-case-practice-and-assessment.md) — chọn một case phù hợp nghiệp vụ, không lấy OMS làm điều kiện bắt buộc.
 
 **Exit criteria (Definition of Done) cho Module 25:** có thể chuyển FR/NFR → HLD/LLD → ADR; giải thích transaction, failure, security, availability, cost và vận hành; có test/evidence thực tế cho các invariants trọng yếu; bảo vệ quyết định trước reviewer và nêu rõ giới hạn. **Verification metadata:** nội dung chương được cập nhật 2026-10-29, còn thiếu production SLO/DR/large-scale deployment evidence; không coi đọc xong là đã có kinh nghiệm Solution Architect.

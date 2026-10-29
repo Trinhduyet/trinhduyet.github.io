@@ -4,6 +4,8 @@ This is a **teaching lab**, not a production reservation, payment, or trading en
 
 ## Principles demonstrated
 
+**Verified integration evidence:** [GitHub Actions run #40816563843 — success](https://github.com/Trinhduyet/trinhduyet.github.io/actions/runs/40816563843), .NET 10 build plus real SQL Server/RabbitMQ smoke checks. More extensive load/DR/partner semantics are not verified by this run.
+
 1. **Concurrency:** an atomic conditional SQL update protects resource availability under 100 simultaneous requests.
 2. **Idempotency:** `(AccountId, Idempotency-Key)` is unique; same payload replays the ID, different payload conflicts.
 3. **Transaction boundary:** reservation and Outbox row commit together.

@@ -4,7 +4,7 @@
 
 **Nguyên tắc:** Không đánh dấu một lab là “đã chạy” khi chưa có source code, kết quả test và log/metrics thực tế. Các bài dưới đây là **đề bài và tiêu chí nghiệm thu**, không phải bằng chứng đã triển khai. **Lab và nguyên lý là domain-neutral**: chọn case Banking, Booking, Commerce, Loyalty, Messaging hoặc Securities; OMS không phải điều kiện bắt buộc.
 
-**Source mẫu liên ngành:** [Distributed Workflow Lab (.NET 10 + SQL Server + RabbitMQ)](https://github.com/Trinhduyet/trinhduyet.github.io/tree/main/labs/25-solution-architect/distributed-workflow) hiện có source và smoke-test runner cho một phần L05/L06/L07/L08. Kết quả `dotnet build` chưa chứng minh runtime integration; chỉ ghi L3 khi Docker/CI chạy SQL + broker và lưu evidence. Lab này không phải bộ 12 lab đã hoàn thành.
+**Source mẫu liên ngành:** [Distributed Workflow Lab (.NET 10 + SQL Server + RabbitMQ)](https://github.com/Trinhduyet/trinhduyet.github.io/tree/main/labs/25-solution-architect/distributed-workflow) hiện có source và smoke-test runner cho một phần L05/L06/L07/L08. [GitHub Actions đã pass SQL/broker integration smoke](https://github.com/Trinhduyet/trinhduyet.github.io/actions/runs/40816563843), gồm 100 concurrent claims, key replay/conflict, Unknown/reconciliation; không đồng nghĩa toàn bộ failure matrix hoặc 12 lab đã hoàn thành.
 
 ## 1. Bộ 12 lab cốt lõi và 4 lab mở rộng
 

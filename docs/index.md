@@ -351,7 +351,7 @@ labs/19-ai-engineering
 labs/25-solution-architect
 ```
 
-Nghĩa là Foundations/Backend core, Terraform + Azure IaC baseline, Kubernetes core, Production AI/MEAI và **source lab Solution Architecture chung** đã có trong repository. Lab 25 đã build nhưng cần Docker CI xác nhận integration SQL/broker; các domain khác và đầy đủ 12 lab vẫn còn trong backlog.
+Nghĩa là Foundations/Backend core, Terraform + Azure IaC baseline, Kubernetes core, Production AI/MEAI và **lab Solution Architecture chung** đã có trong repository. [CI lab 25](https://github.com/Trinhduyet/trinhduyet.github.io/actions/runs/40816563843) đã xác nhận SQL Server/RabbitMQ smoke tests; các domain khác và đầy đủ 12 lab vẫn còn trong backlog.
 
 → [Repository Health — current](00-roadmap/repository-health.md)
 

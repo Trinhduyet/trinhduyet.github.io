@@ -83,7 +83,7 @@ Highlights:
 - **Terraform/Azure IaC:** Terraform 1.16.4, mock AzureRM provider, positive + negative contract tests.
 - **Kubernetes:** Deployment → ReplicaSet → Pod, Service/selectors, readiness, rollout/debugging.
 - **AI Engineering:** deterministic core + `Microsoft.Extensions.AI` self-test/eval/failure paths.
-- **Solution Architecture:** domain-neutral .NET/SQL Server/RabbitMQ distributed workflow source + smoke-test runner; build verified locally, real Docker integration evidence pending CI.
+- **Solution Architecture:** domain-neutral .NET/SQL Server/RabbitMQ workflow lab; [CI integration run passed](https://github.com/Trinhduyet/trinhduyet.github.io/actions/runs/40816563843) (100 concurrent claims, idempotency, Unknown/reconciliation). Broader L01–L16 and production/DR evidence remain open.
 
 Deep content without a dedicated runnable lab is intentionally reported as **Guided/Deep**, not falsely marked “Done”.
 
