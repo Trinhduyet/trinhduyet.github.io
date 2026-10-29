@@ -44,6 +44,9 @@ Từ **C# / SQL Server** đến **Distributed Systems, HLD, LLD, Cloud và vận
 ## Kiểm tra độ bao phủ và học sâu từ nền tảng
 
 - [Kiểm tra độ bao phủ kiến thức](solution-architect-completeness-review.md) — phân biệt nội dung đã có nền tảng với nội dung cần đào sâu và evidence cần có.
+- [Đối chiếu JD Solution Architect chứng khoán](solution-architect-jd-coverage.md) — mapping trách nhiệm, kỹ thuật, domain và khoảng trống thực hành theo yêu cầu tuyển dụng.
+- [Securities Domain Architecture](securities-domain-architecture.md) — account, cash/ledger, OMS, margin, derivatives, market data, portfolio, funds và bonds; reference order flow và failure analysis.
+- [Architecture Delivery & Governance](solution-architecture-delivery-governance.md) — BRD → NFR → HLD/LLD → POC → review, RACI, architecture deviation, risk/debt và go-live.
 - [Computer Science & Networking cho .NET Solution Architect](computer-science-networking-dotnet-architect.md) — process/thread/Task, ThreadPool, TCP/DNS/TLS/HTTP, latency, connection pooling, lỗi production và lab L01.
 - [System Design Case Study Template](system-design-case-study-template.md) — template chuẩn cho FR/NFR, capacity, APIs, entities, HLD, failure modes, security, ADR và verification evidence.
 
