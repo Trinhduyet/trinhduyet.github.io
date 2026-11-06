@@ -57,6 +57,9 @@ Nếu chưa có workload, latency/SLO, source of truth và failure model thì ch
 | [Async, Queue, Backpressure & Reliability](async-queues-backpressure-and-reliability.md) | **P0** | tách arrival rate khỏi processing rate và thiết kế failure semantics |
 | [Availability, Multi-region, DR, Security & Cost](availability-multiregion-dr-security-and-cost.md) | **P0/P1** | thiết kế theo SLO/RTO/RPO thay vì mặc định active-active |
 | [Case Studies & Design Review Workflow](case-studies-and-design-review.md) | **P0** | áp dụng framework vào URL Shortener, Notification, Checkout và AI Assistant |
+| [Twitter/X Feed Architecture](twitter-x-feed-architecture.md) | **P0/P1** | fan-out on write/read, hybrid feed, cache, pagination, privacy và celebrity hot keys |
+| [Payment System Architecture](payment-system-architecture.md) | **P0/P1** | idempotency, payment UNKNOWN, double-entry ledger, CDC/outbox và reconciliation |
+| [Personal Finance Aggregator](personal-finance-aggregator-architecture.md) | **P0/P1** | Open Banking consent, provider rate limits, incremental sync, CDC và budget alerts |
 | [Production Projects & Evidence](production-projects-and-evidence.md) | **P0** | biến design thành project runnable + metrics + failure drills |
 | [References](references.md) | source | official/current sources + user-supplied breadth sources |
 
