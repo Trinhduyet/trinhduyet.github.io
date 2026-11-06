@@ -40,21 +40,9 @@ Thêm webhook retries, user polling, provider outages và reconciliation batches
 
 ## 3. HLD: tách request acceptance, provider outcome và ledger
 
-```mermaid
-flowchart TD
-    Buyer["Web / App / POS"] --> API["API Gateway + Auth"]
-    API --> Pay["Payment Orchestrator"]
-    Pay --> DB[("Payments + Ledger DB")]
-    Pay --> PSP["PSP / Acquirer / Bank"]
-    PSP --> Webhook["Verified Webhook Ingress"]
-    Webhook --> Inbox["Webhook Inbox / Durable Queue"]
-    Inbox --> Pay
-    DB --> Outbox["Transactional Outbox"]
-    Outbox --> Broker["Event Broker"]
-    Broker --> Notify["Merchant Webhook Worker"]
-    PSP --> Recon["Reconciliation Worker"]
-    Recon --> DB
-```
+![HLD Payment: request, PSP confirmation, local accounting và merchant notification](../assets/diagrams/payment-system-architecture.svg)
+
+Sơ đồ tách ba lane; liên kết xuyên lane là: PSP cung cấp callback/reconciliation evidence, Payment Service ghi state + ledger + outbox trong local transaction, rồi relay phát sự kiện tới merchant notification worker. Không có distributed ACID transaction chung với PSP.
 
 **Card security:** Hosted checkout/secure iframe hoặc PSP Elements có thể khiến PAN không đi qua merchant backend, nhưng **không đồng nghĩa merchant miễn mọi PCI DSS scope**. Đối với thiết bị POS, *validated P2PE* khác với việc nói chung chung “chip được mã hóa”. Token nhận được từ PSP không phải PAN, nhưng vẫn phải xem là dữ liệu nhạy cảm và hạn chế lộ/log.
 
@@ -79,21 +67,15 @@ GET  /v1/reconciliation-cases?status=OPEN
 
 Mọi API có merchant-level authorization; `POST` nhận idempotency key, payload hash, bounded retention và documented conflict semantics. Refund có idempotency key riêng. `amountMinor` là số nguyên theo *minor unit* của currency; không giả định mọi currency có hai chữ số thập phân.
 
-```mermaid
-stateDiagram-v2
-    [*] --> Created
-    Created --> Pending: "submit to PSP"
-    Pending --> Authorized: "confirmed authorization"
-    Pending --> Unknown: "timeout / no definitive response"
-    Pending --> Failed: "definitive failure"
-    Unknown --> Authorized: "reconcile succeeds"
-    Unknown --> Failed: "authoritative failure"
-    Authorized --> Captured: "capture confirmed"
-    Authorized --> Voided: "void confirmed"
-    Captured --> PartiallyRefunded: "partial refund"
-    Captured --> Refunded: "full refund"
-    PartiallyRefunded --> Refunded: "remaining refund"
-```
+| Current state | Event / evidence | Next state |
+|---|---|---|
+| `CREATED` | Submit provider request | `PENDING` |
+| `PENDING` | Definitive authorization success / failure | `AUTHORIZED` / `FAILED` |
+| `PENDING` | Timeout, provider outcome not known | **`UNKNOWN`** |
+| `UNKNOWN` | Authoritative reconcile result | `AUTHORIZED` / `FAILED` |
+| `AUTHORIZED` | Confirm capture / void | `CAPTURED` / `VOIDED` |
+| `CAPTURED` | Partial refund / full refund | `PARTIALLY_REFUNDED` / `REFUNDED` |
+| `PARTIALLY_REFUNDED` | Remaining refund confirmed | `REFUNDED` |
 
 **Chú ý:** `Settled`, `Disputed`, `Chargeback` là các trạng thái/aggregate khác có thể cần thêm, tùy PSP. Một `Captured` chưa nhất thiết là tiền đã vào merchant bank account.
 

@@ -35,20 +35,9 @@
 
 ## 3. HLD: hybrid fan-out
 
-```mermaid
-flowchart TD
-    Client["Web / Mobile"] --> Gateway["API Gateway + Auth"]
-    Gateway --> Tweet["Tweet Service"]
-    Gateway --> Feed["Feed Query Service"]
-    Tweet --> DB[("Tweet DB")]
-    Tweet --> Outbox["Transactional Outbox"]
-    Outbox --> Broker["Event Broker"]
-    Broker --> Fanout["Fan-out Workers"]
-    Fanout --> Timeline[("Timeline Store / Cache")]
-    Feed --> Timeline
-    Feed --> DB
-    Feed --> Rank["Candidate + Ranking (FYP)"]
-```
+![HLD Twitter/X: write, asynchronous fan-out, Following/FYP read path](../assets/diagrams/twitter-x-feed-architecture.svg)
+
+Sơ đồ chia ba lane để dễ review. *Data flow logic:* Tweet DB commit cùng outbox; outbox relay phát event cho broker; fan-out materialize timeline; Feed Query có thể hydrate từ Tweet DB và merge candidates trước khi filter/rank.
 
 ### Write path: đăng bài
 
