@@ -601,6 +601,8 @@ AI architecture still follows normal distributed-system rules.
 
 Useful to learn fanout trade-off.
 
+**Bài học đầy đủ:** [Thiết kế Twitter/X Feed ở quy mô lớn](twitter-x-feed-architecture.md) — FR/NFR, capacity, Following vs FYP, hybrid fan-out, authorization, cache invalidation, API, failures và lab.
+
 ## Fanout on write
 
 When author posts:
@@ -706,6 +708,18 @@ metadata validation
 ---
 
 # 8. Design Review questions
+
+## Case studies chuyên sâu có đầy đủ HLD, dữ liệu và failure testing
+
+Ngoài các ví dụ ngắn dùng luyện framework ở trang này, đọc ba đề bài có sơ đồ và checklist end-to-end:
+
+1. [Twitter/X Feed](twitter-x-feed-architecture.md) — read/write asymmetry, celebrity distribution, consistency và policy-aware caching.
+2. [Payment System](payment-system-architecture.md) — PSP timeout UNKNOWN, ledger, idempotency, webhook, transactional outbox và đối soát.
+3. [Personal Finance Aggregator](personal-finance-aggregator-architecture.md) — nhiều ngân hàng, consent, rate-limit, sync cursor, stale data và cảnh báo ngân sách.
+
+Áp dụng cùng [System Design Template](../25-software-architecture/system-design-case-study-template.md); không có stack bắt buộc cho tất cả case.
+
+## Checklist review tổng quát
 
 A Senior/Architect reviewer should ask:
 
