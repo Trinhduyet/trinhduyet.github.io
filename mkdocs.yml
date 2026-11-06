@@ -216,6 +216,7 @@ nav:
       - Azure .NET Reference Architecture: 14-cloud/azure-dotnet-reference-architecture.md
       - Regions, Availability & DR: 14-cloud/regions-availability-and-disaster-recovery.md
       - Cloud Cost Governance: 14-cloud/cloud-cost-governance-and-operations.md
+      - Multi-cloud & Hybrid Platform Decisions: 14-cloud/multicloud-platform-decisions-and-portability.md
       - References: 14-cloud/references.md
 
   - Distributed:
@@ -224,6 +225,7 @@ nav:
           - Partial Failure, Retry & Idempotency: 17-distributed-systems/partial-failure-timeouts-retries-and-idempotency.md
           - Messaging, Outbox, Inbox & Dedup: 17-distributed-systems/messaging-outbox-inbox-and-dedup.md
           - Consistency, Ordering, Saga & Backpressure: 17-distributed-systems/consistency-ordering-saga-and-backpressure.md
+      - Messaging Platforms, AsyncAPI & Workflows: 17-distributed-systems/messaging-platforms-asyncapi-and-workflows.md
       - Microservices Architecture:
           - Overview: 18-microservices-architecture/README.md
           - Boundaries, Data & Contracts: 18-microservices-architecture/service-boundaries-data-ownership-and-contracts.md
@@ -252,11 +254,17 @@ nav:
       - Danh mục 16 nhóm kiến thức kỹ thuật: 25-software-architecture/solution-architect-technical-catalog.md
       - Kiểm tra độ bao phủ kiến thức: 25-software-architecture/solution-architect-completeness-review.md
       - Business Requirements đến HLD & LLD: 25-software-architecture/solution-architecture-from-requirements-to-design.md
+      - Principles, Design Patterns & 12-Factor: 25-software-architecture/architecture-principles-patterns-and-12-factor.md
+      - Event Storming, C4 & Architecture Modeling: 25-software-architecture/architecture-modeling-event-storming-and-c4.md
+      - Tactical DDD & Aggregate Consistency: 25-software-architecture/tactical-ddd-and-aggregate-consistency.md
+      - Anti-patterns & Safe Refactoring: 25-software-architecture/architecture-antipatterns-and-refactoring.md
       - Distributed Systems & Event-Driven Deep Dive: 25-software-architecture/distributed-systems-architecture-deep-dive.md
       - Data Architecture & Polyglot Persistence: 25-software-architecture/data-architecture-polyglot-persistence.md
       - Integration, Security & Hybrid Platform: 25-software-architecture/integration-security-platform-architecture.md
       - Performance, Reliability & Operations: 25-software-architecture/performance-reliability-operational-architecture.md
       - Technical Leadership & Governance: 25-software-architecture/architecture-leadership-decisions-and-governance.md
+      - Actor Model, Event Sourcing & Service Mesh: 25-software-architecture/advanced-actor-event-sourcing-and-service-mesh.md
+      - Awesome Architecture Coverage Map: 25-software-architecture/awesome-architecture-coverage-map.md
       - System Design Practice & Assessment: 25-software-architecture/solution-architect-case-practice-and-assessment.md
       - Ma trận JD Solution Architect chứng khoán: 25-software-architecture/solution-architect-jd-coverage.md
       - Securities Domain Architecture: 25-software-architecture/securities-domain-architecture.md
@@ -281,6 +289,7 @@ nav:
           - Microsoft.Extensions.AI: 19-ai-engineering/microsoft-extensions-ai-dotnet-integration.md
           - Structured Output & Tool Calling: 19-ai-engineering/structured-output-and-tool-calling.md
           - RAG, Evaluation & Observability: 19-ai-engineering/rag-evaluation-and-observability.md
+          - AI Model Serving, Gateway & Platform: 19-ai-engineering/ai-platform-serving-gateways-and-evaluation.md
           - References: 19-ai-engineering/references.md
       - AI Coding Agents:
           - Overview & Learning Path: 21-ai-coding-agents/README.md

@@ -95,6 +95,7 @@ Thứ tự khuyến nghị:
 | [Microsoft.Extensions.AI — .NET Integration Guide](microsoft-extensions-ai-dotnet-integration.md) | `IChatClient`, pipeline, provider adapters, tools, structured output, telemetry/eval |
 | [Structured Output & Tool Calling](structured-output-and-tool-calling.md) | typed contract + capability tools + AuthZ/idempotency |
 | [RAG, Evaluation & Observability](rag-evaluation-and-observability.md) | retrieval lifecycle, ACL, eval regression, AI telemetry |
+| [AI Model Serving, Gateways & Platform](ai-platform-serving-gateways-and-evaluation.md) | managed vs self-host, vLLM/llama.cpp, quotas, TTFT, GPU/cost, runtime security và production eval |
 | [Runnable AI Engineering Lab](https://github.com/Trinhduyet/trinhduyet.github.io/tree/main/labs/19-ai-engineering) | executable evidence, MEAI self-test, failure drills |
 | [References](references.md) | official/provider sources + supplementary learning sources |
 

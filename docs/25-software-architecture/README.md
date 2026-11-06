@@ -45,11 +45,17 @@ Từ **C# / SQL Server** đến **Distributed Systems, HLD, LLD, Cloud và vận
 
 - [Kiểm tra độ bao phủ kiến thức](solution-architect-completeness-review.md) — phân biệt nội dung đã có nền tảng với nội dung cần đào sâu và evidence cần có.
 - [Business Requirements → HLD/LLD](solution-architecture-from-requirements-to-design.md) — discovery, capability mapping, FR/NFR, capacity estimation, architecture styles, contracts và review.
+- [Principles, Patterns & 12-Factor](architecture-principles-patterns-and-12-factor.md) — SOLID, GRASP, cohesion/coupling, GoF patterns, .NET example, 12-Factor và test/ADR.
+- [Architecture Modeling: Event Storming, C4, UML](architecture-modeling-event-storming-and-c4.md) — workshop business discovery, C4/sequence/ERD/state views, traceability và modeling review.
+- [Tactical DDD & Aggregate Consistency](tactical-ddd-and-aggregate-consistency.md) — Entity/Value Object/Aggregate, invariant, concurrency, domain/integration events, ACL và integration tests.
+- [Anti-patterns & Safe Refactoring](architecture-antipatterns-and-refactoring.md) — Big Ball of Mud, God Service, leaky abstraction, distributed monolith, strangler, fitness functions.
 - [Distributed Systems & Event-Driven Deep Dive](distributed-systems-architecture-deep-dive.md) — service/data boundaries, consistency, Outbox/Inbox, Saga, message semantics, throughput và failure recovery.
 - [Data Architecture & Polyglot Persistence](data-architecture-polyglot-persistence.md) — SQL Server, PostgreSQL, Oracle, MongoDB, concurrency, indexes, caching, CDC, data governance và migration.
 - [Integration, Security & Cloud/Hybrid](integration-security-platform-architecture.md) — API gateway, OAuth2/OIDC, service trust, partner integration, Kubernetes/IaC và platform engineering.
 - [Performance, HA/DR & Operational Readiness](performance-reliability-operational-architecture.md) — SLO, p99, load testing, capacity/cost, resilience, observability, runbook và restore drill.
 - [Technical Leadership & Governance](architecture-leadership-decisions-and-governance.md) — ADR, POC, architecture review, risk/debt, deviations, engineering practices và mentoring.
+- [Advanced Architecture: Actor, Event Sourcing, Service Mesh](advanced-actor-event-sourcing-and-service-mesh.md) — Orleans/actor, projections/replay, mTLS/data plane, micro-frontends và trade-offs theo workload.
+- [Awesome Architecture Coverage Map](awesome-architecture-coverage-map.md) — đối chiếu nguồn tham khảo 8 chuyên đề mới, learning order, lab/evidence còn thiếu.
 - [System Design Practice & Assessment](solution-architect-case-practice-and-assessment.md) — 7 đề bài cross-domain, template artifacts và rubric đánh giá evidence.
 - [3 case study System Architecture end-to-end](../24-system-design/README.md) — [Twitter/X Feed](../24-system-design/twitter-x-feed-architecture.md), [Payment System](../24-system-design/payment-system-architecture.md), [Personal Finance Aggregator](../24-system-design/personal-finance-aggregator-architecture.md); FR/NFR, HLD, data, trade-offs và failure tests.
 - [Đối chiếu JD Solution Architect chứng khoán](solution-architect-jd-coverage.md) — mapping trách nhiệm, kỹ thuật, domain và khoảng trống thực hành theo yêu cầu tuyển dụng.
@@ -57,6 +63,12 @@ Từ **C# / SQL Server** đến **Distributed Systems, HLD, LLD, Cloud và vận
 - [Architecture Delivery & Governance](solution-architecture-delivery-governance.md) — BRD → NFR → HLD/LLD → POC → review, RACI, architecture deviation, risk/debt và go-live.
 - [Computer Science & Networking cho .NET Solution Architect](computer-science-networking-dotnet-architect.md) — process/thread/Task, ThreadPool, TCP/DNS/TLS/HTTP, latency, connection pooling, lỗi production và lab L01.
 - [System Design Case Study Template](system-design-case-study-template.md) — template chuẩn cho FR/NFR, capacity, APIs, entities, HLD, failure modes, security, ADR và verification evidence.
+
+### Chuyên đề mở rộng ở các module liên quan
+
+- [Messaging Platforms, AsyncAPI & Workflows](../17-distributed-systems/messaging-platforms-asyncapi-and-workflows.md) — Kafka/RabbitMQ/NATS/Service Bus, event contracts, choreography/orchestration.
+- [Multi-cloud & Hybrid Platform Decisions](../14-cloud/multicloud-platform-decisions-and-portability.md) — Azure/AWS/GCP/on-prem, portability, identity, data gravity và HA/DR trade-offs.
+- [AI Model Serving & Gateway Architecture](../19-ai-engineering/ai-platform-serving-gateways-and-evaluation.md) — model inference, vLLM/llama.cpp, security, eval, quotas, cost và deployment.
 
 > **Lộ trình mặc định là kiến thức Solution Architect tổng quát.** Financial, Loyalty, Booking, Securities OMS và các case khác chỉ là ngữ cảnh để thực hành. Đọc 7 bài chuyên sâu phía trên theo thứ tự, sau đó chọn một domain làm capstone. Có bài giảng hoặc snippet không đồng nghĩa lab đã chạy hay đã có bằng chứng production.
 

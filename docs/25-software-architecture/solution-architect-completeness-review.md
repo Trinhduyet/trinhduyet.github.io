@@ -8,6 +8,8 @@ Trang này kiểm tra **độ bao phủ của chương trình học**, không kh
 
 **Cập nhật lộ trình tổng quát:** Bộ tài liệu mới có [Business → HLD/LLD](solution-architecture-from-requirements-to-design.md), [Distributed Systems](distributed-systems-architecture-deep-dive.md), [Polyglot Data](data-architecture-polyglot-persistence.md), [Integration/Security/Platform](integration-security-platform-architecture.md), [Performance/Operations](performance-reliability-operational-architecture.md), [Leadership/Governance](architecture-leadership-decisions-and-governance.md) và [Practice/Assessment](solution-architect-case-practice-and-assessment.md). Đây là **bổ sung lý thuyết và tiêu chí thực hành**, chưa tự động chuyển các dòng “cần lab/evidence” thành đã hoàn thành.
 
+**Đối chiếu Awesome Architecture:** thêm [Coverage Map](awesome-architecture-coverage-map.md) và 8 chuyên đề liên kết từ Modules 14/17/19/25: Design Principles, Modeling, Tactical DDD, Anti-patterns, Actor/Event Sourcing/Service Mesh, messaging/AsyncAPI, AI serving và Multi-cloud. Các bài tăng mức **L1–L2 giải thích/thiết kế**; lab/production evidence bên dưới vẫn giữ trạng thái chưa chứng minh nếu chưa có test thật.
+
 - **Có nền tảng:** đã có tài liệu tham chiếu, cần kiểm tra độ sâu theo mục tiêu cụ thể.
 - **Cần đào sâu:** có tên chủ đề nhưng thiếu giải thích, trade-off hoặc failure analysis xuyên suốt.
 - **Cần lab/evidence:** phải có source, lệnh chạy, test/metrics và kết quả lưu được.
@@ -20,8 +22,8 @@ Trang này kiểm tra **độ bao phủ của chương trình học**, không kh
 | Computer Science & OS | Process/thread/task, scheduling, memory, GC, allocation, blocking | Đo CPU/GC/ThreadPool và phân biệt CPU-bound với I/O-bound | Cần đào sâu production |
 | Networking | DNS, TCP, TLS, HTTP/1.1–3, proxy, NAT/SNAT, connection reuse | Trace request, mô phỏng timeout và đo tail latency | Lab L01 cần hoàn thiện |
 | .NET Runtime | async/await, ThreadPool, GC/LOH, HttpClient, cancellation, hosted services | Counters/trace và kiểm tra starvation/resource leaks | Cần lab chuyên biệt |
-| Design principles | SOLID, cohesion/coupling, patterns, dependency direction | Refactor có test, so sánh trước/sau | Lab L02 |
-| Domain modeling | Capability map, subdomain, bounded context, aggregate/invariant, ACL | Domain model + quyết định ownership và contract | Lab L03 |
+| Design principles | SOLID, GRASP, cohesion/coupling, patterns, dependency direction, 12-Factor | Refactor có test, so sánh trước/sau | [Bài mới](architecture-principles-patterns-and-12-factor.md); Lab L02 còn cần evidence |
+| Domain modeling | Event Storming, C4, UML, capability map, bounded context, aggregate/invariant, ACL | Workshop artifacts + domain model + quyết định ownership/contract | [Modeling](architecture-modeling-event-storming-and-c4.md) + [Tactical DDD](tactical-ddd-and-aggregate-consistency.md); Lab L03 cần evidence |
 | SQL Server | Data modeling, indexes, execution plans, isolation, locks, Query Store, log/backup | Integration test, plan, deadlock graph, benchmark | Lab L04 cần mở rộng |
 | Concurrency | Lost update, write skew, optimistic/pessimistic locking, unique constraints, idempotency | Test đồng thời trên SQL Server thật | Lab L05 |
 | Distributed consistency | Partial failure, timeout/unknown, retries, saga, reconciliation | Kill/restart, duplicate, delayed response và recovery | Lab L06 |
@@ -33,8 +35,8 @@ Trang này kiểm tra **độ bao phủ của chương trình học**, không kh
 | Cloud/platform/IaC | Deployment topology, network/identity, config/secrets, rollout/rollback, cost | Deploy/fail/rollback test và pipeline evidence | Lab L12 |
 | Observability/SRE | SLI/SLO, error budget, RED/USE, trace/log/metric, alerting | Trace end-to-end, dashboard, alert test | Lab L13 mở rộng |
 | Backup/DR | Backup strategy, PITR, RTO/RPO, restore, failover, reconciliation | Restore drill và số đo thực tế | Lab L14 mở rộng |
-| Architecture governance | Capability map, NFR, C4, ADR, risk register, fitness functions | Một bộ hồ sơ kiến trúc có thể review và cập nhật | Lab L15 mở rộng |
-| Advanced architecture | CQRS/Event Sourcing, multi-region, workflow, service mesh | ADR chứng minh lợi ích, chi phí và trigger áp dụng | Lab L16 mở rộng |
+| Architecture governance | Capability map, NFR, C4, ADR, risk register, fitness functions, anti-pattern remediation | Một bộ hồ sơ kiến trúc có thể review và cập nhật | [Anti-patterns](architecture-antipatterns-and-refactoring.md); Lab L15 mở rộng |
+| Advanced architecture | CQRS/Event Sourcing, Actor Model, multi-region, workflow, service mesh, micro-frontends | ADR chứng minh lợi ích, chi phí và trigger áp dụng | [Bài nâng cao](advanced-actor-event-sourcing-and-service-mesh.md); Lab L16 mở rộng |
 | Data governance | Classification, retention, lineage, privacy, ownership, deletion | Data inventory + retention/deletion scenario | Cần nội dung rõ hơn |
 | Capacity/cost | Arrival rate, peak factor, queue drain, storage growth, egress, cost drivers | Workbook giả định + load test đối chiếu | Cần bài mẫu định lượng |
 | Migration/evolution | Expand-contract, backward compatibility, strangler, rollback, dual-read/write risks | Migration rehearsal trên dữ liệu đại diện | Cần runbook riêng |
@@ -68,6 +70,6 @@ Trang này kiểm tra **độ bao phủ của chương trình học**, không kh
 4. Security/tenant isolation.
 5. Capacity, SLO, resilience và deployment.
 6. Data governance, migration và architecture risk.
-7. Case study Securities OMS tổng hợp.
+7. Một case study/capstone tổng hợp theo lựa chọn của người học (Payment, Booking, Twitter, Finance, Securities hoặc domain khác); không bắt buộc OMS.
 
 Không mở thêm nhóm kiến thức để tăng số lượng trước khi các P0 có đủ chiều sâu và evidence.
