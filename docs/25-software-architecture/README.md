@@ -51,6 +51,7 @@ Từ **C# / SQL Server** đến **Distributed Systems, HLD, LLD, Cloud và vận
 - [Performance, HA/DR & Operational Readiness](performance-reliability-operational-architecture.md) — SLO, p99, load testing, capacity/cost, resilience, observability, runbook và restore drill.
 - [Technical Leadership & Governance](architecture-leadership-decisions-and-governance.md) — ADR, POC, architecture review, risk/debt, deviations, engineering practices và mentoring.
 - [System Design Practice & Assessment](solution-architect-case-practice-and-assessment.md) — 7 đề bài cross-domain, template artifacts và rubric đánh giá evidence.
+- [3 case study System Architecture end-to-end](../24-system-design/README.md) — [Twitter/X Feed](../24-system-design/twitter-x-feed-architecture.md), [Payment System](../24-system-design/payment-system-architecture.md), [Personal Finance Aggregator](../24-system-design/personal-finance-aggregator-architecture.md); FR/NFR, HLD, data, trade-offs và failure tests.
 - [Đối chiếu JD Solution Architect chứng khoán](solution-architect-jd-coverage.md) — mapping trách nhiệm, kỹ thuật, domain và khoảng trống thực hành theo yêu cầu tuyển dụng.
 - [Securities Domain Architecture](securities-domain-architecture.md) — account, cash/ledger, OMS, margin, derivatives, market data, portfolio, funds và bonds; reference order flow và failure analysis.
 - [Architecture Delivery & Governance](solution-architecture-delivery-governance.md) — BRD → NFR → HLD/LLD → POC → review, RACI, architecture deviation, risk/debt và go-live.

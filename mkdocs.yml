@@ -79,7 +79,11 @@ markdown_extensions:
       alternate_style: true
   - pymdownx.tasklist:
       custom_checkbox: true
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
 
 nav:
   - Home: index.md
@@ -240,6 +244,9 @@ nav:
       - Async, Queue, Backpressure & Reliability: 24-system-design/async-queues-backpressure-and-reliability.md
       - Availability, Multi-region, DR, Security & Cost: 24-system-design/availability-multiregion-dr-security-and-cost.md
       - Case Studies & Design Review: 24-system-design/case-studies-and-design-review.md
+      - Twitter/X Feed Architecture: 24-system-design/twitter-x-feed-architecture.md
+      - Payment System Architecture: 24-system-design/payment-system-architecture.md
+      - Personal Finance Aggregator: 24-system-design/personal-finance-aggregator-architecture.md
       - Production Projects & Evidence: 24-system-design/production-projects-and-evidence.md
       - References: 24-system-design/references.md
 
