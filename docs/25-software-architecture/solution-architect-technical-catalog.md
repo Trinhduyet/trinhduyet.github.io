@@ -35,13 +35,13 @@ Các chương mới là **kiến thức kiến trúc tổng quát**, áp dụng 
 
 | Nhóm | Deep dive tích hợp | Kỹ năng đầu ra |
 |---|---|---|
-| 01–03 Foundations, design, DDD | [Business → HLD/LLD](solution-architecture-from-requirements-to-design.md), [Leadership](architecture-leadership-decisions-and-governance.md) | Capability map, boundaries, design review |
+| 01–03 Foundations, design, DDD | [Principles/Patterns](architecture-principles-patterns-and-12-factor.md), [Modeling/C4](architecture-modeling-event-storming-and-c4.md), [Tactical DDD](tactical-ddd-and-aggregate-consistency.md) | SOLID/GRASP, Event Storming, aggregate invariants, capability map, boundaries |
 | 04–05 Database, concurrency | [Polyglot Data](data-architecture-polyglot-persistence.md), [Distributed Systems](distributed-systems-architecture-deep-dive.md) | Transaction, isolation, invariant, SQL/NoSQL trade-off |
-| 06, 08 Distributed & messaging | [Distributed Systems, EDA](distributed-systems-architecture-deep-dive.md) | Outbox/Inbox, Saga, backpressure, ordering, failure recovery |
+| 06, 08 Distributed & messaging | [Distributed Systems, EDA](distributed-systems-architecture-deep-dive.md), [Messaging/AsyncAPI](../17-distributed-systems/messaging-platforms-asyncapi-and-workflows.md) | Outbox/Inbox, Saga, broker trade-offs, contracts, failure recovery |
 | 07, 11 API & security | [Integration/Security/Platform](integration-security-platform-architecture.md) | OAuth/OIDC, API Gateway, tenant/resource authz, partner contract |
 | 09–10 Cache, scale, HA | [Data/Cache](data-architecture-polyglot-persistence.md), [Performance/Operations](performance-reliability-operational-architecture.md) | p99, capacity, load shedding, HA/DR |
 | 12–14 Cloud/platform, observability, DR | [Integration/Hybrid](integration-security-platform-architecture.md), [Performance/Operations](performance-reliability-operational-architecture.md) | CI/CD, IaC, SLO, tracing, restore drill |
-| 15–16 Governance & advanced | [Leadership/Governance](architecture-leadership-decisions-and-governance.md), [Practice/Assessment](solution-architect-case-practice-and-assessment.md) | ADR, POC, deviations, mentoring, capstone |
+| 15–16 Governance & advanced | [Leadership/Governance](architecture-leadership-decisions-and-governance.md), [Anti-patterns](architecture-antipatterns-and-refactoring.md), [Advanced Architecture](advanced-actor-event-sourcing-and-service-mesh.md), [Practice](solution-architect-case-practice-and-assessment.md) | ADR, fitness functions, POC, actor/ES/mesh choice, capstone |
 
 **Chú ý:** source lab [Distributed Workflow](https://github.com/Trinhduyet/trinhduyet.github.io/tree/main/labs/25-solution-architect/distributed-workflow) chỉ là một implementation chung cho một phần L05/L06/L07/L08. Không suy ra 16 nhóm hoặc 12 lab đã được kiểm chứng đầy đủ.
 
@@ -64,7 +64,7 @@ Các chương mới là **kiến thức kiến trúc tổng quát**, áp dụng 
 
 **Tình huống thực tế:** Đổi nhà cung cấp thanh toán không sửa nghiệp vụ; test được adapter giả lập.
 
-**Tài liệu nền:** [Clean/Hexagonal](clean-hexagonal-and-vertical-slice.md).
+**Tài liệu nền:** [Principles/Patterns/12-Factor](architecture-principles-patterns-and-12-factor.md) · [Clean/Hexagonal](clean-hexagonal-and-vertical-slice.md).
 
 **Bằng chứng cần nộp:** [Bài thực hành L02](solution-architect-mandatory-labs.md#l02) (hoặc phần đối chiếu tương ứng trong lab tích hợp). Không đánh dấu hoàn thành nếu chỉ đọc lý thuyết.
 
@@ -75,7 +75,7 @@ Các chương mới là **kiến thức kiến trúc tổng quát**, áp dụng 
 
 **Tình huống thực tế:** Tách Cash, OMS, Exchange Gateway theo ownership; không dùng chung bảng để sửa dữ liệu.
 
-**Tài liệu nền:** [DDD](ddd-modular-monolith-and-microservices.md).
+**Tài liệu nền:** [DDD](ddd-modular-monolith-and-microservices.md) · [Tactical DDD](tactical-ddd-and-aggregate-consistency.md) · [Modeling/Event Storming](architecture-modeling-event-storming-and-c4.md).
 
 **Bằng chứng cần nộp:** [Bài thực hành L03](solution-architect-mandatory-labs.md#l03) (hoặc phần đối chiếu tương ứng trong lab tích hợp). Không đánh dấu hoàn thành nếu chỉ đọc lý thuyết.
 

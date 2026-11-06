@@ -94,6 +94,7 @@ Retry mù có thể charge lần hai.
 | [Partial Failure, Timeouts, Retries và Idempotency](partial-failure-timeouts-retries-and-idempotency.md) | phân loại failure, đặt deadline, retry có bound, chống duplicate side effect |
 | [Messaging, Outbox, Inbox và Dedup](messaging-outbox-inbox-and-dedup.md) | publish reliable từ DB, consume at-least-once, dedup/inbox, DLQ/replay |
 | [Consistency, Ordering, Saga và Backpressure](consistency-ordering-saga-and-backpressure.md) | chọn consistency, giữ ordering khi cần, compensation, capacity/backpressure |
+| [Messaging Platforms, AsyncAPI & Workflows](messaging-platforms-asyncapi-and-workflows.md) | chọn Kafka/RabbitMQ/NATS/Service Bus, version event contracts, kiểm chứng duplicate/replay/orchestration |
 
 ---
 

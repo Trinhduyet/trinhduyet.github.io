@@ -11,6 +11,8 @@
 
 Module 14 chỉ tập trung vào **Microsoft Azure**: chọn service, cấu hình production, networking/identity, reliability, backup/DR, observability và cost model.
 
+**Phụ lục Solution Architect đa nền tảng:** [Multi-cloud & Hybrid Platform Decisions](multicloud-platform-decisions-and-portability.md) so sánh portability, data gravity, governance và HA/DR trên Azure/AWS/GCP/on-prem. Đây là tài liệu tham khảo tùy chọn; lộ trình kỹ thuật chính của Module 14 vẫn tập trung Azure.
+
 **Kubernetes không còn được dạy trong page Azure này.** AKS chỉ xuất hiện như một lựa chọn compute của Azure; toàn bộ Kubernetes object model, scheduling, networking, storage, security, troubleshooting và CKAD practice nằm ở [Module 15 — Kubernetes](../15-kubernetes/README.md).
 
 <div class="key-takeaway" markdown>
