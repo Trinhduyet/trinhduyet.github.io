@@ -38,27 +38,9 @@ Một lần refresh toàn bộ cần `100.000 × 2 = 200.000 calls`. Thời gian
 
 ## 3. HLD: sync pipeline tách biệt read dashboard
 
-```mermaid
-flowchart TD
-    User["Mobile / Web"] --> API["API Gateway + Auth"]
-    API --> Consent["Bank Connection + Consent"]
-    API --> Query["Finance Query Service"]
-    Query --> Cache[("Redis Read Cache")]
-    Query --> DB[("Canonical Finance DB")]
-    Consent --> DB
-    ProviderHook["Verified Provider Webhooks"] --> Queue["Durable Sync Queue"]
-    Scheduler["Adaptive Scheduler"] --> Queue
-    Queue --> Worker["Provider Sync Workers"]
-    Worker --> Limiter["Distributed Rate Limiter"]
-    Limiter --> Banks["Bank APIs / Aggregator"]
-    Worker --> DB
-    DB --> Outbox["Outbox + CDC"]
-    Outbox --> Kafka["Event Stream"]
-    Kafka --> Budget["Budget Workers"]
-    Budget --> DB
-    Budget --> Alert["Notification Outbox"]
-    Alert --> Push["FCM / APNs / Email"]
-```
+![HLD Personal Finance Aggregator: read path, bank sync và budget alert pipeline](../assets/diagrams/personal-finance-aggregator-architecture.svg)
+
+Sơ đồ chia ba lane; liên kết xuyên lane là: Sync Worker lấy delta từ ngân hàng, commit canonical transactions + cursor + outbox; CDC phát event cho Budget Worker; Budget Worker tính lại usage, ghi notification outbox rồi mới gửi thông báo.
 
 **Source of truth:** normalized transactions, consent states, sync cursors và budget records ở durable DB. Redis chỉ làm read cache/rate-limit state, không thay bank data truth. Kafka là kênh thay đổi nội bộ, **không thay thế bank sync**.
 
